@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "dash",
   "main": "index.js",
+  "dist": "webpack -p",
+  "postinstall": "npm run dist",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
