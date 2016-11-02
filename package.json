@@ -4,10 +4,10 @@
   "description": "dash",
   "main": "index.js",
   "dist": "webpack -p",
-  "postinstall": "npm run dist",
   "scripts": {
+    "postinstall": "webpack -p",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "node main.js" 
   },
   "author": "JOWG",
   "license": "ISC",
