@@ -2,12 +2,12 @@
   "name": "dash",
   "version": "1.0.0",
   "description": "dash",
-  "main": "index.js",
+  "main": "main.js",
   "dist": "webpack -p",
   "scripts": {
     "postinstall": "webpack -p",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js" 
+    "start": "node main.js" 
   },
   "author": "JOWG",
   "license": "ISC",
