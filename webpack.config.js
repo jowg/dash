@@ -14,6 +14,9 @@ var config = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       _: 'underscore'
+    }),    
+		new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
     })
   ],
   module: {
