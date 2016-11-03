@@ -6,9 +6,10 @@ import Widget from './Widget.js';
 import ConfigureAddWidget from './ConfigureAddWidget.js';
 import ConfigureAddTab from './ConfigureAddTab.js';
 import ConfigureEditTab from './ConfigureEditTab.js';
+import ConfigureLogin from './ConfigureLogin.js';
 var DateRangePicker = require('react-bootstrap-daterangepicker');
 var moment = require('moment');
-import {saveDashboard,saveloadRestPoint} from './support.js';
+import {saveDashboard,saveloadRestPoint,checkPassword,attemptloginRestPoint} from './support.js';
 
 require('./dash.css');
 
@@ -25,15 +26,52 @@ class Dashboard extends React.Component {
     this.datepickerUpdate    = this.datepickerUpdate.bind(this);
     this.toggleTabHideDate   = this.toggleTabHideDate.bind(this);
     this.deleteCurrentTab    = this.deleteCurrentTab.bind(this);
+    this.attemptLogin        = this.attemptLogin.bind(this);
+    this.loadData            = this.loadData.bind(this);
+    this.state = {
+      loggedin: false,
+      errorloggingin: false
+    }
   }
   componentDidMount() {
-    var thisthis = this;
-    document.cookie = "username=John Doe";
 
+    // Set a cookie on the client.
+    // This cookies should be set with the username from the login window
+    // and that username should also be adjusting the dashboard id.
+    // Or something.
+
+    //console.log('document.cookie = ' + document.cookie);
+    //document.cookie = 'sessionid=xyz123';
+
+
+  }
+  attemptLogin(username,password) {
+    var thisthis = this;
+    $.get(
+      attemptloginRestPoint(),
+      {username: username,
+       password: password
+      },
+      function(rawData) {
+        if (rawData.good === 1) {
+          thisthis.loadData(username);
+          thisthis.setState({loggedin:true,errorloggingin:false});
+        } else {
+          //console.log('Error Logging In!');
+          thisthis.setState({loggedin:false,errorloggingin:true});
+        }
+      }
+    );
+
+    //this.loadData(username);
+
+  }
+  loadData(sessionid) {
+    var thisthis = this;
     $.get(
       saveloadRestPoint(),
       {saveload: 'load',
-       dashboardid: thisthis.props.fullstate.did
+       dashboardid: sessionid//thisthis.props.fullstate.did
       },
       function(rawData) {
         thisthis.props.load_data_into_dashboard(rawData.data);
@@ -86,12 +124,19 @@ class Dashboard extends React.Component {
       'Last Month':   [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
       'This Year':    [moment().startOf('year'), moment().endOf('year')],
     };
+    // If we're not logged in, only display the login prompt.
+    // This login check should be replaced by the cookie check.
+    if (!this.state.loggedin) {
+      return(<div style={{display:this.props.configLogin}}><ConfigureLogin errorloggingin={this.state.errorloggingin} attemptLogin={this.attemptLogin}/></div>);
+    }
+    // Otherwise do the full thing.
     return(
         <div>
         <div style={{display:this.props.configAddWidgetDisplay}}><ConfigureAddWidget/></div>
         <div style={{display:this.props.configAddTabDisplay}}><ConfigureAddTab/></div>
         <div style={{display:this.props.configEditTabDisplay}}><ConfigureEditTab/></div>
         <div className='topbar'>
+        <div className='dashboardidholder'>Dashboard ID: {this.props.did}</div>
         {currentDash.tabHideDate ? <div/> : <div className='daterangepickerholder-dash'><DateRangePicker onApply={this.datepickerUpdate} startDate={moment(currentDash.tabStartDateISO)} endDate={moment(currentDash.tabEndDateISO)} ranges={ranges} alwaysShowCalendars={false}><div>{moment(currentDash.tabStartDateISO).format('MM/DD/YYYY')}-{moment(currentDash.tabEndDateISO).format('MM/DD/YYYY')}</div></DateRangePicker></div>}
         </div>
         <div className='tabholder-left'>
@@ -145,6 +190,8 @@ const mapStateToProps = (state) => ({
   configAddWidgetDisplay: state.configAddWidgetDisplay,
   configAddTabDisplay:    state.configAddTabDisplay,
   configEditTabDisplay:   state.configEditTabDisplay,
+  configLogin:            state.configLogin,
+  did:                    state.did,
   fullstate:              state
 })
 

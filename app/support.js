@@ -140,8 +140,10 @@ export function dataRestPoint() {
   //return("http://lvh.me/cgi-bin/rest/rest_retrieveData.py");
   return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_retrieveData.py");  
 }
-
 export function saveloadRestPoint() {
   //return("http://lvh.me/cgi-bin/rest/rest_saveload.py");
   return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_saveload.py");  
+}
+export function attemptloginRestPoint() {
+  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_attemptlogin.py");
 }
