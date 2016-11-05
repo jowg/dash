@@ -51,6 +51,8 @@ class Dashboard extends React.Component {
         {token: token
         },
         function(rawData) {
+          console.log('Success');
+          console.log(rawData.did);
           if (rawData.did !== '') {
             thisthis.loadData(rawData.did);
             thisthis.setState({showlogin:'dashboard',errorloggingin:false});
