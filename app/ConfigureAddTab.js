@@ -48,7 +48,7 @@ class ConfigureAddTab extends React.Component {
         <br/>
         <input className='addTabTextfield' type="text" value={this.state.tabName} onChange={this.onChange.bind(this)}/>
         <br/><br/>
-        <button onClick={this.updateButtonHandler}>Add Tab</button>
+        <button className='config-window-button' onClick={this.updateButtonHandler}>Add Tab</button>
         </div>
         </div>
     );

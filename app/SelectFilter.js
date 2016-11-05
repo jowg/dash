@@ -51,11 +51,11 @@ class SelectFilter extends React.Component {
               })}
             </select>
               <input type="text" onChange={thisthis.selectFilterUpdate.bind(this,filterindex,'value')} value={filter.value} />
-              <button onClick={thisthis.removeThisFilter.bind(this,filterindex)}>-</button>
+              <button className='config-window-button-plus' onClick={thisthis.removeThisFilter.bind(this,filterindex)}>-</button>
               </div>
           )
         })}
-        <button onClick={this.addNewFilter}>+</button>
+        <button className='config-window-button-plus' onClick={this.addNewFilter}>+</button>
         </div>
     );
   }

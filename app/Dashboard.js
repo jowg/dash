@@ -9,7 +9,7 @@ import ConfigureEditTab from './ConfigureEditTab.js';
 import ConfigureLogin from './ConfigureLogin.js';
 var DateRangePicker = require('react-bootstrap-daterangepicker');
 var moment = require('moment');
-import {saveDashboard,saveloadRestPoint,checkPassword,attemptloginRestPoint} from './support.js';
+import {completeParams,saveDashboard,saveloadRestPoint,checkPassword,attemptloginRestPoint,cookieExtract,getDashboardForTokenRestPoint} from './support.js';
 
 require('./dash.css');
 
@@ -29,36 +29,70 @@ class Dashboard extends React.Component {
     this.attemptLogin        = this.attemptLogin.bind(this);
     this.loadData            = this.loadData.bind(this);
     this.state = {
-      loggedin: false,
+      showlogin: 'limbo',
       errorloggingin: false
     }
   }
   componentDidMount() {
 
-    // Set a cookie on the client.
-    // This cookies should be set with the username from the login window
-    // and that username should also be adjusting the dashboard id.
-    // Or something.
+    // Check if there is a valid token.
+    // If there's no token, set the state to show the login screen.
+    // If there is a token, request the corresponding did.
+    // If there's no corresponding did, set the state to show the login screen.
+    // If there's a corresponding did, show the dashboard.
+
+    var thisthis = this;
+    var token = cookieExtract('token');
+    if (token === undefined) {
+      thisthis.setState({showlogin:'login',errorloggingin:false});
+    } else {
+      $.post(
+        getDashboardForTokenRestPoint(),
+        {token: token
+        },
+        function(rawData) {
+          if (rawData.did !== '') {
+            thisthis.loadData(rawData.did);
+            thisthis.setState({showlogin:'dashboard',errorloggingin:false});
+          } else {
+            thisthis.setState({showlogin:'login',errorloggingin:false});
+          }
+        }
+      );
+    }
+
+
+    // For this token to be valid we must contact the server.
+    // If valid the server will return the username.
+    // We load the data that way.
 
     //console.log('document.cookie = ' + document.cookie);
-    //document.cookie = 'sessionid=xyz123';
-
+    //
 
   }
   attemptLogin(username,password) {
     var thisthis = this;
-    $.get(
+    $.post(
       attemptloginRestPoint(),
       {username: username,
        password: password
       },
+      // rawData = {good:1,token:token}
+      // Contains whether the login was good and if so, what the token is.
       function(rawData) {
         if (rawData.good === 1) {
+
+          var now = new Date();
+          var time = now.getTime();
+          var expireTime = time + 1000*3600;
+          now.setTime(expireTime);
+
+          document.cookie = 'token='+rawData.token//+';expires='+now.toGMTString()+';path=/';
           thisthis.loadData(username);
-          thisthis.setState({loggedin:true,errorloggingin:false});
+          thisthis.setState({showlogin:'dashboard',errorloggingin:false});
         } else {
           //console.log('Error Logging In!');
-          thisthis.setState({loggedin:false,errorloggingin:true});
+          thisthis.setState({showlogin:'login',errorloggingin:true});
         }
       }
     );
@@ -66,15 +100,24 @@ class Dashboard extends React.Component {
     //this.loadData(username);
 
   }
-  loadData(sessionid) {
+  loadData(did) {
+    //console.log(cookieExtract('token'));
     var thisthis = this;
-    $.get(
+    // Load the data for did.
+    // If the dbase contains a token matching our cookie then
+    // rawData={'success':1,data:STATE} which then gets set.
+    // If the dbase does not contain a token matching our cookie
+    // then nothing is loaded and rawData={'success':0}
+    // in which case we reject back to the login screen.
+    $.post(
       saveloadRestPoint(),
-      {saveload: 'load',
-       dashboardid: sessionid//thisthis.props.fullstate.did
-      },
+      completeParams({saveload: 'load',dashboardid: did}),
       function(rawData) {
-        thisthis.props.load_data_into_dashboard(rawData.data);
+        if (rawData.success === 1) {
+          thisthis.props.load_data_into_dashboard(rawData.data);
+        } else {
+          thisthis.setState({showlogin:'login',errorloggingin:false});
+        }
       }
     );
   }
@@ -126,8 +169,10 @@ class Dashboard extends React.Component {
     };
     // If we're not logged in, only display the login prompt.
     // This login check should be replaced by the cookie check.
-    if (!this.state.loggedin) {
+    if (this.state.showlogin === 'login') {
       return(<div style={{display:this.props.configLogin}}><ConfigureLogin errorloggingin={this.state.errorloggingin} attemptLogin={this.attemptLogin}/></div>);
+    } else if (this.state.showlogin === 'limbo') {
+      return(<div/>);
     }
     // Otherwise do the full thing.
     return(
@@ -142,8 +187,10 @@ class Dashboard extends React.Component {
         <div className='tabholder-left'>
         {props.dashLayout.map(function(tab,tabindex) {
           return(
-              <div className={props.currentTab==tabindex ? 'tab-selected' : 'tab-unselected'} key={tabindex} onClick={thisthis.changeCurrentTab.bind(this,tabindex)}>{tab.tabName}</div>
-          )
+              <div className={props.currentTab==tabindex ? 'tab-selected' : 'tab-unselected'} key={tabindex} onClick={thisthis.changeCurrentTab.bind(this,tabindex)}>
+              {tab.tabName.length > 7 ? tab.tabName.substring(0,6)+'...' : tab.tabName}
+            </div>
+          );
         })}
         <div className="dropdown">
         <div className='dropbtn'>Tools</div>

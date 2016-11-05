@@ -67,7 +67,7 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 205);
+	var moment = __webpack_require__(/*! moment */ 208);
 	
 	// Mine.
 	
@@ -88,7 +88,8 @@
 	      currentTab: 0,
 	      configAddWidgetDisplay: 'none',
 	      configAddTabDisplay: 'none',
-	      configEditTabDisplay: 'none'
+	      configEditTabDisplay: 'none',
+	      configLogin: 'block'
 	    };
 	    // For resetting for testing.
 	    if (false) {
@@ -163,7 +164,8 @@
 	        currentTab: 0,
 	        configAddWidgetDisplay: 'none',
 	        configAddTabDisplay: 'none',
-	        configEditTabDisplay: 'none'
+	        configEditTabDisplay: 'none',
+	        configLogin: 'block'
 	      };
 	    }
 	  }
@@ -184,7 +186,7 @@
 	
 	  ////////////////////////////////////////////////////////////////////////////////////////
 	  // UPDATE_DASH
-	  // UPDATE_DASH_PLUS_SAVE  
+	  // UPDATE_DASH_PLUS_SAVE
 	
 	  if (action.type === 'UPDATE_DASH') {
 	    newState = _.extend(newState, action.changes);
@@ -272,6 +274,7 @@
 	
 	  if (action.type === 'LOAD_DATA_INTO_DASHBOARD') {
 	    newState = action.statestring;
+	    newState.currentTab = 0;
 	  }
 	  return newState;
 	};
@@ -6912,9 +6915,12 @@
 	exports.calculateNewLayout = calculateNewLayout;
 	exports.niceDate = niceDate;
 	exports.saveDashboard = saveDashboard;
+	exports.cookieExtract = cookieExtract;
 	exports.dataRestPoint = dataRestPoint;
 	exports.saveloadRestPoint = saveloadRestPoint;
 	exports.attemptloginRestPoint = attemptloginRestPoint;
+	exports.getDashboardForTokenRestPoint = getDashboardForTokenRestPoint;
+	exports.completeParams = completeParams;
 	// Here we assume that request is more like a rest point.
 	// Hold on - I have a rest point on my machine.
 	//
@@ -6947,7 +6953,7 @@
 	}
 	
 	function getTimeframeOptions() {
-	  return ['(undefined)', 'none', 'tab', 'mine'];
+	  return ['(undefined)', 'none', 'tab', 'custom'];
 	}
 	
 	// Get available moves for a certain index.
@@ -7034,32 +7040,47 @@
 	  return year + "-" + month.substr(-2) + "-" + day.substr(-2);
 	}
 	
+	// Save the dashboard with the given config.
+	// The rest point checks the the token as well,
+	// currently attached via completeParams, and if the token
+	// does not exist then nothing is saved and that's that.
+	
 	function saveDashboard(config) {
 	  console.log("Saving Dashboard");
-	  if (true) {
-	    $.post(saveloadRestPoint(),
-	    //"http://lvh.me/cgi-bin/rest/rest_saveload.py",
-	    { saveload: 'save',
-	      dashboardid: config.did,
-	      configuration: JSON.stringify(config)
-	    }, function (data, status) {
-	      // Nuttin.
-	    });
-	  } else {
-	    console.log('Not really');
-	  }
+	  $.post(saveloadRestPoint(), completeParams({ saveload: 'save', dashboardid: config.did, configuration: JSON.stringify(config) }), function (rawData) {
+	    // Nuttin.
+	  });
+	}
+	
+	function cookieExtract(name) {
+	  var value = "; " + document.cookie;
+	  var parts = value.split("; " + name + "=");
+	  if (parts.length == 2) return parts.pop().split(";").shift();
 	}
 	
 	function dataRestPoint() {
 	  //return("http://lvh.me/cgi-bin/rest/rest_retrieveData.py");
-	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_retrieveData.py";
+	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_retrieveData.py";
 	}
 	function saveloadRestPoint() {
 	  //return("http://lvh.me/cgi-bin/rest/rest_saveload.py");
-	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_saveload.py";
+	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_saveload.py";
 	}
+	
+	// This rest point will create the token in the database
+	// and return the cookie which includes the token.
+	// Am I getting that right?
 	function attemptloginRestPoint() {
-	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_attemptlogin.py";
+	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_attemptlogin.py";
+	}
+	
+	function getDashboardForTokenRestPoint() {
+	  return "http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_getDashboardForToken.py";
+	}
+	
+	function completeParams(params) {
+	  params.token = cookieExtract('token');
+	  return params;
 	}
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! underscore */ 1), __webpack_require__(/*! jquery */ 56)))
 
@@ -17325,19 +17346,19 @@
 	
 	var _Widget2 = _interopRequireDefault(_Widget);
 	
-	var _ConfigureAddWidget = __webpack_require__(/*! ./ConfigureAddWidget.js */ 316);
+	var _ConfigureAddWidget = __webpack_require__(/*! ./ConfigureAddWidget.js */ 319);
 	
 	var _ConfigureAddWidget2 = _interopRequireDefault(_ConfigureAddWidget);
 	
-	var _ConfigureAddTab = __webpack_require__(/*! ./ConfigureAddTab.js */ 317);
+	var _ConfigureAddTab = __webpack_require__(/*! ./ConfigureAddTab.js */ 320);
 	
 	var _ConfigureAddTab2 = _interopRequireDefault(_ConfigureAddTab);
 	
-	var _ConfigureEditTab = __webpack_require__(/*! ./ConfigureEditTab.js */ 318);
+	var _ConfigureEditTab = __webpack_require__(/*! ./ConfigureEditTab.js */ 321);
 	
 	var _ConfigureEditTab2 = _interopRequireDefault(_ConfigureEditTab);
 	
-	var _ConfigureLogin = __webpack_require__(/*! ./ConfigureLogin.js */ 319);
+	var _ConfigureLogin = __webpack_require__(/*! ./ConfigureLogin.js */ 322);
 	
 	var _ConfigureLogin2 = _interopRequireDefault(_ConfigureLogin);
 	
@@ -17368,8 +17389,8 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 311);
-	var moment = __webpack_require__(/*! moment */ 205);
+	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 314);
+	var moment = __webpack_require__(/*! moment */ 208);
 	
 	__webpack_require__(/*! ./dash.css */ 197);
 	
@@ -17394,7 +17415,7 @@
 	    _this.attemptLogin = _this.attemptLogin.bind(_this);
 	    _this.loadData = _this.loadData.bind(_this);
 	    _this.state = {
-	      loggedin: false,
+	      showlogin: 'limbo',
 	      errorloggingin: false
 	    };
 	    return _this;
@@ -17404,29 +17425,58 @@
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	
-	      // Set a cookie on the client.
-	      // This cookies should be set with the username from the login window
-	      // and that username should also be adjusting the dashboard id.
-	      // Or something.
+	      // Check if there is a valid token.
+	      // If there's no token, set the state to show the login screen.
+	      // If there is a token, request the corresponding did.
+	      // If there's no corresponding did, set the state to show the login screen.
+	      // If there's a corresponding did, show the dashboard.
+	
+	      var thisthis = this;
+	      var token = (0, _support.cookieExtract)('token');
+	      if (token === undefined) {
+	        thisthis.setState({ showlogin: 'login', errorloggingin: false });
+	      } else {
+	        $.post((0, _support.getDashboardForTokenRestPoint)(), { token: token
+	        }, function (rawData) {
+	          if (rawData.did !== '') {
+	            thisthis.loadData(rawData.did);
+	            thisthis.setState({ showlogin: 'dashboard', errorloggingin: false });
+	          } else {
+	            thisthis.setState({ showlogin: 'login', errorloggingin: false });
+	          }
+	        });
+	      }
+	
+	      // For this token to be valid we must contact the server.
+	      // If valid the server will return the username.
+	      // We load the data that way.
 	
 	      //console.log('document.cookie = ' + document.cookie);
-	      //document.cookie = 'sessionid=xyz123';
-	
-	
+	      //
 	    }
 	  }, {
 	    key: 'attemptLogin',
 	    value: function attemptLogin(username, password) {
 	      var thisthis = this;
-	      $.get((0, _support.attemptloginRestPoint)(), { username: username,
+	      $.post((0, _support.attemptloginRestPoint)(), { username: username,
 	        password: password
-	      }, function (rawData) {
+	      },
+	      // rawData = {good:1,token:token}
+	      // Contains whether the login was good and if so, what the token is.
+	      function (rawData) {
 	        if (rawData.good === 1) {
+	
+	          var now = new Date();
+	          var time = now.getTime();
+	          var expireTime = time + 1000 * 3600;
+	          now.setTime(expireTime);
+	
+	          document.cookie = 'token=' + rawData.token; //+';expires='+now.toGMTString()+';path=/';
 	          thisthis.loadData(username);
-	          thisthis.setState({ loggedin: true, errorloggingin: false });
+	          thisthis.setState({ showlogin: 'dashboard', errorloggingin: false });
 	        } else {
 	          //console.log('Error Logging In!');
-	          thisthis.setState({ loggedin: false, errorloggingin: true });
+	          thisthis.setState({ showlogin: 'login', errorloggingin: true });
 	        }
 	      });
 	
@@ -17434,12 +17484,21 @@
 	    }
 	  }, {
 	    key: 'loadData',
-	    value: function loadData(sessionid) {
+	    value: function loadData(did) {
+	      //console.log(cookieExtract('token'));
 	      var thisthis = this;
-	      $.get((0, _support.saveloadRestPoint)(), { saveload: 'load',
-	        dashboardid: sessionid //thisthis.props.fullstate.did
-	      }, function (rawData) {
-	        thisthis.props.load_data_into_dashboard(rawData.data);
+	      // Load the data for did.
+	      // If the dbase contains a token matching our cookie then
+	      // rawData={'success':1,data:STATE} which then gets set.
+	      // If the dbase does not contain a token matching our cookie
+	      // then nothing is loaded and rawData={'success':0}
+	      // in which case we reject back to the login screen.
+	      $.post((0, _support.saveloadRestPoint)(), (0, _support.completeParams)({ saveload: 'load', dashboardid: did }), function (rawData) {
+	        if (rawData.success === 1) {
+	          thisthis.props.load_data_into_dashboard(rawData.data);
+	        } else {
+	          thisthis.setState({ showlogin: 'login', errorloggingin: false });
+	        }
 	      });
 	    }
 	  }, {
@@ -17508,12 +17567,14 @@
 	      };
 	      // If we're not logged in, only display the login prompt.
 	      // This login check should be replaced by the cookie check.
-	      if (!this.state.loggedin) {
+	      if (this.state.showlogin === 'login') {
 	        return React.createElement('div', { style: { display: this.props.configLogin } }, React.createElement(_ConfigureLogin2.default, { errorloggingin: this.state.errorloggingin, attemptLogin: this.attemptLogin }));
+	      } else if (this.state.showlogin === 'limbo') {
+	        return React.createElement('div', null);
 	      }
 	      // Otherwise do the full thing.
 	      return React.createElement('div', null, React.createElement('div', { style: { display: this.props.configAddWidgetDisplay } }, React.createElement(_ConfigureAddWidget2.default, null)), React.createElement('div', { style: { display: this.props.configAddTabDisplay } }, React.createElement(_ConfigureAddTab2.default, null)), React.createElement('div', { style: { display: this.props.configEditTabDisplay } }, React.createElement(_ConfigureEditTab2.default, null)), React.createElement('div', { className: 'topbar' }, React.createElement('div', { className: 'dashboardidholder' }, 'Dashboard ID: ', this.props.did), currentDash.tabHideDate ? React.createElement('div', null) : React.createElement('div', { className: 'daterangepickerholder-dash' }, React.createElement(DateRangePicker, { onApply: this.datepickerUpdate, startDate: moment(currentDash.tabStartDateISO), endDate: moment(currentDash.tabEndDateISO), ranges: ranges, alwaysShowCalendars: false }, React.createElement('div', null, moment(currentDash.tabStartDateISO).format('MM/DD/YYYY'), '-', moment(currentDash.tabEndDateISO).format('MM/DD/YYYY'))))), React.createElement('div', { className: 'tabholder-left' }, props.dashLayout.map(function (tab, tabindex) {
-	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tab-selected' : 'tab-unselected', key: tabindex, onClick: thisthis.changeCurrentTab.bind(this, tabindex) }, tab.tabName);
+	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tab-selected' : 'tab-unselected', key: tabindex, onClick: thisthis.changeCurrentTab.bind(this, tabindex) }, tab.tabName.length > 7 ? tab.tabName.substring(0, 6) + '...' : tab.tabName);
 	      }), React.createElement('div', { className: 'dropdown' }, React.createElement('div', { className: 'dropbtn' }, 'Tools'), React.createElement('div', { className: 'dropdown-content' }, React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddWidgetWindow }, 'Add Widget'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openEditTabWindow }, 'Rename Tab'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddTabWindow }, 'Add Tab'), currentDash.layout.length === 0 && this.props.dashLayout.length > 1 ? React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.deleteCurrentTab }, 'Delete Tab') : '', React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.toggleTabHideDate }, currentDash.tabHideDate ? 'Show Tab Date' : 'Hide Tab Date')))), props.dashLayout.map(function (tab, tabindex) {
 	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tabsheet-visible' : 'tabsheet-invisible', key: tabindex }, _.flatten(tab.layout.map(function (row, rowindex) {
 	          return row.map(function (widgetindex, columnindex) {
@@ -17607,15 +17668,27 @@
 	
 	var _WidgetConfigPie2 = _interopRequireDefault(_WidgetConfigPie);
 	
-	var _WidgetConfigHistogram = __webpack_require__(/*! ./WidgetConfigHistogram.js */ 201);
+	var _WidgetConfigBar = __webpack_require__(/*! ./WidgetConfigBar.js */ 201);
+	
+	var _WidgetConfigBar2 = _interopRequireDefault(_WidgetConfigBar);
+	
+	var _WidgetConfigLine = __webpack_require__(/*! ./WidgetConfigLine.js */ 202);
+	
+	var _WidgetConfigLine2 = _interopRequireDefault(_WidgetConfigLine);
+	
+	var _WidgetConfigColumn = __webpack_require__(/*! ./WidgetConfigColumn.js */ 203);
+	
+	var _WidgetConfigColumn2 = _interopRequireDefault(_WidgetConfigColumn);
+	
+	var _WidgetConfigHistogram = __webpack_require__(/*! ./WidgetConfigHistogram.js */ 204);
 	
 	var _WidgetConfigHistogram2 = _interopRequireDefault(_WidgetConfigHistogram);
 	
-	var _WidgetConfigStats = __webpack_require__(/*! ./WidgetConfigStats.js */ 202);
+	var _WidgetConfigStats = __webpack_require__(/*! ./WidgetConfigStats.js */ 205);
 	
 	var _WidgetConfigStats2 = _interopRequireDefault(_WidgetConfigStats);
 	
-	var _WidgetConfigScatter = __webpack_require__(/*! ./WidgetConfigScatter.js */ 203);
+	var _WidgetConfigScatter = __webpack_require__(/*! ./WidgetConfigScatter.js */ 206);
 	
 	var _WidgetConfigScatter2 = _interopRequireDefault(_WidgetConfigScatter);
 	
@@ -17661,12 +17734,12 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var Highcharts = __webpack_require__(/*! highcharts */ 204);
-	var moment = __webpack_require__(/*! moment */ 205);
-	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 311);
+	var Highcharts = __webpack_require__(/*! highcharts */ 207);
+	var moment = __webpack_require__(/*! moment */ 208);
+	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 314);
 	
 	__webpack_require__(/*! ./dash.css */ 197);
-	__webpack_require__(/*! ./daterangepicker.css */ 314);
+	__webpack_require__(/*! ./daterangepicker.css */ 317);
 	
 	// How does the dash get access to the store?
 	
@@ -17704,7 +17777,7 @@
 	        fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
 	      }
 	      // If we're using the widget timeframe, add that as a filter.
-	      if (props.widgets[props.widgetindex].data.timeframe == 'mine') {
+	      if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
 	        var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
 	        var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
 	        if (fs.length > 0) {
@@ -17712,18 +17785,23 @@
 	        }
 	        fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
 	      }
-	      // If it's a pie, bar, column or line.
-	      if (data.type == 'pie' || data.type == 'bar' || data.type == 'column' || data.type == 'line') {
+	      // If it's a pie.
+	      if (data.type == 'pie') {
 	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.aggMethod === '(undefined)' || data.timeframe === '(undefined)') {
-	          $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Not Configured</div>'); //data.type+' Widget Not Configured!');
+	          $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
 	        } else {
-	          $.get((0, _support.dataRestPoint)(), { source: data.source,
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
 	            metrics: data.metrics[0] + ',' + data.metrics[1],
 	            aggmetric: data.metrics[0],
 	            nonaggmetric: data.metrics[1],
 	            aggmethod: data.aggMethod,
 	            filters: fs
-	          }, function (rawData) {
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
+	              return false;
+	            }
 	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	            if (data.aggDatetime == true) {
 	              var newplotdata = [];
@@ -17756,11 +17834,11 @@
 	              }
 	            });
 	            if (final.length == 0) {
-	              $(ReactDOM.findDOMNode(chart)).html(data.type + ' widget has no data!');
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
 	            } else {
 	              Highcharts.chart(ReactDOM.findDOMNode(chart), {
 	                chart: {
-	                  type: data.type
+	                  type: 'pie'
 	                },
 	                credits: {
 	                  enabled: false
@@ -17774,20 +17852,263 @@
 	                      enabled: true,
 	                      format: '<b>{point.z}</b><br> {point.y:.2f} ' //,
 	                    }
-	                  },
-	                  line: {
+	                  }
+	                },
+	                xAxis: {
+	                  type: data.aggDatetime == true ? 'datetime' : 'category'
+	                },
+	                legend: {
+	                  enabled: false
+	                },
+	                series: [_defineProperty({
+	                  name: '',
+	                  showInLegend: false,
+	                  data: final,
+	                  size: null,
+	                  innerSize: '0%'
+	                }, 'showInLegend', true)]
+	              });
+	            }
+	          });
+	        }
+	      }
+	      // If it's a bar.
+	      if (data.type == 'bar') {
+	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.aggMethod === '(undefined)' || data.timeframe === '(undefined)') {
+	          $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Not Configured</div>');
+	        } else {
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
+	            metrics: data.metrics[0] + ',' + data.metrics[1],
+	            aggmetric: data.metrics[0],
+	            nonaggmetric: data.metrics[1],
+	            aggmethod: data.aggMethod,
+	            filters: fs
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
+	              return false;
+	            }
+	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	            if (data.aggDatetime == true) {
+	              var newplotdata = [];
+	              _.each(plotdata, function (a) {
+	                var h = {};
+	                h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	                h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	                newplotdata.push(h);
+	              });
+	              plotdata = JSON.parse(JSON.stringify(newplotdata));
+	            }
+	            // If it's to be sorted.
+	            if (data.aggNumeric == true || data.aggDatetime == true) {
+	              plotdata.sort(function (a, b) {
+	                return a[data.metrics[0]] - b[data.metrics[0]];
+	              });
+	            }
+	            var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	            var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	            var final = [];
+	            _.each(metricNumData0, function (datum, i) {
+	              var z = datum;
+	              if (data.aggDatetime == true) {
+	                z = (0, _support.niceDate)(z);
+	              }
+	              if (data.aggDatetime == true) {
+	                final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	              } else {
+	                final.push({ y: metricNumData1[i], z: z, name: datum });
+	              }
+	            });
+	            if (final.length == 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
+	            } else {
+	              Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	                chart: {
+	                  type: 'bar'
+	                },
+	                credits: {
+	                  enabled: false
+	                },
+	                title: {
+	                  text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	                },
+	                plotOptions: {
+	                  bar: {
 	                    dataLabels: {
 	                      enabled: false,
 	                      format: '<b>{point.z}</b>: {point.y:.2f} ' //,
 	                    }
-	                  },
+	                  }
+	                },
+	                xAxis: {
+	                  type: data.aggDatetime == true ? 'datetime' : 'category'
+	                },
+	                legend: {
+	                  enabled: false
+	                },
+	                series: [_defineProperty({
+	                  name: '',
+	                  showInLegend: false,
+	                  data: final,
+	                  size: null,
+	                  innerSize: '0%'
+	                }, 'showInLegend', true)]
+	              });
+	            }
+	          });
+	        }
+	      }
+	      // If it's a column.
+	      if (data.type == 'column') {
+	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.aggMethod === '(undefined)' || data.timeframe === '(undefined)') {
+	          $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Not Configured</div>');
+	        } else {
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
+	            metrics: data.metrics[0] + ',' + data.metrics[1],
+	            aggmetric: data.metrics[0],
+	            nonaggmetric: data.metrics[1],
+	            aggmethod: data.aggMethod,
+	            filters: fs
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+	              return false;
+	            }
+	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	            if (data.aggDatetime == true) {
+	              var newplotdata = [];
+	              _.each(plotdata, function (a) {
+	                var h = {};
+	                h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	                h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	                newplotdata.push(h);
+	              });
+	              plotdata = JSON.parse(JSON.stringify(newplotdata));
+	            }
+	            // If it's to be sorted.
+	            if (data.aggNumeric == true || data.aggDatetime == true) {
+	              plotdata.sort(function (a, b) {
+	                return a[data.metrics[0]] - b[data.metrics[0]];
+	              });
+	            }
+	            var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	            var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	            var final = [];
+	            _.each(metricNumData0, function (datum, i) {
+	              var z = datum;
+	              if (data.aggDatetime == true) {
+	                z = (0, _support.niceDate)(z);
+	              }
+	              if (data.aggDatetime == true) {
+	                final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	              } else {
+	                final.push({ y: metricNumData1[i], z: z, name: datum });
+	              }
+	            });
+	            if (final.length == 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+	            } else {
+	              Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	                chart: {
+	                  type: 'column'
+	                },
+	                credits: {
+	                  enabled: false
+	                },
+	                title: {
+	                  text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	                },
+	                plotOptions: {
 	                  column: {
 	                    dataLabels: {
 	                      enabled: false,
 	                      format: '<b>{point.z}</b>: {point.y:.2f} ' //,
 	                    }
-	                  },
-	                  bar: {
+	                  }
+	                },
+	                xAxis: {
+	                  type: data.aggDatetime == true ? 'datetime' : 'category'
+	                },
+	                legend: {
+	                  enabled: false
+	                },
+	                series: [_defineProperty({
+	                  name: '',
+	                  showInLegend: false,
+	                  data: final,
+	                  size: null,
+	                  innerSize: '0%'
+	                }, 'showInLegend', true)]
+	              });
+	            }
+	          });
+	        }
+	      }
+	      // If it's a line.
+	      if (data.type == 'line') {
+	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.aggMethod === '(undefined)' || data.timeframe === '(undefined)') {
+	          $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Not Configured</div>');
+	        } else {
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
+	            metrics: data.metrics[0] + ',' + data.metrics[1],
+	            aggmetric: data.metrics[0],
+	            nonaggmetric: data.metrics[1],
+	            aggmethod: data.aggMethod,
+	            filters: fs
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
+	              return false;
+	            }
+	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	            if (data.aggDatetime == true) {
+	              var newplotdata = [];
+	              _.each(plotdata, function (a) {
+	                var h = {};
+	                h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	                h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	                newplotdata.push(h);
+	              });
+	              plotdata = JSON.parse(JSON.stringify(newplotdata));
+	            }
+	            // If it's to be sorted.
+	            if (data.aggNumeric == true || data.aggDatetime == true) {
+	              plotdata.sort(function (a, b) {
+	                return a[data.metrics[0]] - b[data.metrics[0]];
+	              });
+	            }
+	            var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	            var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	            var final = [];
+	            _.each(metricNumData0, function (datum, i) {
+	              var z = datum;
+	              if (data.aggDatetime == true) {
+	                z = (0, _support.niceDate)(z);
+	              }
+	              if (data.aggDatetime == true) {
+	                final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	              } else {
+	                final.push({ y: metricNumData1[i], z: z, name: datum });
+	              }
+	            });
+	            if (final.length == 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
+	            } else {
+	              Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	                chart: {
+	                  type: 'line'
+	                },
+	                credits: {
+	                  enabled: false
+	                },
+	                title: {
+	                  text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	                },
+	                plotOptions: {
+	                  line: {
 	                    dataLabels: {
 	                      enabled: false,
 	                      format: '<b>{point.z}</b>: {point.y:.2f} ' //,
@@ -17817,10 +18138,15 @@
 	        if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.buckets === '(undefined)' || data.timeframe === '(undefined)') {
 	          $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Not Configured!');
 	        } else {
-	          $.get((0, _support.dataRestPoint)(), { source: data.source,
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
 	            metrics: data.metrics[0],
 	            filters: fs
-	          }, function (rawData) {
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('Histogram widget has no data!');
+	              return false;
+	            }
 	            var plotdata = rawData.data;
 	            var metricNumData = _.pluck(plotdata, data.metrics[0]);
 	            var cats = [];
@@ -17839,7 +18165,7 @@
 	            if (metricNumData.length == 0) {
 	              $(ReactDOM.findDOMNode(chart)).html('Histogram widget has no data!');
 	            } else {
-	              var _ref2;
+	              var _ref5;
 	
 	              Highcharts.chart(ReactDOM.findDOMNode(chart), {
 	                chart: {
@@ -17865,16 +18191,16 @@
 	                legend: {
 	                  enabled: false
 	                },
-	                series: [(_ref2 = {
+	                series: [(_ref5 = {
 	                  color: '#0000ff',
 	                  name: '',
 	                  showInLegend: false,
 	                  data: vals,
 	                  size: '100%',
 	                  innerSize: '85%'
-	                }, _defineProperty(_ref2, 'showInLegend', true), _defineProperty(_ref2, 'dataLabels', {
+	                }, _defineProperty(_ref5, 'showInLegend', true), _defineProperty(_ref5, 'dataLabels', {
 	                  enabled: true
-	                }), _ref2)]
+	                }), _ref5)]
 	              });
 	            }
 	          });
@@ -17886,10 +18212,15 @@
 	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.timeframe === '(undefined)') {
 	          $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Not Configured!');
 	        } else {
-	          $.get((0, _support.dataRestPoint)(), { source: data.source,
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
 	            metrics: data.metrics[0] + ',' + data.metrics[1],
 	            filters: fs
-	          }, function (rawData) {
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
+	              return false;
+	            }
 	            var plotdata = rawData.data;
 	            var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
 	            var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
@@ -17901,7 +18232,7 @@
 	            if (final.length == 0) {
 	              $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
 	            } else {
-	              var _ref3;
+	              var _ref6;
 	
 	              Highcharts.chart(ReactDOM.findDOMNode(chart), {
 	                chart: {
@@ -17934,14 +18265,14 @@
 	                    shadow: false
 	                  }
 	                },
-	                series: [(_ref3 = {
+	                series: [(_ref6 = {
 	                  color: '#0000ff',
 	                  name: 'f',
 	                  showInLegend: false,
 	                  data: final
-	                }, _defineProperty(_ref3, 'showInLegend', true), _defineProperty(_ref3, 'dataLabels', {
+	                }, _defineProperty(_ref6, 'showInLegend', true), _defineProperty(_ref6, 'dataLabels', {
 	                  enabled: false
-	                }), _ref3)]
+	                }), _ref6)]
 	              });
 	            }
 	          });
@@ -17953,10 +18284,15 @@
 	        if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.timeframe === '(undefined)') {
 	          $(ReactDOM.findDOMNode(chart)).html('Stats Widget Not Configured!');
 	        } else {
-	          $.get((0, _support.dataRestPoint)(), { source: data.source,
+	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	            source: data.source,
 	            metrics: data.metrics[0],
 	            filters: fs
-	          }, function (rawData) {
+	          }), function (rawData) {
+	            if (rawData.data.length === 0) {
+	              $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
+	              return false;
+	            }
 	            var plotdata = rawData.data;
 	            var metricNumData = _.pluck(plotdata, data.metrics[0]);
 	            if (metricNumData.length == 0) {
@@ -18010,7 +18346,22 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.type === 'pie' || newData.type === 'bar' || newData.type === 'column' || newData.type == 'line') {
+	      if (newData.type === 'pie') {
+	        if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	          this.updateInternals();
+	        }
+	      }
+	      if (newData.type === 'bar') {
+	        if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	          this.updateInternals();
+	        }
+	      }
+	      if (newData.type === 'column') {
+	        if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	          this.updateInternals();
+	        }
+	      }
+	      if (newData.type == 'line') {
 	        if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
 	          this.updateInternals();
 	        }
@@ -18083,9 +18434,9 @@
 	        switch (widgetdata.timeframe) {
 	          case 'tab':
 	            return React.createElement('img', { className: 'widget-cog-right', src: 'lock_time.png' });
-	          case 'mine':
+	          case 'custom':
 	            return React.createElement('div', { className: 'daterangepickerholder-small' }, React.createElement(DateRangePicker, { onApply: _this2.datepickerUpdate, startDate: moment(widgetdata.myStartDateISO), endDate: moment(widgetdata.myEndDateISO), ranges: ranges, alwaysShowCalendars: false }, React.createElement('div', null, moment(widgetdata.myStartDateISO).format('MM/DD/YYYY'), '-', moment(widgetdata.myEndDateISO).format('MM/DD/YYYY'))));
-	          case 'none':
+	          default:
 	            return React.createElement('div', { className: 'widget-cog-right' });
 	        }
 	      }(), React.createElement('div', { style: { clear: 'both' } }), React.createElement('div', { className: innersizecss, ref: 'chart' }), function () {
@@ -18093,11 +18444,11 @@
 	          case 'pie':
 	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
 	          case 'bar':
-	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
+	            return React.createElement(_WidgetConfigBar2.default, { widgetindex: props.widgetindex });
 	          case 'column':
-	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
+	            return React.createElement(_WidgetConfigColumn2.default, { widgetindex: props.widgetindex });
 	          case 'line':
-	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
+	            return React.createElement(_WidgetConfigLine2.default, { widgetindex: props.widgetindex });
 	          case 'histogram':
 	            return React.createElement(_WidgetConfigHistogram2.default, { widgetindex: props.widgetindex });
 	          case 'stats':
@@ -18374,7 +18725,7 @@
 	      var aggMethods = (0, _support.getAggMethods)();
 	      var timeframeOptions = (0, _support.getTimeframeOptions)();
 	      metrics.unshift('(undefined)');
-	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Pie Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      })), React.createElement('br', null)), React.createElement('div', { className: 'simpleborder' }, 'Aggregate Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
@@ -18384,7 +18735,7 @@
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
 	  }]);
 	
@@ -18529,8 +18880,8 @@
 	          return _react2.default.createElement('option', { key: i, value: metric }, metric);
 	        })), _react2.default.createElement('select', { onChange: thisthis.selectFilterUpdate.bind(this, filterindex, 'comp'), value: filter.comp }, compOptions.map(function (comp, i) {
 	          return _react2.default.createElement('option', { key: i, value: comp }, comp);
-	        })), _react2.default.createElement('input', { type: 'text', onChange: thisthis.selectFilterUpdate.bind(this, filterindex, 'value'), value: filter.value }), _react2.default.createElement('button', { onClick: thisthis.removeThisFilter.bind(this, filterindex) }, '-'));
-	      }), _react2.default.createElement('button', { onClick: this.addNewFilter }, '+'));
+	        })), _react2.default.createElement('input', { type: 'text', onChange: thisthis.selectFilterUpdate.bind(this, filterindex, 'value'), value: filter.value }), _react2.default.createElement('button', { className: 'config-window-button-plus', onClick: thisthis.removeThisFilter.bind(this, filterindex) }, '-'));
+	      }), _react2.default.createElement('button', { className: 'config-window-button-plus', onClick: this.addNewFilter }, '+'));
 	    }
 	  }]);
 	
@@ -18708,7 +19059,7 @@
 	          canBeFull = false;
 	        }
 	      });
-	      return _react2.default.createElement('div', null, _react2.default.createElement('div', { style: { width: '50%', float: 'left' } }, _react2.default.createElement('input', { type: 'checkbox', name: 'width', value: 'half', checked: this.props.width === 'half', onChange: this.selectSizeUpdate.bind(this, 'width') }), 'Half Width', _react2.default.createElement('br', null), _react2.default.createElement('input', { type: 'checkbox', name: 'width', value: 'full', checked: this.props.width === 'full', disabled: !canBeFull, onChange: this.selectSizeUpdate.bind(this, 'width') }), canBeFull ? 'Full width' : _react2.default.createElement('s', null, 'Full Width')), _react2.default.createElement('div', { style: { width: '50%', float: 'left' } }, _react2.default.createElement('input', { type: 'checkbox', name: 'height', value: 'half', checked: this.props.height === 'half', onChange: this.selectSizeUpdate.bind(this, 'height') }), 'Half Height', _react2.default.createElement('br', null), _react2.default.createElement('input', { type: 'checkbox', name: 'height', value: 'full', checked: this.props.height === 'full', onChange: this.selectSizeUpdate.bind(this, 'height') }), 'Full Height'));
+	      return _react2.default.createElement('div', null, _react2.default.createElement('div', { style: { width: '50%', float: 'left' } }, _react2.default.createElement('label', null, _react2.default.createElement('input', { type: 'checkbox', name: 'width', value: 'half', checked: this.props.width === 'half', onChange: this.selectSizeUpdate.bind(this, 'width') }), 'Half Width'), _react2.default.createElement('br', null), _react2.default.createElement('label', { className: canBeFull ? '' : 'disabled' }, _react2.default.createElement('input', { type: 'checkbox', name: 'width', value: 'full', checked: this.props.width === 'full', disabled: canBeFull ? false : 'disabled', onChange: this.selectSizeUpdate.bind(this, 'width') }), 'Full Width')), _react2.default.createElement('div', { style: { width: '50%', float: 'left' } }, _react2.default.createElement('label', null, _react2.default.createElement('input', { type: 'checkbox', name: 'height', value: 'half', checked: this.props.height === 'half', onChange: this.selectSizeUpdate.bind(this, 'height') }), 'Half Height'), _react2.default.createElement('br', null), _react2.default.createElement('label', null, _react2.default.createElement('input', { type: 'checkbox', name: 'height', value: 'full', checked: this.props.height === 'full', onChange: this.selectSizeUpdate.bind(this, 'height') }), 'Full Height')));
 	    }
 	  }]);
 	
@@ -36321,7 +36672,7 @@
 	
 	
 	// module
-	exports.push([module.id, ":root {\n  --body-color:                         #aaaaaa;\n  --tabholder-color:                    #4a708b;\n  --tabholder-color-light:              #5a809b;\n  --tab-selected-background-color:      #aaaaaa;\n  --tab-unselected-background-color:    #4a708b;\n  --tab-hover-background-color:         #777777;\n  --tab-default-color:                  #eeeeee;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/* Widget container information */\n\n.widget-container-hh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hh {\n  width:  300px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-container-fh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-fh {\n  width:  650px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-container-hf {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;    \n}\n.widget-chart-container-hf {\n  width:  300px;\n  height: 600px;\n  display: inline-block;\n}\n.widget-container-ff {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-ff {\n  width:  650px;;\n  height: 600px;\n  display: inline-block;\n}\n/* Stuff inside the widget container */\n\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #0000ff;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          10;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--tabholder-color);\n  z-index:          4;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         100px;\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         100px;\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  display:      none;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabholder-left {\n  padding-top:      36px;\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100px;\n  height:           100%;\n  background-color: var(--tabholder-color);\n  z-index:          3;  \n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-selected-background-color);\n  border-bottom:             1px solid var(--tab-selected-background-color);\n  border-left:               1px solid var(--tab-selected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-unselected-background-color);\n  border-bottom:             1px solid var(--tab-unselected-background-color);\n  border-left:               1px solid var(--tab-unselected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-selected-background-color);\n  margin-right:     5px;\n}\n\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          5;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  text-align:       left;\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tabholder-color-light);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  padding-left:              10px;\n  cursor:                    pointer;\n  z-index:                   4;\n  width:                     90px;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: fixed;\n  bottom:   8px;\n  left:     0px;\n  display:  inline-block;\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             100px;\n  min-width:        160px;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tabholder-color-light);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}", ""]);
+	exports.push([module.id, ":root {\n  --body-color:                         #aaaaaa;\n  --tabholder-color:                    #4a708b;\n  --tabholder-color-light:              #5a809b;\n  --tab-selected-background-color:      #aaaaaa;\n  --tab-unselected-background-color:    #4a708b;\n  --tab-hover-background-color:         #777777;\n  --tab-default-color:                  #eeeeee;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/* Widget container information */\n\n.widget-container-hh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hh {\n  width:  300px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-container-fh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-fh {\n  width:  650px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-container-hf {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hf {\n  width:  300px;\n  height: 600px;\n  display: inline-block;\n}\n.widget-container-ff {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-ff {\n  width:  650px;;\n  height: 600px;\n  display: inline-block;\n}\n/* Stuff inside the widget container */\n\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #0000ff;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          10;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--tabholder-color);\n  z-index:          4;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         100px;\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         100px;\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  display:      none;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabholder-left {\n  padding-top:      36px;\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100px;\n  height:           100%;\n  background-color: var(--tabholder-color);\n  z-index:          3;\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-selected-background-color);\n  border-bottom:             1px solid var(--tab-selected-background-color);\n  border-left:               1px solid var(--tab-selected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-unselected-background-color);\n  border-bottom:             1px solid var(--tab-unselected-background-color);\n  border-left:               1px solid var(--tab-unselected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-selected-background-color);\n  margin-right:     5px;\n}\n\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          5;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tabholder-color-light);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  padding-left:              10px;\n  cursor:                    pointer;\n  z-index:                   4;\n  width:                     90px;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: fixed;\n  bottom:   8px;\n  left:     0px;\n  display:  inline-block;\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             100px;\n  min-width:        160px;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tabholder-color-light);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {  \n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n", ""]);
 	
 	// exports
 
@@ -36642,6 +36993,846 @@
 
 /***/ },
 /* 201 */
+/*!****************************!*\
+  !*** ./WidgetConfigBar.js ***!
+  \****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	var WidgetConfigBar = function (_React$Component) {
+	  _inherits(WidgetConfigBar, _React$Component);
+	
+	  function WidgetConfigBar(props) {
+	    _classCallCheck(this, WidgetConfigBar);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigBar.__proto__ || Object.getPrototypeOf(WidgetConfigBar)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      aggDatetime: data.aggDatetime,
+	      aggNumeric: data.aggNumeric,
+	      aggMethod: data.aggMethod,
+	      filters: data.filters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      moveValue: -0.5
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
+	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
+	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigBar, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: ['(undefined)', '(undefined)'],
+	        aggMethod: ['(undefined)'],
+	        aggNumeric: false,
+	        aggDatetime: false,
+	        filters: []
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(i, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
+	      metrics[i] = e.target.value;
+	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'toggleAggNumericUpdate',
+	    value: function toggleAggNumericUpdate(e) {
+	      this.setState({ aggNumeric: e.target.checked });
+	    }
+	  }, {
+	    key: 'toggleAggDatetimeUpdate',
+	    value: function toggleAggDatetimeUpdate(e) {
+	      this.setState({ aggDatetime: e.target.checked });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
+	        aggNumeric: this.state.aggNumeric,
+	        aggDatetime: this.state.aggDatetime,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        width: this.state.width,
+	        height: this.state.height
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
+	        aggNumeric: oldState.aggNumeric,
+	        aggDatetime: oldState.aggDatetime,
+	        filters: oldState.filters,
+	        width: oldState.width,
+	        height: oldState.height
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
+	      var aggMethods = (0, _support.getAggMethods)();
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Bar Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null)), React.createElement('div', { className: 'simpleborder' }, 'Aggregate Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigBar;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigBar);
+
+/***/ },
+/* 202 */
+/*!*****************************!*\
+  !*** ./WidgetConfigLine.js ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	var WidgetConfigLine = function (_React$Component) {
+	  _inherits(WidgetConfigLine, _React$Component);
+	
+	  function WidgetConfigLine(props) {
+	    _classCallCheck(this, WidgetConfigLine);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigLine.__proto__ || Object.getPrototypeOf(WidgetConfigLine)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      aggDatetime: data.aggDatetime,
+	      aggNumeric: data.aggNumeric,
+	      aggMethod: data.aggMethod,
+	      filters: data.filters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      moveValue: -0.5
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
+	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
+	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigLine, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: ['(undefined)', '(undefined)'],
+	        aggMethod: ['(undefined)'],
+	        aggNumeric: false,
+	        aggDatetime: false,
+	        filters: []
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(i, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
+	      metrics[i] = e.target.value;
+	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'toggleAggNumericUpdate',
+	    value: function toggleAggNumericUpdate(e) {
+	      this.setState({ aggNumeric: e.target.checked });
+	    }
+	  }, {
+	    key: 'toggleAggDatetimeUpdate',
+	    value: function toggleAggDatetimeUpdate(e) {
+	      this.setState({ aggDatetime: e.target.checked });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
+	        aggNumeric: this.state.aggNumeric,
+	        aggDatetime: this.state.aggDatetime,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        width: this.state.width,
+	        height: this.state.height
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
+	        aggNumeric: oldState.aggNumeric,
+	        aggDatetime: oldState.aggDatetime,
+	        filters: oldState.filters,
+	        width: oldState.width,
+	        height: oldState.height
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
+	      var aggMethods = (0, _support.getAggMethods)();
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Line Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null)), React.createElement('div', { className: 'simpleborder' }, 'Aggregate Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigLine;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigLine);
+
+/***/ },
+/* 203 */
+/*!*******************************!*\
+  !*** ./WidgetConfigColumn.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	var WidgetConfigColumn = function (_React$Component) {
+	  _inherits(WidgetConfigColumn, _React$Component);
+	
+	  function WidgetConfigColumn(props) {
+	    _classCallCheck(this, WidgetConfigColumn);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigColumn.__proto__ || Object.getPrototypeOf(WidgetConfigColumn)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      aggDatetime: data.aggDatetime,
+	      aggNumeric: data.aggNumeric,
+	      aggMethod: data.aggMethod,
+	      filters: data.filters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      moveValue: -0.5
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
+	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
+	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigColumn, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: ['(undefined)', '(undefined)'],
+	        aggMethod: ['(undefined)'],
+	        aggNumeric: false,
+	        aggDatetime: false,
+	        filters: []
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(i, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
+	      metrics[i] = e.target.value;
+	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'toggleAggNumericUpdate',
+	    value: function toggleAggNumericUpdate(e) {
+	      this.setState({ aggNumeric: e.target.checked });
+	    }
+	  }, {
+	    key: 'toggleAggDatetimeUpdate',
+	    value: function toggleAggDatetimeUpdate(e) {
+	      this.setState({ aggDatetime: e.target.checked });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
+	        aggNumeric: this.state.aggNumeric,
+	        aggDatetime: this.state.aggDatetime,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        width: this.state.width,
+	        height: this.state.height
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
+	        aggNumeric: oldState.aggNumeric,
+	        aggDatetime: oldState.aggDatetime,
+	        filters: oldState.filters,
+	        width: oldState.width,
+	        height: oldState.height
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
+	      var aggMethods = (0, _support.getAggMethods)();
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Column Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null)), React.createElement('div', { className: 'simpleborder' }, 'Aggregate Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigColumn;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigColumn);
+
+/***/ },
+/* 204 */
 /*!**********************************!*\
   !*** ./WidgetConfigHistogram.js ***!
   \**********************************/
@@ -36848,7 +38039,7 @@
 	      var timeframeOptions = (0, _support.getTimeframeOptions)();
 	      var bucketOptions = ['(undefined)', 5, 10, 20, 50, 100];
 	      metrics.unshift('(undefined)');
-	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Histogram Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
@@ -36856,7 +38047,7 @@
 	        return React.createElement('option', { key: i, value: b }, b);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
 	  }]);
 	
@@ -36900,7 +38091,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigHistogram);
 
 /***/ },
-/* 202 */
+/* 205 */
 /*!******************************!*\
   !*** ./WidgetConfigStats.js ***!
   \******************************/
@@ -37097,13 +38288,13 @@
 	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
 	      var timeframeOptions = (0, _support.getTimeframeOptions)();
 	      metrics.unshift('(undefined)');
-	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Stats Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
 	  }]);
 	
@@ -37147,7 +38338,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigStats);
 
 /***/ },
-/* 203 */
+/* 206 */
 /*!********************************!*\
   !*** ./WidgetConfigScatter.js ***!
   \********************************/
@@ -37344,7 +38535,7 @@
 	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
 	      var timeframeOptions = (0, _support.getTimeframeOptions)();
 	      metrics.unshift('(undefined)');
-	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Scatter Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'x-Axis Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
@@ -37352,7 +38543,7 @@
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
 	  }]);
 	
@@ -37396,7 +38587,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigScatter);
 
 /***/ },
-/* 204 */
+/* 207 */
 /*!*************************************!*\
   !*** ../~/highcharts/highcharts.js ***!
   \*************************************/
@@ -37786,7 +38977,7 @@
 
 
 /***/ },
-/* 205 */
+/* 208 */
 /*!*****************************!*\
   !*** ../~/moment/moment.js ***!
   \*****************************/
@@ -39588,7 +40779,7 @@
 	                module && module.exports) {
 	            try {
 	                oldLocale = globalLocale._abbr;
-	                __webpack_require__(/*! ./locale */ 206)("./" + name);
+	                __webpack_require__(/*! ./locale */ 209)("./" + name);
 	                // because defineLocale currently also sets the global locale, we
 	                // want to undo that for lazy loaded locales
 	                locale_locales__getSetGlobalLocale(oldLocale);
@@ -42029,221 +43220,221 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../webpack/buildin/module.js */ 46)(module)))
 
 /***/ },
-/* 206 */
+/* 209 */
 /*!***********************************!*\
   !*** ../~/moment/locale ^\.\/.*$ ***!
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./af": 207,
-		"./af.js": 207,
-		"./ar": 208,
-		"./ar-ly": 209,
-		"./ar-ly.js": 209,
-		"./ar-ma": 210,
-		"./ar-ma.js": 210,
-		"./ar-sa": 211,
-		"./ar-sa.js": 211,
-		"./ar-tn": 212,
-		"./ar-tn.js": 212,
-		"./ar.js": 208,
-		"./az": 213,
-		"./az.js": 213,
-		"./be": 214,
-		"./be.js": 214,
-		"./bg": 215,
-		"./bg.js": 215,
-		"./bn": 216,
-		"./bn.js": 216,
-		"./bo": 217,
-		"./bo.js": 217,
-		"./br": 218,
-		"./br.js": 218,
-		"./bs": 219,
-		"./bs.js": 219,
-		"./ca": 220,
-		"./ca.js": 220,
-		"./cs": 221,
-		"./cs.js": 221,
-		"./cv": 222,
-		"./cv.js": 222,
-		"./cy": 223,
-		"./cy.js": 223,
-		"./da": 224,
-		"./da.js": 224,
-		"./de": 225,
-		"./de-at": 226,
-		"./de-at.js": 226,
-		"./de.js": 225,
-		"./dv": 227,
-		"./dv.js": 227,
-		"./el": 228,
-		"./el.js": 228,
-		"./en-au": 229,
-		"./en-au.js": 229,
-		"./en-ca": 230,
-		"./en-ca.js": 230,
-		"./en-gb": 231,
-		"./en-gb.js": 231,
-		"./en-ie": 232,
-		"./en-ie.js": 232,
-		"./en-nz": 233,
-		"./en-nz.js": 233,
-		"./eo": 234,
-		"./eo.js": 234,
-		"./es": 235,
-		"./es-do": 236,
-		"./es-do.js": 236,
-		"./es.js": 235,
-		"./et": 237,
-		"./et.js": 237,
-		"./eu": 238,
-		"./eu.js": 238,
-		"./fa": 239,
-		"./fa.js": 239,
-		"./fi": 240,
-		"./fi.js": 240,
-		"./fo": 241,
-		"./fo.js": 241,
-		"./fr": 242,
-		"./fr-ca": 243,
-		"./fr-ca.js": 243,
-		"./fr-ch": 244,
-		"./fr-ch.js": 244,
-		"./fr.js": 242,
-		"./fy": 245,
-		"./fy.js": 245,
-		"./gd": 246,
-		"./gd.js": 246,
-		"./gl": 247,
-		"./gl.js": 247,
-		"./he": 248,
-		"./he.js": 248,
-		"./hi": 249,
-		"./hi.js": 249,
-		"./hr": 250,
-		"./hr.js": 250,
-		"./hu": 251,
-		"./hu.js": 251,
-		"./hy-am": 252,
-		"./hy-am.js": 252,
-		"./id": 253,
-		"./id.js": 253,
-		"./is": 254,
-		"./is.js": 254,
-		"./it": 255,
-		"./it.js": 255,
-		"./ja": 256,
-		"./ja.js": 256,
-		"./jv": 257,
-		"./jv.js": 257,
-		"./ka": 258,
-		"./ka.js": 258,
-		"./kk": 259,
-		"./kk.js": 259,
-		"./km": 260,
-		"./km.js": 260,
-		"./ko": 261,
-		"./ko.js": 261,
-		"./ky": 262,
-		"./ky.js": 262,
-		"./lb": 263,
-		"./lb.js": 263,
-		"./lo": 264,
-		"./lo.js": 264,
-		"./lt": 265,
-		"./lt.js": 265,
-		"./lv": 266,
-		"./lv.js": 266,
-		"./me": 267,
-		"./me.js": 267,
-		"./mi": 268,
-		"./mi.js": 268,
-		"./mk": 269,
-		"./mk.js": 269,
-		"./ml": 270,
-		"./ml.js": 270,
-		"./mr": 271,
-		"./mr.js": 271,
-		"./ms": 272,
-		"./ms-my": 273,
-		"./ms-my.js": 273,
-		"./ms.js": 272,
-		"./my": 274,
-		"./my.js": 274,
-		"./nb": 275,
-		"./nb.js": 275,
-		"./ne": 276,
-		"./ne.js": 276,
-		"./nl": 277,
-		"./nl.js": 277,
-		"./nn": 278,
-		"./nn.js": 278,
-		"./pa-in": 279,
-		"./pa-in.js": 279,
-		"./pl": 280,
-		"./pl.js": 280,
-		"./pt": 281,
-		"./pt-br": 282,
-		"./pt-br.js": 282,
-		"./pt.js": 281,
-		"./ro": 283,
-		"./ro.js": 283,
-		"./ru": 284,
-		"./ru.js": 284,
-		"./se": 285,
-		"./se.js": 285,
-		"./si": 286,
-		"./si.js": 286,
-		"./sk": 287,
-		"./sk.js": 287,
-		"./sl": 288,
-		"./sl.js": 288,
-		"./sq": 289,
-		"./sq.js": 289,
-		"./sr": 290,
-		"./sr-cyrl": 291,
-		"./sr-cyrl.js": 291,
-		"./sr.js": 290,
-		"./ss": 292,
-		"./ss.js": 292,
-		"./sv": 293,
-		"./sv.js": 293,
-		"./sw": 294,
-		"./sw.js": 294,
-		"./ta": 295,
-		"./ta.js": 295,
-		"./te": 296,
-		"./te.js": 296,
-		"./th": 297,
-		"./th.js": 297,
-		"./tl-ph": 298,
-		"./tl-ph.js": 298,
-		"./tlh": 299,
-		"./tlh.js": 299,
-		"./tr": 300,
-		"./tr.js": 300,
-		"./tzl": 301,
-		"./tzl.js": 301,
-		"./tzm": 302,
-		"./tzm-latn": 303,
-		"./tzm-latn.js": 303,
-		"./tzm.js": 302,
-		"./uk": 304,
-		"./uk.js": 304,
-		"./uz": 305,
-		"./uz.js": 305,
-		"./vi": 306,
-		"./vi.js": 306,
-		"./x-pseudo": 307,
-		"./x-pseudo.js": 307,
-		"./zh-cn": 308,
-		"./zh-cn.js": 308,
-		"./zh-hk": 309,
-		"./zh-hk.js": 309,
-		"./zh-tw": 310,
-		"./zh-tw.js": 310
+		"./af": 210,
+		"./af.js": 210,
+		"./ar": 211,
+		"./ar-ly": 212,
+		"./ar-ly.js": 212,
+		"./ar-ma": 213,
+		"./ar-ma.js": 213,
+		"./ar-sa": 214,
+		"./ar-sa.js": 214,
+		"./ar-tn": 215,
+		"./ar-tn.js": 215,
+		"./ar.js": 211,
+		"./az": 216,
+		"./az.js": 216,
+		"./be": 217,
+		"./be.js": 217,
+		"./bg": 218,
+		"./bg.js": 218,
+		"./bn": 219,
+		"./bn.js": 219,
+		"./bo": 220,
+		"./bo.js": 220,
+		"./br": 221,
+		"./br.js": 221,
+		"./bs": 222,
+		"./bs.js": 222,
+		"./ca": 223,
+		"./ca.js": 223,
+		"./cs": 224,
+		"./cs.js": 224,
+		"./cv": 225,
+		"./cv.js": 225,
+		"./cy": 226,
+		"./cy.js": 226,
+		"./da": 227,
+		"./da.js": 227,
+		"./de": 228,
+		"./de-at": 229,
+		"./de-at.js": 229,
+		"./de.js": 228,
+		"./dv": 230,
+		"./dv.js": 230,
+		"./el": 231,
+		"./el.js": 231,
+		"./en-au": 232,
+		"./en-au.js": 232,
+		"./en-ca": 233,
+		"./en-ca.js": 233,
+		"./en-gb": 234,
+		"./en-gb.js": 234,
+		"./en-ie": 235,
+		"./en-ie.js": 235,
+		"./en-nz": 236,
+		"./en-nz.js": 236,
+		"./eo": 237,
+		"./eo.js": 237,
+		"./es": 238,
+		"./es-do": 239,
+		"./es-do.js": 239,
+		"./es.js": 238,
+		"./et": 240,
+		"./et.js": 240,
+		"./eu": 241,
+		"./eu.js": 241,
+		"./fa": 242,
+		"./fa.js": 242,
+		"./fi": 243,
+		"./fi.js": 243,
+		"./fo": 244,
+		"./fo.js": 244,
+		"./fr": 245,
+		"./fr-ca": 246,
+		"./fr-ca.js": 246,
+		"./fr-ch": 247,
+		"./fr-ch.js": 247,
+		"./fr.js": 245,
+		"./fy": 248,
+		"./fy.js": 248,
+		"./gd": 249,
+		"./gd.js": 249,
+		"./gl": 250,
+		"./gl.js": 250,
+		"./he": 251,
+		"./he.js": 251,
+		"./hi": 252,
+		"./hi.js": 252,
+		"./hr": 253,
+		"./hr.js": 253,
+		"./hu": 254,
+		"./hu.js": 254,
+		"./hy-am": 255,
+		"./hy-am.js": 255,
+		"./id": 256,
+		"./id.js": 256,
+		"./is": 257,
+		"./is.js": 257,
+		"./it": 258,
+		"./it.js": 258,
+		"./ja": 259,
+		"./ja.js": 259,
+		"./jv": 260,
+		"./jv.js": 260,
+		"./ka": 261,
+		"./ka.js": 261,
+		"./kk": 262,
+		"./kk.js": 262,
+		"./km": 263,
+		"./km.js": 263,
+		"./ko": 264,
+		"./ko.js": 264,
+		"./ky": 265,
+		"./ky.js": 265,
+		"./lb": 266,
+		"./lb.js": 266,
+		"./lo": 267,
+		"./lo.js": 267,
+		"./lt": 268,
+		"./lt.js": 268,
+		"./lv": 269,
+		"./lv.js": 269,
+		"./me": 270,
+		"./me.js": 270,
+		"./mi": 271,
+		"./mi.js": 271,
+		"./mk": 272,
+		"./mk.js": 272,
+		"./ml": 273,
+		"./ml.js": 273,
+		"./mr": 274,
+		"./mr.js": 274,
+		"./ms": 275,
+		"./ms-my": 276,
+		"./ms-my.js": 276,
+		"./ms.js": 275,
+		"./my": 277,
+		"./my.js": 277,
+		"./nb": 278,
+		"./nb.js": 278,
+		"./ne": 279,
+		"./ne.js": 279,
+		"./nl": 280,
+		"./nl.js": 280,
+		"./nn": 281,
+		"./nn.js": 281,
+		"./pa-in": 282,
+		"./pa-in.js": 282,
+		"./pl": 283,
+		"./pl.js": 283,
+		"./pt": 284,
+		"./pt-br": 285,
+		"./pt-br.js": 285,
+		"./pt.js": 284,
+		"./ro": 286,
+		"./ro.js": 286,
+		"./ru": 287,
+		"./ru.js": 287,
+		"./se": 288,
+		"./se.js": 288,
+		"./si": 289,
+		"./si.js": 289,
+		"./sk": 290,
+		"./sk.js": 290,
+		"./sl": 291,
+		"./sl.js": 291,
+		"./sq": 292,
+		"./sq.js": 292,
+		"./sr": 293,
+		"./sr-cyrl": 294,
+		"./sr-cyrl.js": 294,
+		"./sr.js": 293,
+		"./ss": 295,
+		"./ss.js": 295,
+		"./sv": 296,
+		"./sv.js": 296,
+		"./sw": 297,
+		"./sw.js": 297,
+		"./ta": 298,
+		"./ta.js": 298,
+		"./te": 299,
+		"./te.js": 299,
+		"./th": 300,
+		"./th.js": 300,
+		"./tl-ph": 301,
+		"./tl-ph.js": 301,
+		"./tlh": 302,
+		"./tlh.js": 302,
+		"./tr": 303,
+		"./tr.js": 303,
+		"./tzl": 304,
+		"./tzl.js": 304,
+		"./tzm": 305,
+		"./tzm-latn": 306,
+		"./tzm-latn.js": 306,
+		"./tzm.js": 305,
+		"./uk": 307,
+		"./uk.js": 307,
+		"./uz": 308,
+		"./uz.js": 308,
+		"./vi": 309,
+		"./vi.js": 309,
+		"./x-pseudo": 310,
+		"./x-pseudo.js": 310,
+		"./zh-cn": 311,
+		"./zh-cn.js": 311,
+		"./zh-hk": 312,
+		"./zh-hk.js": 312,
+		"./zh-tw": 313,
+		"./zh-tw.js": 313
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -42256,11 +43447,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 206;
+	webpackContext.id = 209;
 
 
 /***/ },
-/* 207 */
+/* 210 */
 /*!********************************!*\
   !*** ../~/moment/locale/af.js ***!
   \********************************/
@@ -42271,7 +43462,7 @@
 	//! author : Werner Mollentze : https://github.com/wernerm
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42340,7 +43531,7 @@
 	}));
 
 /***/ },
-/* 208 */
+/* 211 */
 /*!********************************!*\
   !*** ../~/moment/locale/ar.js ***!
   \********************************/
@@ -42353,7 +43544,7 @@
 	//! author : forabi https://github.com/forabi
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42484,7 +43675,7 @@
 	}));
 
 /***/ },
-/* 209 */
+/* 212 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-ly.js ***!
   \***********************************/
@@ -42495,7 +43686,7 @@
 	//! author : Ali Hmer: https://github.com/kikoanis
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42613,7 +43804,7 @@
 	}));
 
 /***/ },
-/* 210 */
+/* 213 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-ma.js ***!
   \***********************************/
@@ -42625,7 +43816,7 @@
 	//! author : Abdel Said : https://github.com/abdelsaid
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42680,7 +43871,7 @@
 	}));
 
 /***/ },
-/* 211 */
+/* 214 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-sa.js ***!
   \***********************************/
@@ -42691,7 +43882,7 @@
 	//! author : Suhail Alkowaileet : https://github.com/xsoh
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42791,7 +43982,7 @@
 	}));
 
 /***/ },
-/* 212 */
+/* 215 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-tn.js ***!
   \***********************************/
@@ -42802,7 +43993,7 @@
 	//! author : Nader Toukabri : https://github.com/naderio
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42857,7 +44048,7 @@
 	}));
 
 /***/ },
-/* 213 */
+/* 216 */
 /*!********************************!*\
   !*** ../~/moment/locale/az.js ***!
   \********************************/
@@ -42868,7 +44059,7 @@
 	//! author : topchiyev : https://github.com/topchiyev
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -42969,7 +44160,7 @@
 	}));
 
 /***/ },
-/* 214 */
+/* 217 */
 /*!********************************!*\
   !*** ../~/moment/locale/be.js ***!
   \********************************/
@@ -42982,7 +44173,7 @@
 	//! Author : Menelion Elensúle : https://github.com/Oire
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43110,7 +44301,7 @@
 	}));
 
 /***/ },
-/* 215 */
+/* 218 */
 /*!********************************!*\
   !*** ../~/moment/locale/bg.js ***!
   \********************************/
@@ -43121,7 +44312,7 @@
 	//! author : Krasen Borisov : https://github.com/kraz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43207,7 +44398,7 @@
 	}));
 
 /***/ },
-/* 216 */
+/* 219 */
 /*!********************************!*\
   !*** ../~/moment/locale/bn.js ***!
   \********************************/
@@ -43218,7 +44409,7 @@
 	//! author : Kaushik Gandhi : https://github.com/kaushikgandhi
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43333,7 +44524,7 @@
 	}));
 
 /***/ },
-/* 217 */
+/* 220 */
 /*!********************************!*\
   !*** ../~/moment/locale/bo.js ***!
   \********************************/
@@ -43344,7 +44535,7 @@
 	//! author : Thupten N. Chakrishar : https://github.com/vajradog
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43459,7 +44650,7 @@
 	}));
 
 /***/ },
-/* 218 */
+/* 221 */
 /*!********************************!*\
   !*** ../~/moment/locale/br.js ***!
   \********************************/
@@ -43470,7 +44661,7 @@
 	//! author : Jean-Baptiste Le Duigou : https://github.com/jbleduigou
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43574,7 +44765,7 @@
 	}));
 
 /***/ },
-/* 219 */
+/* 222 */
 /*!********************************!*\
   !*** ../~/moment/locale/bs.js ***!
   \********************************/
@@ -43586,7 +44777,7 @@
 	//! based on (hr) translation by Bojan Marković
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43724,7 +44915,7 @@
 	}));
 
 /***/ },
-/* 220 */
+/* 223 */
 /*!********************************!*\
   !*** ../~/moment/locale/ca.js ***!
   \********************************/
@@ -43735,7 +44926,7 @@
 	//! author : Juan G. Hurtado : https://github.com/juanghurtado
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43812,7 +45003,7 @@
 	}));
 
 /***/ },
-/* 221 */
+/* 224 */
 /*!********************************!*\
   !*** ../~/moment/locale/cs.js ***!
   \********************************/
@@ -43823,7 +45014,7 @@
 	//! author : petrbela : https://github.com/petrbela
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -43991,7 +45182,7 @@
 	}));
 
 /***/ },
-/* 222 */
+/* 225 */
 /*!********************************!*\
   !*** ../~/moment/locale/cv.js ***!
   \********************************/
@@ -44002,7 +45193,7 @@
 	//! author : Anatoly Mironov : https://github.com/mirontoli
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44061,7 +45252,7 @@
 	}));
 
 /***/ },
-/* 223 */
+/* 226 */
 /*!********************************!*\
   !*** ../~/moment/locale/cy.js ***!
   \********************************/
@@ -44073,7 +45264,7 @@
 	//! author : https://github.com/ryangreaves
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44149,7 +45340,7 @@
 	}));
 
 /***/ },
-/* 224 */
+/* 227 */
 /*!********************************!*\
   !*** ../~/moment/locale/da.js ***!
   \********************************/
@@ -44160,7 +45351,7 @@
 	//! author : Ulrik Nielsen : https://github.com/mrbase
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44216,7 +45407,7 @@
 	}));
 
 /***/ },
-/* 225 */
+/* 228 */
 /*!********************************!*\
   !*** ../~/moment/locale/de.js ***!
   \********************************/
@@ -44229,7 +45420,7 @@
 	//! author : Mikolaj Dadela : https://github.com/mik01aj
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44301,7 +45492,7 @@
 	}));
 
 /***/ },
-/* 226 */
+/* 229 */
 /*!***********************************!*\
   !*** ../~/moment/locale/de-at.js ***!
   \***********************************/
@@ -44315,7 +45506,7 @@
 	//! author : Mikolaj Dadela : https://github.com/mik01aj
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44387,7 +45578,7 @@
 	}));
 
 /***/ },
-/* 227 */
+/* 230 */
 /*!********************************!*\
   !*** ../~/moment/locale/dv.js ***!
   \********************************/
@@ -44398,7 +45589,7 @@
 	//! author : Jawish Hameed : https://github.com/jawish
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44493,7 +45684,7 @@
 	}));
 
 /***/ },
-/* 228 */
+/* 231 */
 /*!********************************!*\
   !*** ../~/moment/locale/el.js ***!
   \********************************/
@@ -44504,7 +45695,7 @@
 	//! author : Aggelos Karalias : https://github.com/mehiel
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44598,7 +45789,7 @@
 	}));
 
 /***/ },
-/* 229 */
+/* 232 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-au.js ***!
   \***********************************/
@@ -44609,7 +45800,7 @@
 	//! author : Jared Morse : https://github.com/jarcoal
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44672,7 +45863,7 @@
 	}));
 
 /***/ },
-/* 230 */
+/* 233 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-ca.js ***!
   \***********************************/
@@ -44683,7 +45874,7 @@
 	//! author : Jonathan Abourbih : https://github.com/jonbca
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44742,7 +45933,7 @@
 	}));
 
 /***/ },
-/* 231 */
+/* 234 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-gb.js ***!
   \***********************************/
@@ -44753,7 +45944,7 @@
 	//! author : Chris Gedrim : https://github.com/chrisgedrim
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44816,7 +46007,7 @@
 	}));
 
 /***/ },
-/* 232 */
+/* 235 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-ie.js ***!
   \***********************************/
@@ -44827,7 +46018,7 @@
 	//! author : Chris Cartlidge : https://github.com/chriscartlidge
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44890,7 +46081,7 @@
 	}));
 
 /***/ },
-/* 233 */
+/* 236 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-nz.js ***!
   \***********************************/
@@ -44901,7 +46092,7 @@
 	//! author : Luke McGregor : https://github.com/lukemcgregor
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -44964,7 +46155,7 @@
 	}));
 
 /***/ },
-/* 234 */
+/* 237 */
 /*!********************************!*\
   !*** ../~/moment/locale/eo.js ***!
   \********************************/
@@ -44977,7 +46168,7 @@
 	//!          Se ne, bonvolu korekti kaj avizi min por ke mi povas lerni!
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45044,7 +46235,7 @@
 	}));
 
 /***/ },
-/* 235 */
+/* 238 */
 /*!********************************!*\
   !*** ../~/moment/locale/es.js ***!
   \********************************/
@@ -45055,7 +46246,7 @@
 	//! author : Julio Napurí : https://github.com/julionc
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45132,7 +46323,7 @@
 	}));
 
 /***/ },
-/* 236 */
+/* 239 */
 /*!***********************************!*\
   !*** ../~/moment/locale/es-do.js ***!
   \***********************************/
@@ -45142,7 +46333,7 @@
 	//! locale : Spanish (Dominican Republic) [es-do]
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45219,7 +46410,7 @@
 	}));
 
 /***/ },
-/* 237 */
+/* 240 */
 /*!********************************!*\
   !*** ../~/moment/locale/et.js ***!
   \********************************/
@@ -45231,7 +46422,7 @@
 	//! improvements : Illimar Tambek : https://github.com/ragulka
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45306,7 +46497,7 @@
 	}));
 
 /***/ },
-/* 238 */
+/* 241 */
 /*!********************************!*\
   !*** ../~/moment/locale/eu.js ***!
   \********************************/
@@ -45317,7 +46508,7 @@
 	//! author : Eneko Illarramendi : https://github.com/eillarra
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45379,7 +46570,7 @@
 	}));
 
 /***/ },
-/* 239 */
+/* 242 */
 /*!********************************!*\
   !*** ../~/moment/locale/fa.js ***!
   \********************************/
@@ -45390,7 +46581,7 @@
 	//! author : Ebrahim Byagowi : https://github.com/ebraminio
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45492,7 +46683,7 @@
 	}));
 
 /***/ },
-/* 240 */
+/* 243 */
 /*!********************************!*\
   !*** ../~/moment/locale/fi.js ***!
   \********************************/
@@ -45503,7 +46694,7 @@
 	//! author : Tarmo Aidantausta : https://github.com/bleadof
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45606,7 +46797,7 @@
 	}));
 
 /***/ },
-/* 241 */
+/* 244 */
 /*!********************************!*\
   !*** ../~/moment/locale/fo.js ***!
   \********************************/
@@ -45617,7 +46808,7 @@
 	//! author : Ragnar Johannesen : https://github.com/ragnar123
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45673,7 +46864,7 @@
 	}));
 
 /***/ },
-/* 242 */
+/* 245 */
 /*!********************************!*\
   !*** ../~/moment/locale/fr.js ***!
   \********************************/
@@ -45684,7 +46875,7 @@
 	//! author : John Fischer : https://github.com/jfroffice
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45744,7 +46935,7 @@
 	}));
 
 /***/ },
-/* 243 */
+/* 246 */
 /*!***********************************!*\
   !*** ../~/moment/locale/fr-ca.js ***!
   \***********************************/
@@ -45755,7 +46946,7 @@
 	//! author : Jonathan Abourbih : https://github.com/jonbca
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45811,7 +47002,7 @@
 	}));
 
 /***/ },
-/* 244 */
+/* 247 */
 /*!***********************************!*\
   !*** ../~/moment/locale/fr-ch.js ***!
   \***********************************/
@@ -45822,7 +47013,7 @@
 	//! author : Gaspard Bucher : https://github.com/gaspard
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45882,7 +47073,7 @@
 	}));
 
 /***/ },
-/* 245 */
+/* 248 */
 /*!********************************!*\
   !*** ../~/moment/locale/fy.js ***!
   \********************************/
@@ -45893,7 +47084,7 @@
 	//! author : Robin van der Vliet : https://github.com/robin0van0der0v
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -45962,7 +47153,7 @@
 	}));
 
 /***/ },
-/* 246 */
+/* 249 */
 /*!********************************!*\
   !*** ../~/moment/locale/gd.js ***!
   \********************************/
@@ -45973,7 +47164,7 @@
 	//! author : Jon Ashdown : https://github.com/jonashdown
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46045,7 +47236,7 @@
 	}));
 
 /***/ },
-/* 247 */
+/* 250 */
 /*!********************************!*\
   !*** ../~/moment/locale/gl.js ***!
   \********************************/
@@ -46056,7 +47247,7 @@
 	//! author : Juan G. Hurtado : https://github.com/juanghurtado
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46129,7 +47320,7 @@
 	}));
 
 /***/ },
-/* 248 */
+/* 251 */
 /*!********************************!*\
   !*** ../~/moment/locale/he.js ***!
   \********************************/
@@ -46142,7 +47333,7 @@
 	//! author : Tal Ater : https://github.com/TalAter
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46235,7 +47426,7 @@
 	}));
 
 /***/ },
-/* 249 */
+/* 252 */
 /*!********************************!*\
   !*** ../~/moment/locale/hi.js ***!
   \********************************/
@@ -46246,7 +47437,7 @@
 	//! author : Mayank Singhal : https://github.com/mayanksinghal
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46366,7 +47557,7 @@
 	}));
 
 /***/ },
-/* 250 */
+/* 253 */
 /*!********************************!*\
   !*** ../~/moment/locale/hr.js ***!
   \********************************/
@@ -46377,7 +47568,7 @@
 	//! author : Bojan Marković : https://github.com/bmarkovic
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46518,7 +47709,7 @@
 	}));
 
 /***/ },
-/* 251 */
+/* 254 */
 /*!********************************!*\
   !*** ../~/moment/locale/hu.js ***!
   \********************************/
@@ -46529,7 +47720,7 @@
 	//! author : Adam Brunner : https://github.com/adambrunner
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46634,7 +47825,7 @@
 	}));
 
 /***/ },
-/* 252 */
+/* 255 */
 /*!***********************************!*\
   !*** ../~/moment/locale/hy-am.js ***!
   \***********************************/
@@ -46645,7 +47836,7 @@
 	//! author : Armendarabyan : https://github.com/armendarabyan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46736,7 +47927,7 @@
 	}));
 
 /***/ },
-/* 253 */
+/* 256 */
 /*!********************************!*\
   !*** ../~/moment/locale/id.js ***!
   \********************************/
@@ -46748,7 +47939,7 @@
 	//! reference: http://id.wikisource.org/wiki/Pedoman_Umum_Ejaan_Bahasa_Indonesia_yang_Disempurnakan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46826,7 +48017,7 @@
 	}));
 
 /***/ },
-/* 254 */
+/* 257 */
 /*!********************************!*\
   !*** ../~/moment/locale/is.js ***!
   \********************************/
@@ -46837,7 +48028,7 @@
 	//! author : Hinrik Örn Sigurðsson : https://github.com/hinrik
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -46960,7 +48151,7 @@
 	}));
 
 /***/ },
-/* 255 */
+/* 258 */
 /*!********************************!*\
   !*** ../~/moment/locale/it.js ***!
   \********************************/
@@ -46972,7 +48163,7 @@
 	//! author: Mattia Larentis: https://github.com/nostalgiaz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47037,7 +48228,7 @@
 	}));
 
 /***/ },
-/* 256 */
+/* 259 */
 /*!********************************!*\
   !*** ../~/moment/locale/ja.js ***!
   \********************************/
@@ -47048,7 +48239,7 @@
 	//! author : LI Long : https://github.com/baryon
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47120,7 +48311,7 @@
 	}));
 
 /***/ },
-/* 257 */
+/* 260 */
 /*!********************************!*\
   !*** ../~/moment/locale/jv.js ***!
   \********************************/
@@ -47132,7 +48323,7 @@
 	//! reference: http://jv.wikipedia.org/wiki/Basa_Jawa
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47210,7 +48401,7 @@
 	}));
 
 /***/ },
-/* 258 */
+/* 261 */
 /*!********************************!*\
   !*** ../~/moment/locale/ka.js ***!
   \********************************/
@@ -47221,7 +48412,7 @@
 	//! author : Irakli Janiashvili : https://github.com/irakli-janiashvili
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47306,7 +48497,7 @@
 	}));
 
 /***/ },
-/* 259 */
+/* 262 */
 /*!********************************!*\
   !*** ../~/moment/locale/kk.js ***!
   \********************************/
@@ -47317,7 +48508,7 @@
 	//! authors : Nurlan Rakhimzhanov : https://github.com/nurlan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47400,7 +48591,7 @@
 	}));
 
 /***/ },
-/* 260 */
+/* 263 */
 /*!********************************!*\
   !*** ../~/moment/locale/km.js ***!
   \********************************/
@@ -47411,7 +48602,7 @@
 	//! author : Kruy Vanna : https://github.com/kruyvanna
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47465,7 +48656,7 @@
 	}));
 
 /***/ },
-/* 261 */
+/* 264 */
 /*!********************************!*\
   !*** ../~/moment/locale/ko.js ***!
   \********************************/
@@ -47477,7 +48668,7 @@
 	//! author : Jeeeyul Lee <jeeeyul@gmail.com>
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47537,7 +48728,7 @@
 	}));
 
 /***/ },
-/* 262 */
+/* 265 */
 /*!********************************!*\
   !*** ../~/moment/locale/ky.js ***!
   \********************************/
@@ -47548,7 +48739,7 @@
 	//! author : Chyngyz Arystan uulu : https://github.com/chyngyz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47632,7 +48823,7 @@
 	}));
 
 /***/ },
-/* 263 */
+/* 266 */
 /*!********************************!*\
   !*** ../~/moment/locale/lb.js ***!
   \********************************/
@@ -47644,7 +48835,7 @@
 	//! author : David Raison : https://github.com/kwisatz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47776,7 +48967,7 @@
 	}));
 
 /***/ },
-/* 264 */
+/* 267 */
 /*!********************************!*\
   !*** ../~/moment/locale/lo.js ***!
   \********************************/
@@ -47787,7 +48978,7 @@
 	//! author : Ryan Hart : https://github.com/ryanhart2
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47853,7 +49044,7 @@
 	}));
 
 /***/ },
-/* 265 */
+/* 268 */
 /*!********************************!*\
   !*** ../~/moment/locale/lt.js ***!
   \********************************/
@@ -47864,7 +49055,7 @@
 	//! author : Mindaugas Mozūras : https://github.com/mmozuras
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -47977,7 +49168,7 @@
 	}));
 
 /***/ },
-/* 266 */
+/* 269 */
 /*!********************************!*\
   !*** ../~/moment/locale/lv.js ***!
   \********************************/
@@ -47989,7 +49180,7 @@
 	//! author : Jānis Elmeris : https://github.com/JanisE
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48081,7 +49272,7 @@
 	}));
 
 /***/ },
-/* 267 */
+/* 270 */
 /*!********************************!*\
   !*** ../~/moment/locale/me.js ***!
   \********************************/
@@ -48092,7 +49283,7 @@
 	//! author : Miodrag Nikač <miodrag@restartit.me> : https://github.com/miodragnikac
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48199,7 +49390,7 @@
 	}));
 
 /***/ },
-/* 268 */
+/* 271 */
 /*!********************************!*\
   !*** ../~/moment/locale/mi.js ***!
   \********************************/
@@ -48210,7 +49401,7 @@
 	//! author : John Corrigan <robbiecloset@gmail.com> : https://github.com/johnideal
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48270,7 +49461,7 @@
 	}));
 
 /***/ },
-/* 269 */
+/* 272 */
 /*!********************************!*\
   !*** ../~/moment/locale/mk.js ***!
   \********************************/
@@ -48281,7 +49472,7 @@
 	//! author : Borislav Mickov : https://github.com/B0k0
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48367,7 +49558,7 @@
 	}));
 
 /***/ },
-/* 270 */
+/* 273 */
 /*!********************************!*\
   !*** ../~/moment/locale/ml.js ***!
   \********************************/
@@ -48378,7 +49569,7 @@
 	//! author : Floyd Pink : https://github.com/floydpink
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48455,7 +49646,7 @@
 	}));
 
 /***/ },
-/* 271 */
+/* 274 */
 /*!********************************!*\
   !*** ../~/moment/locale/mr.js ***!
   \********************************/
@@ -48467,7 +49658,7 @@
 	//! author : Vivek Athalye : https://github.com/vnathalye
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48621,7 +49812,7 @@
 	}));
 
 /***/ },
-/* 272 */
+/* 275 */
 /*!********************************!*\
   !*** ../~/moment/locale/ms.js ***!
   \********************************/
@@ -48632,7 +49823,7 @@
 	//! author : Weldan Jamili : https://github.com/weldan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48710,7 +49901,7 @@
 	}));
 
 /***/ },
-/* 273 */
+/* 276 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ms-my.js ***!
   \***********************************/
@@ -48722,7 +49913,7 @@
 	//! author : Weldan Jamili : https://github.com/weldan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48800,7 +49991,7 @@
 	}));
 
 /***/ },
-/* 274 */
+/* 277 */
 /*!********************************!*\
   !*** ../~/moment/locale/my.js ***!
   \********************************/
@@ -48813,7 +50004,7 @@
 	//! author : Tin Aung Lin : https://github.com/thanyawzinmin
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48902,7 +50093,7 @@
 	}));
 
 /***/ },
-/* 275 */
+/* 278 */
 /*!********************************!*\
   !*** ../~/moment/locale/nb.js ***!
   \********************************/
@@ -48914,7 +50105,7 @@
 	//!           Sigurd Gartmann : https://github.com/sigurdga
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -48972,7 +50163,7 @@
 	}));
 
 /***/ },
-/* 276 */
+/* 279 */
 /*!********************************!*\
   !*** ../~/moment/locale/ne.js ***!
   \********************************/
@@ -48983,7 +50174,7 @@
 	//! author : suvash : https://github.com/suvash
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49102,7 +50293,7 @@
 	}));
 
 /***/ },
-/* 277 */
+/* 280 */
 /*!********************************!*\
   !*** ../~/moment/locale/nl.js ***!
   \********************************/
@@ -49114,7 +50305,7 @@
 	//! author : Jacob Middag : https://github.com/middagj
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49195,7 +50386,7 @@
 	}));
 
 /***/ },
-/* 278 */
+/* 281 */
 /*!********************************!*\
   !*** ../~/moment/locale/nn.js ***!
   \********************************/
@@ -49206,7 +50397,7 @@
 	//! author : https://github.com/mechuwind
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49262,7 +50453,7 @@
 	}));
 
 /***/ },
-/* 279 */
+/* 282 */
 /*!***********************************!*\
   !*** ../~/moment/locale/pa-in.js ***!
   \***********************************/
@@ -49273,7 +50464,7 @@
 	//! author : Harpreet Singh : https://github.com/harpreetkhalsagtbit
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49393,7 +50584,7 @@
 	}));
 
 /***/ },
-/* 280 */
+/* 283 */
 /*!********************************!*\
   !*** ../~/moment/locale/pl.js ***!
   \********************************/
@@ -49404,7 +50595,7 @@
 	//! author : Rafal Hirsz : https://github.com/evoL
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49505,7 +50696,7 @@
 	}));
 
 /***/ },
-/* 281 */
+/* 284 */
 /*!********************************!*\
   !*** ../~/moment/locale/pt.js ***!
   \********************************/
@@ -49516,7 +50707,7 @@
 	//! author : Jefferson : https://github.com/jalex79
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49577,7 +50768,7 @@
 	}));
 
 /***/ },
-/* 282 */
+/* 285 */
 /*!***********************************!*\
   !*** ../~/moment/locale/pt-br.js ***!
   \***********************************/
@@ -49588,7 +50779,7 @@
 	//! author : Caio Ribeiro Pereira : https://github.com/caio-ribeiro-pereira
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49645,7 +50836,7 @@
 	}));
 
 /***/ },
-/* 283 */
+/* 286 */
 /*!********************************!*\
   !*** ../~/moment/locale/ro.js ***!
   \********************************/
@@ -49657,7 +50848,7 @@
 	//! author : Valentin Agachi : https://github.com/avaly
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49727,7 +50918,7 @@
 	}));
 
 /***/ },
-/* 284 */
+/* 287 */
 /*!********************************!*\
   !*** ../~/moment/locale/ru.js ***!
   \********************************/
@@ -49740,7 +50931,7 @@
 	//! author : Коренберг Марк : https://github.com/socketpair
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49917,7 +51108,7 @@
 	}));
 
 /***/ },
-/* 285 */
+/* 288 */
 /*!********************************!*\
   !*** ../~/moment/locale/se.js ***!
   \********************************/
@@ -49928,7 +51119,7 @@
 	//! authors : Bård Rolstad Henriksen : https://github.com/karamell
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -49985,7 +51176,7 @@
 	}));
 
 /***/ },
-/* 286 */
+/* 289 */
 /*!********************************!*\
   !*** ../~/moment/locale/si.js ***!
   \********************************/
@@ -49996,7 +51187,7 @@
 	//! author : Sampath Sitinamaluwa : https://github.com/sampathsris
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50063,7 +51254,7 @@
 	}));
 
 /***/ },
-/* 287 */
+/* 290 */
 /*!********************************!*\
   !*** ../~/moment/locale/sk.js ***!
   \********************************/
@@ -50075,7 +51266,7 @@
 	//! based on work of petrbela : https://github.com/petrbela
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50220,7 +51411,7 @@
 	}));
 
 /***/ },
-/* 288 */
+/* 291 */
 /*!********************************!*\
   !*** ../~/moment/locale/sl.js ***!
   \********************************/
@@ -50231,7 +51422,7 @@
 	//! author : Robert Sedovšek : https://github.com/sedovsek
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50389,7 +51580,7 @@
 	}));
 
 /***/ },
-/* 289 */
+/* 292 */
 /*!********************************!*\
   !*** ../~/moment/locale/sq.js ***!
   \********************************/
@@ -50402,7 +51593,7 @@
 	//! author : Oerd Cukalla : https://github.com/oerd
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50466,7 +51657,7 @@
 	}));
 
 /***/ },
-/* 290 */
+/* 293 */
 /*!********************************!*\
   !*** ../~/moment/locale/sr.js ***!
   \********************************/
@@ -50477,7 +51668,7 @@
 	//! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50583,7 +51774,7 @@
 	}));
 
 /***/ },
-/* 291 */
+/* 294 */
 /*!*************************************!*\
   !*** ../~/moment/locale/sr-cyrl.js ***!
   \*************************************/
@@ -50594,7 +51785,7 @@
 	//! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50700,7 +51891,7 @@
 	}));
 
 /***/ },
-/* 292 */
+/* 295 */
 /*!********************************!*\
   !*** ../~/moment/locale/ss.js ***!
   \********************************/
@@ -50711,7 +51902,7 @@
 	//! author : Nicolai Davies<mail@nicolai.io> : https://github.com/nicolaidavies
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50796,7 +51987,7 @@
 	}));
 
 /***/ },
-/* 293 */
+/* 296 */
 /*!********************************!*\
   !*** ../~/moment/locale/sv.js ***!
   \********************************/
@@ -50807,7 +51998,7 @@
 	//! author : Jens Alm : https://github.com/ulmus
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50872,7 +52063,7 @@
 	}));
 
 /***/ },
-/* 294 */
+/* 297 */
 /*!********************************!*\
   !*** ../~/moment/locale/sw.js ***!
   \********************************/
@@ -50883,7 +52074,7 @@
 	//! author : Fahad Kassim : https://github.com/fadsel
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -50938,7 +52129,7 @@
 	}));
 
 /***/ },
-/* 295 */
+/* 298 */
 /*!********************************!*\
   !*** ../~/moment/locale/ta.js ***!
   \********************************/
@@ -50949,7 +52140,7 @@
 	//! author : Arjunkumar Krishnamoorthy : https://github.com/tk120404
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51074,7 +52265,7 @@
 	}));
 
 /***/ },
-/* 296 */
+/* 299 */
 /*!********************************!*\
   !*** ../~/moment/locale/te.js ***!
   \********************************/
@@ -51085,7 +52276,7 @@
 	//! author : Krishna Chaitanya Thota : https://github.com/kcthota
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51170,7 +52361,7 @@
 	}));
 
 /***/ },
-/* 297 */
+/* 300 */
 /*!********************************!*\
   !*** ../~/moment/locale/th.js ***!
   \********************************/
@@ -51181,7 +52372,7 @@
 	//! author : Kridsada Thanabulpong : https://github.com/sirn
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51244,7 +52435,7 @@
 	}));
 
 /***/ },
-/* 298 */
+/* 301 */
 /*!***********************************!*\
   !*** ../~/moment/locale/tl-ph.js ***!
   \***********************************/
@@ -51255,7 +52446,7 @@
 	//! author : Dan Hagman : https://github.com/hagmandan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51313,7 +52504,7 @@
 	}));
 
 /***/ },
-/* 299 */
+/* 302 */
 /*!*********************************!*\
   !*** ../~/moment/locale/tlh.js ***!
   \*********************************/
@@ -51324,7 +52515,7 @@
 	//! author : Dominika Kruk : https://github.com/amaranthrose
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51440,7 +52631,7 @@
 	}));
 
 /***/ },
-/* 300 */
+/* 303 */
 /*!********************************!*\
   !*** ../~/moment/locale/tr.js ***!
   \********************************/
@@ -51452,7 +52643,7 @@
 	//!           Burak Yiğit Kaya: https://github.com/BYK
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51537,7 +52728,7 @@
 	}));
 
 /***/ },
-/* 301 */
+/* 304 */
 /*!*********************************!*\
   !*** ../~/moment/locale/tzl.js ***!
   \*********************************/
@@ -51549,7 +52740,7 @@
 	//! author : Iustì Canun
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51635,7 +52826,7 @@
 	}));
 
 /***/ },
-/* 302 */
+/* 305 */
 /*!*********************************!*\
   !*** ../~/moment/locale/tzm.js ***!
   \*********************************/
@@ -51646,7 +52837,7 @@
 	//! author : Abdel Said : https://github.com/abdelsaid
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51700,7 +52891,7 @@
 	}));
 
 /***/ },
-/* 303 */
+/* 306 */
 /*!**************************************!*\
   !*** ../~/moment/locale/tzm-latn.js ***!
   \**************************************/
@@ -51711,7 +52902,7 @@
 	//! author : Abdel Said : https://github.com/abdelsaid
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51765,7 +52956,7 @@
 	}));
 
 /***/ },
-/* 304 */
+/* 307 */
 /*!********************************!*\
   !*** ../~/moment/locale/uk.js ***!
   \********************************/
@@ -51777,7 +52968,7 @@
 	//! Author : Menelion Elensúle : https://github.com/Oire
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51918,7 +53109,7 @@
 	}));
 
 /***/ },
-/* 305 */
+/* 308 */
 /*!********************************!*\
   !*** ../~/moment/locale/uz.js ***!
   \********************************/
@@ -51929,7 +53120,7 @@
 	//! author : Sardor Muminov : https://github.com/muminoff
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -51983,7 +53174,7 @@
 	}));
 
 /***/ },
-/* 306 */
+/* 309 */
 /*!********************************!*\
   !*** ../~/moment/locale/vi.js ***!
   \********************************/
@@ -51994,7 +53185,7 @@
 	//! author : Bang Nguyen : https://github.com/bangnk
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -52069,7 +53260,7 @@
 	}));
 
 /***/ },
-/* 307 */
+/* 310 */
 /*!**************************************!*\
   !*** ../~/moment/locale/x-pseudo.js ***!
   \**************************************/
@@ -52080,7 +53271,7 @@
 	//! author : Andrew Hood : https://github.com/andrewhood125
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -52144,7 +53335,7 @@
 	}));
 
 /***/ },
-/* 308 */
+/* 311 */
 /*!***********************************!*\
   !*** ../~/moment/locale/zh-cn.js ***!
   \***********************************/
@@ -52156,7 +53347,7 @@
 	//! author : Zeno Zeng : https://github.com/zenozeng
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -52278,7 +53469,7 @@
 	}));
 
 /***/ },
-/* 309 */
+/* 312 */
 /*!***********************************!*\
   !*** ../~/moment/locale/zh-hk.js ***!
   \***********************************/
@@ -52291,7 +53482,7 @@
 	//! author : Konstantin : https://github.com/skfd
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -52390,7 +53581,7 @@
 	}));
 
 /***/ },
-/* 310 */
+/* 313 */
 /*!***********************************!*\
   !*** ../~/moment/locale/zh-tw.js ***!
   \***********************************/
@@ -52402,7 +53593,7 @@
 	//! author : Chris Lam : https://github.com/hehachris
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 205)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 208)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -52501,7 +53692,7 @@
 	}));
 
 /***/ },
-/* 311 */
+/* 314 */
 /*!*********************************************************!*\
   !*** ../~/react-bootstrap-daterangepicker/lib/index.js ***!
   \*********************************************************/
@@ -52517,8 +53708,8 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var $ = __webpack_require__(/*! jquery */ 56);
 	var objectAssign = __webpack_require__(/*! object-assign */ 6);
-	var DateRangePicker = __webpack_require__(/*! bootstrap-daterangepicker */ 312);
-	var getOptions = __webpack_require__(/*! ./get-options.js */ 313);
+	var DateRangePicker = __webpack_require__(/*! bootstrap-daterangepicker */ 315);
+	var getOptions = __webpack_require__(/*! ./get-options.js */ 316);
 	
 	/* this is our export React class */
 	module.exports = React.createClass({
@@ -52663,7 +53854,7 @@
 
 
 /***/ },
-/* 312 */
+/* 315 */
 /*!*********************************************************!*\
   !*** ../~/bootstrap-daterangepicker/daterangepicker.js ***!
   \*********************************************************/
@@ -52680,7 +53871,7 @@
 	(function (root, factory) {
 	    if (true) {
 	        // AMD. Make globaly available as well
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! moment */ 205), __webpack_require__(/*! jquery */ 56)], __WEBPACK_AMD_DEFINE_RESULT__ = function (moment, jquery) {
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! moment */ 208), __webpack_require__(/*! jquery */ 56)], __WEBPACK_AMD_DEFINE_RESULT__ = function (moment, jquery) {
 	            return (root.daterangepicker = factory(moment, jquery));
 	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof module === 'object' && module.exports) {
@@ -54290,7 +55481,7 @@
 
 
 /***/ },
-/* 313 */
+/* 316 */
 /*!***************************************************************!*\
   !*** ../~/react-bootstrap-daterangepicker/lib/get-options.js ***!
   \***************************************************************/
@@ -54334,7 +55525,7 @@
 	};
 
 /***/ },
-/* 314 */
+/* 317 */
 /*!*****************************!*\
   !*** ./daterangepicker.css ***!
   \*****************************/
@@ -54343,7 +55534,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../~/css-loader!./daterangepicker.css */ 315);
+	var content = __webpack_require__(/*! !./../~/css-loader!./daterangepicker.css */ 318);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 200)(content, {});
@@ -54363,7 +55554,7 @@
 	}
 
 /***/ },
-/* 315 */
+/* 318 */
 /*!*********************************************!*\
   !*** ../~/css-loader!./daterangepicker.css ***!
   \*********************************************/
@@ -54380,7 +55571,7 @@
 
 
 /***/ },
-/* 316 */
+/* 319 */
 /*!*******************************!*\
   !*** ./ConfigureAddWidget.js ***!
   \*******************************/
@@ -54437,7 +55628,7 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var moment = __webpack_require__(/*! moment */ 205);
+	var moment = __webpack_require__(/*! moment */ 208);
 	
 	var ConfigureAddWidget = function (_React$Component) {
 	  _inherits(ConfigureAddWidget, _React$Component);
@@ -54461,7 +55652,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Pie Chart',
-	      description: 'Basic pie chart which uses an agreggating metric to aggregate a numerical metric'
+	      description: 'Basic pie chart which uses an agreggating metric to aggregate a numerical metric.'
 	    }, { type: 'bar',
 	      width: 'half',
 	      height: 'half',
@@ -54476,7 +55667,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Horizontal Bar Chart',
-	      description: 'Basic horizontal bar chart which uses an agreggating metric to aggregate a numerical metric'
+	      description: 'Basic horizontal bar chart which uses an agreggating metric to aggregate a numerical metric.'
 	    }, { type: 'line',
 	      width: 'half',
 	      height: 'half',
@@ -54491,7 +55682,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Line Graph',
-	      description: 'Horizontal line graph for viewing progressive numerical data'
+	      description: 'Horizontal line graph for viewing progressive numerical data.'
 	    }, { type: 'column',
 	      width: 'half',
 	      height: 'half',
@@ -54506,7 +55697,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Vertical Bar Chart',
-	      description: 'Basic vertical bar chart which uses an agreggating metric to aggregate a numerical metric'
+	      description: 'Basic vertical bar chart which uses an agreggating metric to aggregate a numerical metric.'
 	    }, { type: 'stats',
 	      width: 'half',
 	      height: 'half',
@@ -54518,7 +55709,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Simple Statistics',
-	      description: 'Provides a basic statistical breakdown of a numerical metric'
+	      description: 'Provides a basic statistical breakdown of a numerical metric.'
 	    }, { type: 'scatter',
 	      width: 'half',
 	      height: 'half',
@@ -54530,7 +55721,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Scatter Plot',
-	      description: 'Plots two numerical metrics against one another'
+	      description: 'Plots two numerical metrics against one another.'
 	    }, { type: 'histogram',
 	      width: 'half',
 	      height: 'half',
@@ -54543,7 +55734,7 @@
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      title: 'Histogram',
-	      description: 'Breaks down a numerical metric into a fixed number of buckets'
+	      description: 'Breaks down a numerical metric into a fixed number of buckets.'
 	    }];
 	    _this.state = {
 	      configs: configs,
@@ -54569,7 +55760,7 @@
 	    value: function render() {
 	      var thisthis = this;
 	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addwidgetwindow' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelButtonHandler, title: 'Pick Widget Type' }), React.createElement('div', { className: 'addwidgetwindowinner' }, thisthis.state.configs.map(function (wc, wci) {
-	        return React.createElement('div', { key: wci, className: 'addwidgetdiv', onClick: thisthis.updateButtonHandler.bind(thisthis, wci) }, wc.title, React.createElement('br', null), wc.description);
+	        return React.createElement('div', { key: wci, className: 'addwidgetdiv', onClick: thisthis.updateButtonHandler.bind(thisthis, wci) }, React.createElement('div', { className: 'addwidgetdiv-title' }, wc.title), React.createElement('div', { className: 'addwidgetdiv-text' }, wc.description));
 	      }), React.createElement('br', null))));
 	    }
 	  }]);
@@ -54608,7 +55799,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ConfigureAddWidget);
 
 /***/ },
-/* 317 */
+/* 320 */
 /*!****************************!*\
   !*** ./ConfigureAddTab.js ***!
   \****************************/
@@ -54665,7 +55856,7 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var moment = __webpack_require__(/*! moment */ 205);
+	var moment = __webpack_require__(/*! moment */ 208);
 	
 	var ConfigureAddTab = function (_React$Component) {
 	  _inherits(ConfigureAddTab, _React$Component);
@@ -54713,7 +55904,7 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addTabWindow' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelButtonHandler, title: 'Add Tab' }), React.createElement('br', null), 'Enter Tab Name', React.createElement('br', null), '(Alphanumeric Only)', React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'text', value: this.state.tabName, onChange: this.onChange.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('button', { onClick: this.updateButtonHandler }, 'Add Tab')));
+	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addTabWindow' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelButtonHandler, title: 'Add Tab' }), React.createElement('br', null), 'Enter Tab Name', React.createElement('br', null), '(Alphanumeric Only)', React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'text', value: this.state.tabName, onChange: this.onChange.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.updateButtonHandler }, 'Add Tab')));
 	    }
 	  }]);
 	
@@ -54749,7 +55940,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ConfigureAddTab);
 
 /***/ },
-/* 318 */
+/* 321 */
 /*!*****************************!*\
   !*** ./ConfigureEditTab.js ***!
   \*****************************/
@@ -54806,7 +55997,7 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var moment = __webpack_require__(/*! moment */ 205);
+	var moment = __webpack_require__(/*! moment */ 208);
 	
 	var ConfigureEditTab = function (_React$Component) {
 	  _inherits(ConfigureEditTab, _React$Component);
@@ -54858,7 +56049,7 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addTabWindow' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelButtonHandler, title: 'Edit Tab' }), React.createElement('br', null), 'Enter Tab Name', React.createElement('br', null), '(Alphanumeric Only)', React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'text', value: this.state.tabName, onChange: this.onChange.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('button', { onClick: this.updateButtonHandler }, 'Save Tab')));
+	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addTabWindow' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelButtonHandler, title: 'Edit Tab' }), React.createElement('br', null), 'Enter Tab Name', React.createElement('br', null), '(Alphanumeric Only)', React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'text', value: this.state.tabName, onChange: this.onChange.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.updateButtonHandler }, 'Save Tab')));
 	    }
 	  }]);
 	
@@ -54895,7 +56086,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ConfigureEditTab);
 
 /***/ },
-/* 319 */
+/* 322 */
 /*!***************************!*\
   !*** ./ConfigureLogin.js ***!
   \***************************/
@@ -54978,7 +56169,7 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addTabWindow' }, React.createElement('br', null), React.createElement('br', null), this.props.errorloggingin ? 'Bad Username & Password' : 'Enter Username & Password', React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'text', value: this.state.username, onChange: this.onChangeUsername.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'password', value: this.state.password, onChange: this.onChangePassword.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('button', { onClick: this.updateButtonHandler }, 'Login')));
+	      return React.createElement('div', null, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'addTabWindow' }, React.createElement('br', null), React.createElement('br', null), this.props.errorloggingin ? 'Bad Username & Password' : 'Enter Username & Password', React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'text', value: this.state.username, onChange: this.onChangeUsername.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('input', { className: 'addTabTextfield', type: 'password', value: this.state.password, onChange: this.onChangePassword.bind(this) }), React.createElement('br', null), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.updateButtonHandler }, 'Login')));
 	    }
 	  }]);
 	

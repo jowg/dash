@@ -24,7 +24,7 @@ class ConfigureAddWidget extends React.Component {
        timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Pie Chart',
-       description:      'Basic pie chart which uses an agreggating metric to aggregate a numerical metric'
+       description:      'Basic pie chart which uses an agreggating metric to aggregate a numerical metric.'
       },
       {type:             'bar',
        width:            'half',
@@ -37,10 +37,10 @@ class ConfigureAddWidget extends React.Component {
        myStartDateISO:   moment().toISOString(),
        myEndDateISO:     moment().toISOString(),
        filters:          [],
-       timeframe:        '(undefined)',       
+       timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Horizontal Bar Chart',
-       description:      'Basic horizontal bar chart which uses an agreggating metric to aggregate a numerical metric'
+       description:      'Basic horizontal bar chart which uses an agreggating metric to aggregate a numerical metric.'
       },
       {type:             'line',
        width:            'half',
@@ -56,7 +56,7 @@ class ConfigureAddWidget extends React.Component {
        timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Line Graph',
-       description:      'Horizontal line graph for viewing progressive numerical data'
+       description:      'Horizontal line graph for viewing progressive numerical data.'
       },
       {type:             'column',
        width:            'half',
@@ -72,7 +72,7 @@ class ConfigureAddWidget extends React.Component {
        timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Vertical Bar Chart',
-       description:      'Basic vertical bar chart which uses an agreggating metric to aggregate a numerical metric'
+       description:      'Basic vertical bar chart which uses an agreggating metric to aggregate a numerical metric.'
       },
       {type:             'stats',
        width:            'half',
@@ -85,7 +85,7 @@ class ConfigureAddWidget extends React.Component {
        timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Simple Statistics',
-       description:      'Provides a basic statistical breakdown of a numerical metric'
+       description:      'Provides a basic statistical breakdown of a numerical metric.'
       },
       {type:             'scatter',
        width:            'half',
@@ -98,7 +98,7 @@ class ConfigureAddWidget extends React.Component {
        timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Scatter Plot',
-       description:      'Plots two numerical metrics against one another'
+       description:      'Plots two numerical metrics against one another.'
       },
       {type:             'histogram',
        width:            'half',
@@ -112,7 +112,7 @@ class ConfigureAddWidget extends React.Component {
        timeframe:        '(undefined)',
        configDisplay:    'none',
        title:            'Histogram',
-       description:      'Breaks down a numerical metric into a fixed number of buckets'
+       description:      'Breaks down a numerical metric into a fixed number of buckets.'
       }
     ];
     this.state = {
@@ -137,7 +137,10 @@ class ConfigureAddWidget extends React.Component {
         <BorderTopPlusClose onClose={this.cancelButtonHandler} title='Pick Widget Type'/>
         <div className='addwidgetwindowinner'>
         {thisthis.state.configs.map(function(wc,wci) {
-          return(<div key={wci} className='addwidgetdiv' onClick={thisthis.updateButtonHandler.bind(thisthis,wci)}>{wc.title}<br/>{wc.description}</div>);
+          return(<div key={wci} className='addwidgetdiv' onClick={thisthis.updateButtonHandler.bind(thisthis,wci)}>
+                 <div className='addwidgetdiv-title'>{wc.title}</div>
+                 <div className='addwidgetdiv-text'>{wc.description}</div>
+                </div>);
         })}
         <br/>
         </div>

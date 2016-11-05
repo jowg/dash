@@ -105,7 +105,7 @@ class WidgetConfigStats extends React.Component {
         <div style={{display: data.configDisplay}}>
         <div className='deactivating-overlay'></div>
         <div className='widget-config-window'>
-        <BorderTopPlusClose onClose={this.cancelConfig} title='Widget Configuration'/>
+        <BorderTopPlusClose onClose={this.cancelConfig} title='Stats Widget Configuration'/>
         <div className='bandsubtitle'>Choose Source & Metrics</div>
         <div className='simpleborder'>
         Source
@@ -132,17 +132,17 @@ class WidgetConfigStats extends React.Component {
         <div className='simpleborder'>
         <SelectSize selectSizeUpdate={this.selectSizeUpdate} width={this.state.width} height={this.state.height} layout={props.dashLayout[props.currentTab].layout} widgetindex={props.widgetindex}/>
         </div>
-        <button onClick={this.updateWidget}>Update</button>
+        <button className='config-window-button' onClick={this.updateWidget}>Update</button>
         <br/><br/>
         <div className='bandsubtitle'>Move Widget</div>
         <div className='simpleborder'>
         <SelectMove selectMoveUpdate={this.selectMoveValueUpdate} myIndex={props.widgetindex} tabCurrent={this.props.currentTab} tabLayout={dashLayout} widgets={props.widgets}/>
         </div>
-        <button onClick={this.updateLayout}>Move</button>
+        <button className='config-window-button' onClick={this.updateLayout}>Move</button>
         <br/><br/>
         <div className='bandsubtitle'>Delete Widget</div>
         <br/>
-        <button onClick={this.deleteWidget}>Delete</button>
+        <button className='config-window-button' onClick={this.deleteWidget}>Delete</button>
         <br/><br/>
         </div>
         </div>

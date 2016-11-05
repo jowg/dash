@@ -35,7 +35,7 @@ class ConfigureLogin extends React.Component {
         <br/><br/>
         <input className='addTabTextfield' type="password" value={this.state.password} onChange={this.onChangePassword.bind(this)}/>
         <br/><br/>
-        <button onClick={this.updateButtonHandler}>Login</button>
+        <button className='config-window-button' onClick={this.updateButtonHandler}>Login</button>
         </div>
         </div>
     );

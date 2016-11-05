@@ -5,7 +5,7 @@ var ReactDOM = require('react-dom');
 var moment = require('moment');
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
-import {saveDashboard} from './support.js';
+import {saveloadRestPoint,completeParams,saveDashboard} from './support.js';
 
 // Mine.
 
@@ -31,6 +31,7 @@ var userReducer = function(state, action) {
       configAddWidgetDisplay: 'none',
       configAddTabDisplay: 'none',
       configEditTabDisplay: 'none',
+      configLogin: 'block'
     };
     // For resetting for testing.
     if (1==0) {
@@ -114,11 +115,11 @@ var userReducer = function(state, action) {
         configAddWidgetDisplay: 'none',
         configAddTabDisplay: 'none',
         configEditTabDisplay: 'none',
+        configLogin: 'block'
       };
     }
-    
   }
-  
+
   var newState = JSON.parse(JSON.stringify(state));
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -132,10 +133,10 @@ var userReducer = function(state, action) {
     newState.widgets[action.widgetindex].data = _.extend(newState.widgets[action.widgetindex].data,action.changes);
     saveDashboard(newState);
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // UPDATE_DASH
-  // UPDATE_DASH_PLUS_SAVE  
+  // UPDATE_DASH_PLUS_SAVE
 
   if (action.type === 'UPDATE_DASH') {
     newState = _.extend(newState,action.changes);
@@ -150,7 +151,7 @@ var userReducer = function(state, action) {
     }
     saveDashboard(newState);
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // ADD_WIDGET
   // This always saves.
@@ -171,11 +172,11 @@ var userReducer = function(state, action) {
     newState.configAddWidgetDisplay = 'none';
     saveDashboard(newState);
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // DELETE_WIDGET
   // This always saves.
-  
+
   if (action.type === 'DELETE_WIDGET') {
     var indexToDelete = action.widgetindex;
     var currentLayout = newState.dashLayout[newState.currentTab].layout;
@@ -201,7 +202,7 @@ var userReducer = function(state, action) {
   ////////////////////////////////////////////////////////////////////////////////////////
   // UPDATE_LAYOUT
   // This always saves.
-  
+
   if (action.type === 'UPDATE_LAYOUT') {
     newState.dashLayout = action.newLayout;
     saveDashboard(newState);
@@ -210,7 +211,7 @@ var userReducer = function(state, action) {
   ////////////////////////////////////////////////////////////////////////////////////////
   // CHANGE_CURRENT_TAB
   // This never saves.
-  
+
   if (action.type === 'CHANGE_CURRENT_TAB') {
     newState.currentTab = action.newTab;
   }
@@ -218,9 +219,10 @@ var userReducer = function(state, action) {
   ////////////////////////////////////////////////////////////////////////////////////////
   // LOAD_DATA_INTO_DASHBOARD
   // This never saves.
-  
+
   if (action.type === 'LOAD_DATA_INTO_DASHBOARD') {
     newState = action.statestring;
+    newState.currentTab = 0;
   }
   return newState;
 }

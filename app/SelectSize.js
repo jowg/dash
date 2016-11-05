@@ -23,16 +23,24 @@ class SelectSize extends React.Component {
     return(
       <div>
         <div style={{width:'50%',float:'left'}}>
+        <label>
         <input type='checkbox' name='width' value='half' checked={this.props.width === 'half'} onChange={this.selectSizeUpdate.bind(this,'width')} />Half Width
+      </label>
         <br/>
-        <input type='checkbox' name='width' value='full' checked={this.props.width === 'full'} disabled={!canBeFull} onChange={this.selectSizeUpdate.bind(this,'width')} />
-        {canBeFull ? 'Full width': <s>Full Width</s>}
-      </div>
+        <label className={canBeFull ? '':'disabled'}>
+        <input type='checkbox' name='width' value='full' checked={this.props.width === 'full'} disabled={canBeFull ? false:'disabled'} onChange={this.selectSizeUpdate.bind(this,'width')}/>
+        Full Width
+      </label>
+        </div>
         <div style={{width:'50%',float:'left'}}>
+        <label>
         <input type='checkbox' name='height' value='half' checked={this.props.height === 'half'} onChange={this.selectSizeUpdate.bind(this,'height')} />Half Height
+        </label>
         <br/>
+        <label>
         <input type='checkbox' name='height' value='full' checked={this.props.height === 'full'} onChange={this.selectSizeUpdate.bind(this,'height')} />Full Height
-      </div>
+      </label>
+        </div>
         </div>
     );
   }

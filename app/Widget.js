@@ -6,9 +6,12 @@ var DateRangePicker = require('react-bootstrap-daterangepicker');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {niceDate,getTimeframeRanges,dataRestPoint} from './support.js';
+import {niceDate,getTimeframeRanges,dataRestPoint,completeParams} from './support.js';
 
 import WidgetConfigPie       from './WidgetConfigPie.js';
+import WidgetConfigBar       from './WidgetConfigBar.js';
+import WidgetConfigLine      from './WidgetConfigLine.js';
+import WidgetConfigColumn    from './WidgetConfigColumn.js';
 import WidgetConfigHistogram from './WidgetConfigHistogram.js';
 import WidgetConfigStats     from './WidgetConfigStats.js';
 import WidgetConfigScatter   from './WidgetConfigScatter.js';
@@ -41,27 +44,32 @@ class Widget extends React.Component {
       fs = fs + 'datetime:>=:'+tabStartDateUnix+',datetime:<=:'+tabEndDateUnix;
     }
     // If we're using the widget timeframe, add that as a filter.
-    if (props.widgets[props.widgetindex].data.timeframe == 'mine') {
+    if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
       var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
       var myEndDateUnix   = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
       if (fs.length > 0) {fs = fs + ',';}
       fs = fs + 'datetime:>=:'+myStartDateUnix+',datetime:<=:'+myEndDateUnix;
     }
-    // If it's a pie, bar, column or line.
-    if ((data.type == 'pie') || (data.type == 'bar') || (data.type == 'column') || (data.type == 'line')) {
+    // If it's a pie.
+    if (data.type == 'pie') {
       if ((data.source === 'undefined') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
-        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Not Configured</div>');//data.type+' Widget Not Configured!');
+        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
       } else {
-        $.get(
+        $.post(
           dataRestPoint(),
-          {source:       data.source,
-           metrics:      data.metrics[0]+','+data.metrics[1],
-           aggmetric:    data.metrics[0],
-           nonaggmetric: data.metrics[1],
-           aggmethod:    data.aggMethod,
-           filters:      fs
-          },
+          completeParams({
+            source:       data.source,
+            metrics:      data.metrics[0]+','+data.metrics[1],
+            aggmetric:    data.metrics[0],
+            nonaggmetric: data.metrics[1],
+            aggmethod:    data.aggMethod,
+            filters:      fs
+          }),
           function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
+              return false;
+            }
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
               var newplotdata = [];
@@ -92,11 +100,11 @@ class Widget extends React.Component {
               }
             });
             if (final.length == 0) {
-              $(ReactDOM.findDOMNode(chart)).html(data.type+' widget has no data!');
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
             } else {
 	            Highcharts.chart(ReactDOM.findDOMNode(chart),{
                 chart: {
-                  type: data.type
+                  type: 'pie'
                 },
                 credits: {
                   enabled: false
@@ -110,19 +118,91 @@ class Widget extends React.Component {
                       enabled: true,
                       format:  '<b>{point.z}</b><br> {point.y:.2f} '//,
                     }
-                  },
-                  line: {
-                    dataLabels: {
-                      enabled: false,
-                      format:  '<b>{point.z}</b>: {point.y:.2f} '//,
-                    },
-                  },
-                  column: {
-                    dataLabels: {
-                      enabled: false,
-                      format:  '<b>{point.z}</b>: {point.y:.2f} '//,
-                    }
-                  },
+                  }
+                },
+                xAxis: {
+                  type: (data.aggDatetime == true ? 'datetime' : 'category')
+                },
+                legend: {
+                  enabled: false
+                },
+                series: [{
+                  name:         '',
+                  showInLegend: false,
+                  data:         final,
+                  size:         null,
+                  innerSize:    '0%',
+                  showInLegend: true,
+                }]
+              });
+            }
+          }
+        );
+      }
+    }
+    // If it's a bar.
+    if (data.type == 'bar') {
+      if ((data.source === 'undefined') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
+        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Not Configured</div>');
+      } else {
+        $.post(
+          dataRestPoint(),
+          completeParams({
+            source:       data.source,
+            metrics:      data.metrics[0]+','+data.metrics[1],
+            aggmetric:    data.metrics[0],
+            nonaggmetric: data.metrics[1],
+            aggmethod:    data.aggMethod,
+            filters:      fs
+          }),
+          function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
+              return false;
+            }
+            var plotdata = JSON.parse(JSON.stringify(rawData.data));
+            if (data.aggDatetime == true) {
+              var newplotdata = [];
+              _.each(plotdata,function(a) {
+                var h = {};
+                h[data.metrics[0]] = a[data.metrics[0]]*1000; // Convert from Unix to JS.
+                h[data.metrics[1]] = a[data.metrics[1]]*1000;
+                newplotdata.push(h);
+              });
+              plotdata = JSON.parse(JSON.stringify(newplotdata));
+            }
+            // If it's to be sorted.
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              plotdata.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
+            var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
+            var final = [];
+            _.each(metricNumData0,function(datum,i) {
+              var z = datum;
+              if (data.aggDatetime == true) {
+                z = niceDate(z);
+              }
+              if (data.aggDatetime == true) {
+                final.push({x:datum,y:metricNumData1[i],z:z,name:datum});
+              } else {
+                final.push({y:metricNumData1[i],z:z,name:datum});
+              }
+            });
+            if (final.length == 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
+            } else {
+	            Highcharts.chart(ReactDOM.findDOMNode(chart),{
+                chart: {
+                  type: 'bar'
+                },
+                credits: {
+                  enabled: false
+                },
+                title: {
+                  text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+                },
+                plotOptions: {
                   bar: {
                     dataLabels: {
                       enabled: false,
@@ -150,18 +230,203 @@ class Widget extends React.Component {
         );
       }
     }
+    // If it's a column.
+    if (data.type == 'column') {
+      if ((data.source === 'undefined') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
+        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Not Configured</div>');
+      } else {
+        $.post(
+          dataRestPoint(),
+          completeParams({
+            source:       data.source,
+            metrics:      data.metrics[0]+','+data.metrics[1],
+            aggmetric:    data.metrics[0],
+            nonaggmetric: data.metrics[1],
+            aggmethod:    data.aggMethod,
+            filters:      fs
+          }),
+          function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+              return false;
+            }
+            var plotdata = JSON.parse(JSON.stringify(rawData.data));
+            if (data.aggDatetime == true) {
+              var newplotdata = [];
+              _.each(plotdata,function(a) {
+                var h = {};
+                h[data.metrics[0]] = a[data.metrics[0]]*1000; // Convert from Unix to JS.
+                h[data.metrics[1]] = a[data.metrics[1]]*1000;
+                newplotdata.push(h);
+              });
+              plotdata = JSON.parse(JSON.stringify(newplotdata));
+            }
+            // If it's to be sorted.
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              plotdata.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
+            var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
+            var final = [];
+            _.each(metricNumData0,function(datum,i) {
+              var z = datum;
+              if (data.aggDatetime == true) {
+                z = niceDate(z);
+              }
+              if (data.aggDatetime == true) {
+                final.push({x:datum,y:metricNumData1[i],z:z,name:datum});
+              } else {
+                final.push({y:metricNumData1[i],z:z,name:datum});
+              }
+            });
+            if (final.length == 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+            } else {
+	            Highcharts.chart(ReactDOM.findDOMNode(chart),{
+                chart: {
+                  type: 'column'
+                },
+                credits: {
+                  enabled: false
+                },
+                title: {
+                  text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+                },
+                plotOptions: {
+                  column: {
+                    dataLabels: {
+                      enabled: false,
+                      format:  '<b>{point.z}</b>: {point.y:.2f} '//,
+                    }
+                  }
+                },
+                xAxis: {
+                  type: (data.aggDatetime == true ? 'datetime' : 'category')
+                },
+                legend: {
+                  enabled: false
+                },
+                series: [{
+                  name:         '',
+                  showInLegend: false,
+                  data:         final,
+                  size:         null,
+                  innerSize:    '0%',
+                  showInLegend: true,
+                }]
+              });
+            }
+          }
+        );
+      }
+    }
+    // If it's a line.
+    if (data.type == 'line') {
+      if ((data.source === 'undefined') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
+        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Not Configured</div>');
+      } else {
+        $.post(
+          dataRestPoint(),
+          completeParams({
+            source:       data.source,
+            metrics:      data.metrics[0]+','+data.metrics[1],
+            aggmetric:    data.metrics[0],
+            nonaggmetric: data.metrics[1],
+            aggmethod:    data.aggMethod,
+            filters:      fs
+          }),
+          function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
+              return false;
+            }
+            var plotdata = JSON.parse(JSON.stringify(rawData.data));
+            if (data.aggDatetime == true) {
+              var newplotdata = [];
+              _.each(plotdata,function(a) {
+                var h = {};
+                h[data.metrics[0]] = a[data.metrics[0]]*1000; // Convert from Unix to JS.
+                h[data.metrics[1]] = a[data.metrics[1]]*1000;
+                newplotdata.push(h);
+              });
+              plotdata = JSON.parse(JSON.stringify(newplotdata));
+            }
+            // If it's to be sorted.
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              plotdata.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
+            var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
+            var final = [];
+            _.each(metricNumData0,function(datum,i) {
+              var z = datum;
+              if (data.aggDatetime == true) {
+                z = niceDate(z);
+              }
+              if (data.aggDatetime == true) {
+                final.push({x:datum,y:metricNumData1[i],z:z,name:datum});
+              } else {
+                final.push({y:metricNumData1[i],z:z,name:datum});
+              }
+            });
+            if (final.length == 0) {
+              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
+            } else {
+	            Highcharts.chart(ReactDOM.findDOMNode(chart),{
+                chart: {
+                  type: 'line'
+                },
+                credits: {
+                  enabled: false
+                },
+                title: {
+                  text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+                },
+                plotOptions: {
+                  line: {
+                    dataLabels: {
+                      enabled: false,
+                      format:  '<b>{point.z}</b>: {point.y:.2f} '//,
+                    },
+                  }
+                },
+                xAxis: {
+                  type: (data.aggDatetime == true ? 'datetime' : 'category')
+                },
+                legend: {
+                  enabled: false
+                },
+                series: [{
+                  name:         '',
+                  showInLegend: false,
+                  data:         final,
+                  size:         null,
+                  innerSize:    '0%',
+                  showInLegend: true,
+                }]
+              });
+            }
+          }
+        );
+      }
+    }
     // If it's a histogram.
     if (data.type == 'histogram') {
       if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.buckets === '(undefined)') || (data.timeframe === '(undefined)')) {
         $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Not Configured!');
       } else {
-        $.get(
+        $.post(
           dataRestPoint(),
-          {source:  data.source,
-           metrics: data.metrics[0],
-           filters: fs
-          },
+          completeParams({
+            source:  data.source,
+            metrics: data.metrics[0],
+            filters: fs
+          }),
           function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('Histogram widget has no data!');
+              return false;
+            }
             var plotdata = rawData.data;
             var metricNumData = _.pluck(plotdata,data.metrics[0]);
             var cats = [];
@@ -229,13 +494,18 @@ class Widget extends React.Component {
       if ((data.source === 'undefined') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.timeframe === '(undefined)')) {
         $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Not Configured!');
       } else {
-        $.get(
+        $.post(
           dataRestPoint(),
-          {source:  data.source,
-           metrics: data.metrics[0]+','+data.metrics[1],
-           filters: fs
-          },
+          completeParams({
+            source:  data.source,
+            metrics: data.metrics[0]+','+data.metrics[1],
+            filters: fs
+          }),
           function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
+              return false;
+            }
             var plotdata = rawData.data;
             var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
             var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
@@ -302,13 +572,18 @@ class Widget extends React.Component {
       if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.timeframe === '(undefined)')) {
             $(ReactDOM.findDOMNode(chart)).html('Stats Widget Not Configured!');
       } else {
-        $.get(
+        $.post(
           dataRestPoint(),
-          {source:  data.source,
-           metrics: data.metrics[0],
-           filters: fs
-          },
+          completeParams({
+            source:  data.source,
+            metrics: data.metrics[0],
+            filters: fs
+          }),
           function(rawData) {
+            if (rawData.data.length === 0) {
+              $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
+              return false;
+            }
             var plotdata = rawData.data;
             var metricNumData = _.pluck(plotdata,data.metrics[0]);
             if (metricNumData.length == 0) {
@@ -354,7 +629,61 @@ class Widget extends React.Component {
     var oldData = prevProps.widgets[prevProps.widgetindex].data;
     var newTabData = this.props.dashLayout[this.props.currentTab];
     var oldTabData = prevProps.dashLayout[this.props.currentTab];
-    if ((newData.type === 'pie') || (newData.type === 'bar') || (newData.type === 'column') || (newData.type == 'line')) {
+    if (newData.type === 'pie') {
+      if ((newData.source                  !== oldData.source) ||
+          (newData.metrics[0]              !== oldData.metrics[0]) ||
+          (newData.metrics[1]              !== oldData.metrics[1]) ||
+          (newData.aggNumeric              !== oldData.aggNumeric) ||
+          (newData.aggDatetime             !== oldData.aggDatetime) ||
+          (JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters)) ||
+          (newData.timeframe               !== oldData.timeframe) ||
+          (newData.myStartDateISO          !== oldData.myStartDateISO) ||
+          (newData.myEndDateISO            !== oldData.myEndDateISO) ||
+          (newData.aggMethod               !== oldData.aggMethod) ||
+          (newData.width                   !== oldData.width) ||
+          (newData.height                  !== oldData.height) ||
+          ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
+                                             (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
+        this.updateInternals();
+      }
+    }
+    if (newData.type === 'bar') {
+      if ((newData.source                  !== oldData.source) ||
+          (newData.metrics[0]              !== oldData.metrics[0]) ||
+          (newData.metrics[1]              !== oldData.metrics[1]) ||
+          (newData.aggNumeric              !== oldData.aggNumeric) ||
+          (newData.aggDatetime             !== oldData.aggDatetime) ||
+          (JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters)) ||
+          (newData.timeframe               !== oldData.timeframe) ||
+          (newData.myStartDateISO          !== oldData.myStartDateISO) ||
+          (newData.myEndDateISO            !== oldData.myEndDateISO) ||
+          (newData.aggMethod               !== oldData.aggMethod) ||
+          (newData.width                   !== oldData.width) ||
+          (newData.height                  !== oldData.height) ||
+          ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
+                                             (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
+        this.updateInternals();
+      }
+    }
+    if (newData.type === 'column') {
+      if ((newData.source                  !== oldData.source) ||
+          (newData.metrics[0]              !== oldData.metrics[0]) ||
+          (newData.metrics[1]              !== oldData.metrics[1]) ||
+          (newData.aggNumeric              !== oldData.aggNumeric) ||
+          (newData.aggDatetime             !== oldData.aggDatetime) ||
+          (JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters)) ||
+          (newData.timeframe               !== oldData.timeframe) ||
+          (newData.myStartDateISO          !== oldData.myStartDateISO) ||
+          (newData.myEndDateISO            !== oldData.myEndDateISO) ||
+          (newData.aggMethod               !== oldData.aggMethod) ||
+          (newData.width                   !== oldData.width) ||
+          (newData.height                  !== oldData.height) ||
+          ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
+                                             (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
+        this.updateInternals();
+      }
+    }
+    if (newData.type == 'line') {
       if ((newData.source                  !== oldData.source) ||
           (newData.metrics[0]              !== oldData.metrics[0]) ||
           (newData.metrics[1]              !== oldData.metrics[1]) ||
@@ -462,8 +791,8 @@ class Widget extends React.Component {
         {(() => {
           switch (widgetdata.timeframe) {
           case 'tab':  return(<img className='widget-cog-right' src='lock_time.png'/>);
-          case 'mine': return(<div className='daterangepickerholder-small'><DateRangePicker onApply={this.datepickerUpdate} startDate={moment(widgetdata.myStartDateISO)} endDate={moment(widgetdata.myEndDateISO)} ranges={ranges} alwaysShowCalendars={false}><div>{moment(widgetdata.myStartDateISO).format('MM/DD/YYYY')}-{moment(widgetdata.myEndDateISO).format('MM/DD/YYYY')}</div></DateRangePicker></div>);
-          case 'none': return (<div className='widget-cog-right'></div>);
+          case 'custom': return(<div className='daterangepickerholder-small'><DateRangePicker onApply={this.datepickerUpdate} startDate={moment(widgetdata.myStartDateISO)} endDate={moment(widgetdata.myEndDateISO)} ranges={ranges} alwaysShowCalendars={false}><div>{moment(widgetdata.myStartDateISO).format('MM/DD/YYYY')}-{moment(widgetdata.myEndDateISO).format('MM/DD/YYYY')}</div></DateRangePicker></div>);
+          default: return (<div className='widget-cog-right'></div>);
           }
         })()}
         <div style={{clear:'both'}}></div>
@@ -471,9 +800,9 @@ class Widget extends React.Component {
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
           case 'pie':         return(<WidgetConfigPie widgetindex={props.widgetindex}/>);
-          case 'bar':         return(<WidgetConfigPie widgetindex={props.widgetindex}/>);
-          case 'column':      return(<WidgetConfigPie widgetindex={props.widgetindex}/>);
-          case 'line':        return(<WidgetConfigPie widgetindex={props.widgetindex}/>);
+          case 'bar':         return(<WidgetConfigBar widgetindex={props.widgetindex}/>);
+          case 'column':      return(<WidgetConfigColumn widgetindex={props.widgetindex}/>);
+          case 'line':        return(<WidgetConfigLine widgetindex={props.widgetindex}/>);
           case 'histogram':   return(<WidgetConfigHistogram widgetindex={props.widgetindex}/>);
           case 'stats':       return(<WidgetConfigStats widgetindex={props.widgetindex}/>);
           case 'scatter':     return(<WidgetConfigScatter widgetindex={props.widgetindex}/>);

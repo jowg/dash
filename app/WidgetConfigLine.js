@@ -10,7 +10,7 @@ import BorderTopPlusClose from './BorderTopPlusClose.js';
 
 require('./dash.css');
 
-class WidgetConfigPie extends React.Component {
+class WidgetConfigLine extends React.Component {
   constructor(props) {
     super();
     var data = props.widgets[props.widgetindex].data;
@@ -128,7 +128,7 @@ class WidgetConfigPie extends React.Component {
         <div style={{display: data.configDisplay}}>
         <div className='deactivating-overlay'></div>
         <div className='widget-config-window'>
-        <BorderTopPlusClose onClose={this.cancelConfig} title='Pie Widget Configuration'/>
+        <BorderTopPlusClose onClose={this.cancelConfig} title='Line Widget Configuration'/>
         <div className='bandsubtitle'>Choose Source & Metrics</div>
         <div className='simpleborder'>
         Source
@@ -216,4 +216,4 @@ const mapDispatchToProps = (dispatch,ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WidgetConfigPie);
+)(WidgetConfigLine);

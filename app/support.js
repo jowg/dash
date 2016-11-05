@@ -30,7 +30,7 @@ export function getAggMethods() {
 }
 
 export function getTimeframeOptions() {
-  return ['(undefined)','none','tab','mine'];
+  return ['(undefined)','none','tab','custom'];
 }
 
 // Get available moves for a certain index.
@@ -117,33 +117,49 @@ export function niceDate(z) {
   return(year+"-"+month.substr(-2)+"-"+day.substr(-2));
 }
 
+// Save the dashboard with the given config.
+// The rest point checks the the token as well,
+// currently attached via completeParams, and if the token
+// does not exist then nothing is saved and that's that.
+
 export function saveDashboard(config) {
   console.log("Saving Dashboard")
-  if (1==1) {
-    $.post(
-      saveloadRestPoint(),
-      //"http://lvh.me/cgi-bin/rest/rest_saveload.py",
-      {saveload: 'save',
-       dashboardid: config.did,
-       configuration: JSON.stringify(config)
-      },
-      function(data, status){
-        // Nuttin.
-      }
-    );
-  } else {
-    console.log('Not really');
-  }
+  $.post(
+    saveloadRestPoint(),
+    completeParams({saveload:'save',dashboardid:config.did,configuration:JSON.stringify(config)}),
+    function(rawData) {
+      // Nuttin.
+    }
+  );
+}
+
+export function cookieExtract(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; "+name+"=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
 }
 
 export function dataRestPoint() {
   //return("http://lvh.me/cgi-bin/rest/rest_retrieveData.py");
-  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_retrieveData.py");  
+  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_retrieveData.py");
 }
 export function saveloadRestPoint() {
   //return("http://lvh.me/cgi-bin/rest/rest_saveload.py");
-  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_saveload.py");  
+  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_saveload.py");
 }
+
+// This rest point will create the token in the database
+// and return the cookie which includes the token.
+// Am I getting that right?
 export function attemptloginRestPoint() {
-  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/rest_attemptlogin.py");
+  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_attemptlogin.py");
+}
+
+export function getDashboardForTokenRestPoint() {
+  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_getDashboardForToken.py");
+}
+
+export function completeParams(params) {
+  params.token = cookieExtract('token');
+  return(params);
 }
