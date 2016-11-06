@@ -55722,6 +55722,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Pie Chart',
 	      description: 'Basic pie chart which uses an agreggating metric to aggregate a numerical metric.'
 	    }, { type: 'bar',
@@ -55737,6 +55738,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Horizontal Bar Chart',
 	      description: 'Basic horizontal bar chart which uses an agreggating metric to aggregate a numerical metric.'
 	    }, { type: 'line',
@@ -55752,6 +55754,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Line Graph',
 	      description: 'Horizontal line graph for viewing progressive numerical data.'
 	    }, { type: 'column',
@@ -55767,6 +55770,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Vertical Bar Chart',
 	      description: 'Basic vertical bar chart which uses an agreggating metric to aggregate a numerical metric.'
 	    }, { type: 'stats',
@@ -55779,6 +55783,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Simple Statistics',
 	      description: 'Provides a basic statistical breakdown of a numerical metric.'
 	    }, { type: 'scatter',
@@ -55791,6 +55796,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Scatter Plot',
 	      description: 'Plots two numerical metrics against one another.'
 	    }, { type: 'histogram',
@@ -55804,6 +55810,7 @@
 	      filters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
+	      fob: 'front',
 	      title: 'Histogram',
 	      description: 'Breaks down a numerical metric into a fixed number of buckets.'
 	    }];
