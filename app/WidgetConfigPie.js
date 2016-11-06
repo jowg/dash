@@ -24,6 +24,7 @@ class WidgetConfigPie extends React.Component {
       timeframe:   data.timeframe,
       width:       data.width,
       height:      data.height,
+      label:       data.label,
       moveValue:   -0.5
     }
     this.selectSourceUpdate      = this.selectSourceUpdate.bind(this);
@@ -39,6 +40,7 @@ class WidgetConfigPie extends React.Component {
     this.deleteWidget            = this.deleteWidget.bind(this);
     this.selectTimeframeUpdate   = this.selectTimeframeUpdate.bind(this);
     this.selectSizeUpdate        = this.selectSizeUpdate.bind(this);
+    this.selectLabelUpdate       = this.selectLabelUpdate.bind(this);
   }
   selectSourceUpdate(e) {
     this.setState({
@@ -73,6 +75,9 @@ class WidgetConfigPie extends React.Component {
   selectTimeframeUpdate(e) {
     this.setState({timeframe:e.target.value});
   }
+  selectLabelUpdate(e) {
+    this.setState({label:e.target.value});
+  }
   selectSizeUpdate(dim,value) {
     if (dim === 'width') {this.setState({width:value})}
     if (dim === 'height') {this.setState({height:value})}
@@ -94,7 +99,8 @@ class WidgetConfigPie extends React.Component {
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
       width:         this.state.width,
-      height:        this.state.height
+      height:        this.state.height,
+      label:         this.state.label
     });
   }
   cancelConfig() {
@@ -108,7 +114,8 @@ class WidgetConfigPie extends React.Component {
       aggDatetime:   oldState.aggDatetime,
       filters:       oldState.filters,
       width:         oldState.width,
-      height:        oldState.height
+      height:        oldState.height,
+      label:         oldState.label
     });
     this.props.update_widget(this.props.widgetindex,{configDisplay: 'none'});
   }
@@ -123,6 +130,7 @@ class WidgetConfigPie extends React.Component {
     var metrics          = getMetricsForSource(this.state.source);
     var aggMethods       = getAggMethods();
     var timeframeOptions = getTimeframeOptions();
+    var labelOptions     = ['(undefined)','show','trim','hide'];
     metrics.unshift('(undefined)');
     return (
         <div style={{display: data.configDisplay}}>
@@ -137,6 +145,7 @@ class WidgetConfigPie extends React.Component {
       </select>
         <br/>
         </div>
+        
         <div className='simpleborder'>
         Aggregate Metric
         <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
@@ -154,22 +163,33 @@ class WidgetConfigPie extends React.Component {
         Aggregate Metric is UNIX Timestamp
         <input type="checkbox" checked={this.state.aggDatetime} onChange={this.toggleAggDatetimeUpdate}/>
         </div>
+        
         <div className='simpleborder'>
         Numerical Metric
         <select onChange={this.selectMetricUpdate.bind(this,1)} value={this.state.metrics[1]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         </div>
+        
         <div className='simpleborder'>
         Filters
         <SelectFilter selectFilterUpdate={this.selectFilterUpdate} options={metrics} filters={this.state.filters} />
         </div>
+        
         <div className='simpleborder'>
         Time Frame
         <select onChange={this.selectTimeframeUpdate} value={this.state.timeframe}>
         {timeframeOptions.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
       </select>
         </div>
+
+        <div className='simpleborder'>
+        Label Display
+        <select onChange={this.selectLabelUpdate} value={this.state.label}>
+        {labelOptions.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
+      </select>
+        </div>
+      
         <div className='simpleborder'>
         <SelectSize selectSizeUpdate={this.selectSizeUpdate} width={this.state.width} height={this.state.height} layout={props.dashLayout[props.currentTab].layout} widgetindex={props.widgetindex}/>
         </div>

@@ -6902,11 +6902,12 @@
   \********************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_, $) {'use strict';
+	/* WEBPACK VAR INJECTION */(function(_, $) {"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.tableFromRawData = tableFromRawData;
 	exports.getMetricsForSource = getMetricsForSource;
 	exports.getSources = getSources;
 	exports.getAggMethods = getAggMethods;
@@ -6933,6 +6934,24 @@
 	// These are located where?
 	// /Library/WebServer/CGI-Executables/rest/
 	
+	function tableFromRawData(rawData) {
+	  var k = rawData.metrics;
+	  var t = "<div class='div-table'>";
+	  t += "<div class='div-table-row'>";
+	  _.each(k, function (key) {
+	    t += "<div class='div-table-header'>" + key + "</div>";
+	  });
+	  t += "</div>";
+	  _.each(rawData.data, function (datum) {
+	    t += "<div class='div-table-row'>";
+	    _.each(k, function (key) {
+	      t += "<div class='div-table-cell'>" + datum[key] + "</div>";
+	    });
+	    t += "</div>";
+	  });
+	  t += "</div>";
+	  return t;
+	}
 	
 	function getMetricsForSource(source) {
 	  if (source == 'source01') {
@@ -17424,6 +17443,7 @@
 	  _createClass(Dashboard, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      console.log('Dashboard: componentDidMount');
 	
 	      // Check if there is a valid token.
 	      // If there's no token, set the state to show the login screen.
@@ -17433,28 +17453,25 @@
 	
 	      var thisthis = this;
 	      var token = (0, _support.cookieExtract)('token');
+	      console.log('token = ' + token);
 	      if (token === undefined) {
+	        console.log('token undefined: setting state to login');
 	        thisthis.setState({ showlogin: 'login', errorloggingin: false });
 	      } else {
+	        console.log('token found: getting did for this token from server');
 	        $.post((0, _support.getDashboardForTokenRestPoint)(), { token: token
 	        }, function (rawData) {
-	          console.log('Success');
-	          console.log(rawData.did);
+	          console.log('server response: did = ' + rawData.did);
 	          if (rawData.did !== '') {
+	            console.log('did found: loading associated data');
 	            thisthis.loadData(rawData.did);
 	            thisthis.setState({ showlogin: 'dashboard', errorloggingin: false });
 	          } else {
+	            console.log('did not found: setting state to login');
 	            thisthis.setState({ showlogin: 'login', errorloggingin: false });
 	          }
 	        });
 	      }
-	
-	      // For this token to be valid we must contact the server.
-	      // If valid the server will return the username.
-	      // We load the data that way.
-	
-	      //console.log('document.cookie = ' + document.cookie);
-	      //
 	    }
 	  }, {
 	    key: 'attemptLogin',
@@ -17576,7 +17593,7 @@
 	      }
 	      // Otherwise do the full thing.
 	      return React.createElement('div', null, React.createElement('div', { style: { display: this.props.configAddWidgetDisplay } }, React.createElement(_ConfigureAddWidget2.default, null)), React.createElement('div', { style: { display: this.props.configAddTabDisplay } }, React.createElement(_ConfigureAddTab2.default, null)), React.createElement('div', { style: { display: this.props.configEditTabDisplay } }, React.createElement(_ConfigureEditTab2.default, null)), React.createElement('div', { className: 'topbar' }, React.createElement('div', { className: 'dashboardidholder' }, 'Dashboard ID: ', this.props.did), currentDash.tabHideDate ? React.createElement('div', null) : React.createElement('div', { className: 'daterangepickerholder-dash' }, React.createElement(DateRangePicker, { onApply: this.datepickerUpdate, startDate: moment(currentDash.tabStartDateISO), endDate: moment(currentDash.tabEndDateISO), ranges: ranges, alwaysShowCalendars: false }, React.createElement('div', null, moment(currentDash.tabStartDateISO).format('MM/DD/YYYY'), '-', moment(currentDash.tabEndDateISO).format('MM/DD/YYYY'))))), React.createElement('div', { className: 'tabholder-left' }, props.dashLayout.map(function (tab, tabindex) {
-	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tab-selected' : 'tab-unselected', key: tabindex, onClick: thisthis.changeCurrentTab.bind(this, tabindex) }, tab.tabName.length > 7 ? tab.tabName.substring(0, 6) + '...' : tab.tabName);
+	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tab-selected' : 'tab-unselected', key: tabindex, onClick: thisthis.changeCurrentTab.bind(this, tabindex) }, tab.tabName.length > 10 ? tab.tabName.substring(0, 10) + '...' : tab.tabName);
 	      }), React.createElement('div', { className: 'dropdown' }, React.createElement('div', { className: 'dropbtn' }, 'Tools'), React.createElement('div', { className: 'dropdown-content' }, React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddWidgetWindow }, 'Add Widget'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openEditTabWindow }, 'Rename Tab'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddTabWindow }, 'Add Tab'), currentDash.layout.length === 0 && this.props.dashLayout.length > 1 ? React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.deleteCurrentTab }, 'Delete Tab') : '', React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.toggleTabHideDate }, currentDash.tabHideDate ? 'Show Tab Date' : 'Hide Tab Date')))), props.dashLayout.map(function (tab, tabindex) {
 	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tabsheet-visible' : 'tabsheet-invisible', key: tabindex }, _.flatten(tab.layout.map(function (row, rowindex) {
 	          return row.map(function (widgetindex, columnindex) {
@@ -17757,12 +17774,14 @@
 	    _this.updateInternals = _this.updateInternals.bind(_this);
 	    _this.openWidgetConfig = _this.openWidgetConfig.bind(_this);
 	    _this.datepickerUpdate = _this.datepickerUpdate.bind(_this);
+	    _this.flipToOtherSide = _this.flipToOtherSide.bind(_this);
 	    return _this;
 	  }
 	
 	  _createClass(Widget, [{
 	    key: 'updateInternals',
 	    value: function updateInternals() {
+	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
@@ -17789,7 +17808,7 @@
 	      }
 	      // If it's a pie.
 	      if (data.type == 'pie') {
-	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.aggMethod === '(undefined)' || data.timeframe === '(undefined)') {
+	        if (data.source === 'undefined' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.aggMethod === '(undefined)' || data.label === '(undefined)' || data.timeframe === '(undefined)') {
 	          $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
 	        } else {
 	          $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
@@ -17804,6 +17823,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	            if (data.aggDatetime == true) {
 	              var newplotdata = [];
@@ -17851,7 +17873,7 @@
 	                plotOptions: {
 	                  pie: {
 	                    dataLabels: {
-	                      enabled: true,
+	                      enabled: data.label !== 'hide' ? true : false,
 	                      format: '<b>{point.z}</b><br> {point.y:.2f} ' //,
 	                    }
 	                  }
@@ -17891,6 +17913,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	            if (data.aggDatetime == true) {
 	              var newplotdata = [];
@@ -17978,6 +18003,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	            if (data.aggDatetime == true) {
 	              var newplotdata = [];
@@ -18065,6 +18093,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	            if (data.aggDatetime == true) {
 	              var newplotdata = [];
@@ -18149,6 +18180,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('Histogram widget has no data!');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = rawData.data;
 	            var metricNumData = _.pluck(plotdata, data.metrics[0]);
 	            var cats = [];
@@ -18223,6 +18257,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = rawData.data;
 	            var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
 	            var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
@@ -18295,6 +18332,9 @@
 	              $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
 	              return false;
 	            }
+	            // Load the raw data into the raw data table.            
+	            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	            // Then set up the plot.
 	            var plotdata = rawData.data;
 	            var metricNumData = _.pluck(plotdata, data.metrics[0]);
 	            if (metricNumData.length == 0) {
@@ -18349,7 +18389,7 @@
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
 	      if (newData.type === 'pie') {
-	        if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.label !== oldData.label || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
 	          this.updateInternals();
 	        }
 	      }
@@ -18402,6 +18442,13 @@
 	      });
 	    }
 	  }, {
+	    key: 'flipToOtherSide',
+	    value: function flipToOtherSide() {
+	      this.props.update_widget(this.props.widgetindex, {
+	        fob: this.props.widgets[this.props.widgetindex].data.fob === 'back' ? 'front' : 'back'
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
@@ -18418,18 +18465,23 @@
 	        'This Year': [moment().startOf('year'), moment().endOf('year')]
 	      };
 	      var outersizecss = '';
-	      var innersizecss = '';
+	      var innerchartcss = '';
+	      var innerdatacss = '';
 	      if (widgetdata.width === 'half' && widgetdata.height === 'half') {
-	        innersizecss = 'widget-chart-container-hh';
+	        innerchartcss = 'widget-chart-container-hh';
+	        innerdatacss = 'widget-data-container-hh';
 	        outersizecss = 'widget-container-hh';
 	      } else if (widgetdata.width === 'full' && widgetdata.height === 'half') {
-	        innersizecss = 'widget-chart-container-fh';
+	        innerchartcss = 'widget-chart-container-fh';
+	        innerdatacss = 'widget-data-container-fh';
 	        outersizecss = 'widget-container-fh';
 	      } else if (widgetdata.width === 'half' && widgetdata.height === 'full') {
-	        innersizecss = 'widget-chart-container-hf';
+	        innerchartcss = 'widget-chart-container-hf';
+	        innerdatacss = 'widget-data-container-hf';
 	        outersizecss = 'widget-container-hf';
 	      } else if (widgetdata.width === 'full' && widgetdata.height === 'full') {
-	        innersizecss = 'widget-chart-container-ff';
+	        innerchartcss = 'widget-chart-container-ff';
+	        innerdatacss = 'widget-data-container-ff';
 	        outersizecss = 'widget-container-ff';
 	      }
 	      return React.createElement('div', { className: outersizecss }, React.createElement('img', { className: 'widget-cog-left', onClick: this.openWidgetConfig.bind(this), src: 'cog_icon.png' }), function () {
@@ -18441,7 +18493,7 @@
 	          default:
 	            return React.createElement('div', { className: 'widget-cog-right' });
 	        }
-	      }(), React.createElement('div', { style: { clear: 'both' } }), React.createElement('div', { className: innersizecss, ref: 'chart' }), function () {
+	      }(), React.createElement('div', { style: { clear: 'both' } }), React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'visible' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'visible' : 'hidden' }, ref: 'chartdata' }), function () {
 	        switch (props.widgets[props.widgetindex].data.type) {
 	          case 'pie':
 	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
@@ -18458,7 +18510,7 @@
 	          case 'scatter':
 	            return React.createElement(_WidgetConfigScatter2.default, { widgetindex: props.widgetindex });
 	        }
-	      }());
+	      }(), React.createElement('img', { className: 'widget-flippy-right', src: 'flippy.png', onClick: this.flipToOtherSide }), ');');
 	    }
 	  }]);
 	
@@ -18593,6 +18645,7 @@
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
+	      label: data.label,
 	      moveValue: -0.5
 	    };
 	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
@@ -18608,6 +18661,7 @@
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
 	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
 	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    _this.selectLabelUpdate = _this.selectLabelUpdate.bind(_this);
 	    return _this;
 	  }
 	
@@ -18661,6 +18715,11 @@
 	      this.setState({ timeframe: e.target.value });
 	    }
 	  }, {
+	    key: 'selectLabelUpdate',
+	    value: function selectLabelUpdate(e) {
+	      this.setState({ label: e.target.value });
+	    }
+	  }, {
 	    key: 'selectSizeUpdate',
 	    value: function selectSizeUpdate(dim, value) {
 	      if (dim === 'width') {
@@ -18691,7 +18750,8 @@
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
 	        width: this.state.width,
-	        height: this.state.height
+	        height: this.state.height,
+	        label: this.state.label
 	      });
 	    }
 	  }, {
@@ -18707,7 +18767,8 @@
 	        aggDatetime: oldState.aggDatetime,
 	        filters: oldState.filters,
 	        width: oldState.width,
-	        height: oldState.height
+	        height: oldState.height,
+	        label: oldState.label
 	      });
 	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
 	    }
@@ -18726,6 +18787,7 @@
 	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
 	      var aggMethods = (0, _support.getAggMethods)();
 	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      var labelOptions = ['(undefined)', 'show', 'trim', 'hide'];
 	      metrics.unshift('(undefined)');
 	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Pie Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
@@ -18736,6 +18798,8 @@
 	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Label Display', React.createElement('select', { onChange: this.selectLabelUpdate, value: this.state.label }, labelOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -36674,7 +36738,7 @@
 	
 	
 	// module
-	exports.push([module.id, ":root {\n  --body-color:                         #aaaaaa;\n  --tabholder-color:                    #4a708b;\n  --tabholder-color-light:              #5a809b;\n  --tab-selected-background-color:      #aaaaaa;\n  --tab-unselected-background-color:    #4a708b;\n  --tab-hover-background-color:         #777777;\n  --tab-default-color:                  #eeeeee;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/* Widget container information */\n\n.widget-container-hh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hh {\n  width:  300px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-container-fh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-fh {\n  width:  650px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-container-hf {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hf {\n  width:  300px;\n  height: 600px;\n  display: inline-block;\n}\n.widget-container-ff {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-ff {\n  width:  650px;;\n  height: 600px;\n  display: inline-block;\n}\n/* Stuff inside the widget container */\n\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #0000ff;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          10;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--tabholder-color);\n  z-index:          4;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         100px;\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         100px;\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  display:      none;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabholder-left {\n  padding-top:      36px;\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100px;\n  height:           100%;\n  background-color: var(--tabholder-color);\n  z-index:          3;\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-selected-background-color);\n  border-bottom:             1px solid var(--tab-selected-background-color);\n  border-left:               1px solid var(--tab-selected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-unselected-background-color);\n  border-bottom:             1px solid var(--tab-unselected-background-color);\n  border-left:               1px solid var(--tab-unselected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-selected-background-color);\n  margin-right:     5px;\n}\n\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          5;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tabholder-color-light);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  padding-left:              10px;\n  cursor:                    pointer;\n  z-index:                   4;\n  width:                     90px;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: fixed;\n  bottom:   8px;\n  left:     0px;\n  display:  inline-block;\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             100px;\n  min-width:        160px;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tabholder-color-light);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {  \n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n", ""]);
+	exports.push([module.id, ":root {\n  --body-color:                         #aaaaaa;\n  --tabholder-color:                    #4a708b;\n  --tabholder-color-light:              #5a809b;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #aaaaaa;\n  --tab-unselected-background-color:    #4a708b;\n  --tab-hover-background-color:         #777777;\n  --tab-default-color:                  #eeeeee;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/* Widget container information */\n\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n.widget-container-hh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hh {\n  width:  300px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-data-container-hh {\n  padding: 10px;\n  width: 300px;\n  height: 300px;\n  top: -300px;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n  display: inline-block;\n}\n.widget-container-fh {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-fh {\n  width:  650px;\n  height: 300px;\n  display: inline-block;\n}\n.widget-data-container-fh {\n  padding: 10px;\n  width: 650px;\n  height: 300px;\n  top: -300px;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n  display: inline-block;\n}\n.widget-container-hf {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-hf {\n  width:  300px;\n  height: 600px;\n  display: inline-block;\n}\n.widget-data-container-hf {\n  padding: 10px;\n  width: 300px;\n  height: 600px;\n  top: -600px;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n  display: inline-block;\n}\n.widget-container-ff {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n}\n.widget-chart-container-ff {\n  width:  650px;;\n  height: 600px;\n  display: inline-block;\n}\n.widget-data-container-ff {\n  padding: 10px;\n  width: 650px;\n  height: 600px;\n  top: -600px;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n  display: inline-block;\n}\n/* Stuff inside the widget container */\n\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #0000ff;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          10;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--tabholder-color);\n  z-index:          4;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  display:      none;\n  padding-left: 16px;\n  padding-top:  48px;\n}\n.tabholder-left {\n  padding-top:      36px;\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            var(--tabholder-width);\n  height:           100%;\n  background-color: var(--tabholder-color);\n  z-index:          3;\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-selected-background-color);\n  border-bottom:             1px solid var(--tab-selected-background-color);\n  border-left:               1px solid var(--tab-selected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  border:                    0px;\n  border-top:                1px solid var(--tab-unselected-background-color);\n  border-bottom:             1px solid var(--tab-unselected-background-color);\n  border-left:               1px solid var(--tab-unselected-background-color);\n  border-top-left-radius:    15px;\n  border-bottom-left-radius: 15px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-selected-background-color);\n  margin-right:     5px;\n}\n\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--tab-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          5;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tabholder-color-light);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          10;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-unselected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               10px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: fixed;\n  bottom:   8px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tabholder-color-light);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n", ""]);
 	
 	// exports
 
@@ -55887,7 +55951,7 @@
 	    value: function updateButtonHandler() {
 	      if (this.state.tabName !== '') {
 	        var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));
-	        oldDash.push({ tabName: this.state.tabName,
+	        oldDash.push({ tabName: this.state.tabName.trim().replace(/\s+/g, ' '),
 	          layout: [],
 	          tabStartDateISO: moment('2016-06-15T00:00:00').toISOString(),
 	          tabEndDateISO: moment('2016-06-30T00:00:00').toISOString() });
@@ -55899,9 +55963,7 @@
 	  }, {
 	    key: 'onChange',
 	    value: function onChange(e) {
-	      var text = e.target.value;
-	      text = text.replace(/\W+/g, '');
-	      this.setState({ tabName: text });
+	      this.setState({ tabName: e.target.value });
 	    }
 	  }, {
 	    key: 'render',
@@ -56035,7 +56097,7 @@
 	    value: function updateButtonHandler() {
 	      if (this.state.tabName !== '') {
 	        var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));
-	        oldDash[this.props.currentTab].tabName = this.state.tabName;
+	        oldDash[this.props.currentTab].tabName = this.state.tabName.trim().replace(/\s+/g, ' ');
 	        this.props.update_dash_plus_save({ dashLayout: oldDash, configEditTabDisplay: 'none' });
 	      } else {
 	        this.props.update_dash({ configEditTabDisplay: 'none' });
@@ -56044,9 +56106,7 @@
 	  }, {
 	    key: 'onChange',
 	    value: function onChange(e) {
-	      var text = e.target.value;
-	      text = text.replace(/\W+/g, '');
-	      this.setState({ tabName: text });
+	      this.setState({ tabName: e.target.value });
 	    }
 	  }, {
 	    key: 'render',

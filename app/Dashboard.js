@@ -34,6 +34,7 @@ class Dashboard extends React.Component {
     }
   }
   componentDidMount() {
+    console.log('Dashboard: componentDidMount');
 
     // Check if there is a valid token.
     // If there's no token, set the state to show the login screen.
@@ -43,34 +44,29 @@ class Dashboard extends React.Component {
 
     var thisthis = this;
     var token = cookieExtract('token');
+    console.log('token = ' + token);
     if (token === undefined) {
+      console.log('token undefined: setting state to login');
       thisthis.setState({showlogin:'login',errorloggingin:false});
     } else {
+      console.log('token found: getting did for this token from server');
       $.post(
         getDashboardForTokenRestPoint(),
         {token: token
         },
         function(rawData) {
-          console.log('Success');
-          console.log(rawData.did);
+          console.log('server response: did = ' + rawData.did);
           if (rawData.did !== '') {
+            console.log('did found: loading associated data');
             thisthis.loadData(rawData.did);
             thisthis.setState({showlogin:'dashboard',errorloggingin:false});
           } else {
+            console.log('did not found: setting state to login');
             thisthis.setState({showlogin:'login',errorloggingin:false});
           }
         }
       );
     }
-
-
-    // For this token to be valid we must contact the server.
-    // If valid the server will return the username.
-    // We load the data that way.
-
-    //console.log('document.cookie = ' + document.cookie);
-    //
-
   }
   attemptLogin(username,password) {
     var thisthis = this;
@@ -190,7 +186,7 @@ class Dashboard extends React.Component {
         {props.dashLayout.map(function(tab,tabindex) {
           return(
               <div className={props.currentTab==tabindex ? 'tab-selected' : 'tab-unselected'} key={tabindex} onClick={thisthis.changeCurrentTab.bind(this,tabindex)}>
-              {tab.tabName.length > 7 ? tab.tabName.substring(0,6)+'...' : tab.tabName}
+              {tab.tabName.length > 10 ? tab.tabName.substring(0,10)+'...' : tab.tabName}
             </div>
           );
         })}

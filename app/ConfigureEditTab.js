@@ -25,17 +25,15 @@ class ConfigureEditTab extends React.Component {
   }
   updateButtonHandler() {
     if (this.state.tabName !== '') {
-      var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));      
-      oldDash[this.props.currentTab].tabName = this.state.tabName;
+      var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));
+      oldDash[this.props.currentTab].tabName = this.state.tabName.trim().replace(/\s+/g, ' ');
       this.props.update_dash_plus_save({dashLayout: oldDash,configEditTabDisplay: 'none'});
     } else {
       this.props.update_dash({configEditTabDisplay: 'none'});
     }
   }
   onChange(e) {
-    var text = e.target.value;
-    text=text.replace(/\W+/g, '');
-    this.setState({tabName:text});
+    this.setState({tabName:e.target.value});
   }
   render() {
     return (
@@ -79,4 +77,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ConfigureEditTab);
-

@@ -21,7 +21,7 @@ class ConfigureAddTab extends React.Component {
   updateButtonHandler() {
     if (this.state.tabName !== '') {
       var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));
-      oldDash.push({tabName:         this.state.tabName,
+      oldDash.push({tabName:         this.state.tabName.trim().replace(/\s+/g, ' '),
                     layout:          [],
                     tabStartDateISO: moment('2016-06-15T00:00:00').toISOString(),
                     tabEndDateISO:   moment('2016-06-30T00:00:00').toISOString()});
@@ -31,9 +31,7 @@ class ConfigureAddTab extends React.Component {
     }
   }
   onChange(e) {
-    var text = e.target.value;
-    text=text.replace(/\W+/g, '');
-    this.setState({tabName:text});
+    this.setState({tabName:e.target.value});
   }
   render() {
     return (
@@ -77,4 +75,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ConfigureAddTab);
-

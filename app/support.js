@@ -10,6 +10,24 @@
 // These are located where?
 // /Library/WebServer/CGI-Executables/rest/
 
+export function tableFromRawData(rawData) {
+  var k = rawData.metrics;
+  var t = "<div class='div-table'>";
+  t += "<div class='div-table-row'>";
+  _.each(k,function(key) {
+    t += "<div class='div-table-header'>" + key + "</div>";
+  });
+  t += "</div>";
+  _.each(rawData.data,function(datum) {
+    t += "<div class='div-table-row'>";
+    _.each(k,function(key) {
+      t += "<div class='div-table-cell'>" + datum[key] + "</div>";
+    });
+    t += "</div>";
+  });
+  t += "</div>";
+  return t;
+}
 
 export function getMetricsForSource(source) {
   if (source == 'source01') {

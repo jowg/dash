@@ -6,7 +6,7 @@ var DateRangePicker = require('react-bootstrap-daterangepicker');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {niceDate,getTimeframeRanges,dataRestPoint,completeParams} from './support.js';
+import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
 
 import WidgetConfigPie       from './WidgetConfigPie.js';
 import WidgetConfigBar       from './WidgetConfigBar.js';
@@ -28,8 +28,10 @@ class Widget extends React.Component {
     this.updateInternals  = this.updateInternals.bind(this);
     this.openWidgetConfig = this.openWidgetConfig.bind(this);
     this.datepickerUpdate = this.datepickerUpdate.bind(this);
+    this.flipToOtherSide  = this.flipToOtherSide.bind(this);
   }
   updateInternals() {
+    var thisthis = this;
     var chart = this.refs.chart;
     var props = this.props;
     var data = props.widgets[props.widgetindex].data;
@@ -52,7 +54,12 @@ class Widget extends React.Component {
     }
     // If it's a pie.
     if (data.type == 'pie') {
-      if ((data.source === 'undefined') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
+      if ((data.source === 'undefined') ||
+          (data.metrics[0] === '(undefined)') ||
+          (data.metrics[1] === '(undefined)') ||
+          (data.aggMethod === '(undefined)') ||
+          (data.label === '(undefined)') ||
+          (data.timeframe === '(undefined)')) {
         $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
       } else {
         $.post(
@@ -70,6 +77,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
               var newplotdata = [];
@@ -115,7 +125,7 @@ class Widget extends React.Component {
                 plotOptions: {
                   pie: {
                     dataLabels: {
-                      enabled: true,
+                      enabled: (data.label !== 'hide' ? true : false),
                       format:  '<b>{point.z}</b><br> {point.y:.2f} '//,
                     }
                   }
@@ -160,6 +170,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
               var newplotdata = [];
@@ -250,6 +263,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
               var newplotdata = [];
@@ -340,6 +356,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
               var newplotdata = [];
@@ -427,6 +446,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('Histogram widget has no data!');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = rawData.data;
             var metricNumData = _.pluck(plotdata,data.metrics[0]);
             var cats = [];
@@ -506,6 +528,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = rawData.data;
             var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
             var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
@@ -584,6 +609,9 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
               return false;
             }
+            // Load the raw data into the raw data table.            
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Then set up the plot.
             var plotdata = rawData.data;
             var metricNumData = _.pluck(plotdata,data.metrics[0]);
             if (metricNumData.length == 0) {
@@ -642,6 +670,7 @@ class Widget extends React.Component {
           (newData.aggMethod               !== oldData.aggMethod) ||
           (newData.width                   !== oldData.width) ||
           (newData.height                  !== oldData.height) ||
+          (newData.label                   !== oldData.label) ||
           ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
                                              (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
         this.updateInternals();
@@ -758,9 +787,14 @@ class Widget extends React.Component {
       myEndDateISO:   picker.endDate.toISOString()
     });
   }
+  flipToOtherSide() {
+    this.props.update_widget(this.props.widgetindex,{
+      fob: (this.props.widgets[this.props.widgetindex].data.fob === 'back' ? 'front' : 'back')
+    });
+  }
   render() {
     var props = this.props;
-    var widgetdata = props.widgets[props.widgetindex].data;
+    var widgetdata = props.widgets[props.widgetindex].data;    
     var ranges = {
       'Today':        [moment(), moment()],
       'Yesterday':    [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -771,18 +805,23 @@ class Widget extends React.Component {
       'This Year':    [moment().startOf('year'), moment().endOf('year')],
     };
     var outersizecss = '';
-    var innersizecss = '';
+    var innerchartcss = '';
+    var innerdatacss = '';
     if ((widgetdata.width === 'half') && (widgetdata.height === 'half')) {
-      innersizecss = 'widget-chart-container-hh';
+      innerchartcss = 'widget-chart-container-hh';
+      innerdatacss = 'widget-data-container-hh';
       outersizecss = 'widget-container-hh';
     } else if ((widgetdata.width === 'full') && (widgetdata.height === 'half')) {
-      innersizecss = 'widget-chart-container-fh';
+      innerchartcss = 'widget-chart-container-fh';
+      innerdatacss = 'widget-data-container-fh';
       outersizecss = 'widget-container-fh';
     } else if ((widgetdata.width === 'half') && (widgetdata.height === 'full')) {
-      innersizecss = 'widget-chart-container-hf';
+      innerchartcss = 'widget-chart-container-hf';
+      innerdatacss = 'widget-data-container-hf';
       outersizecss = 'widget-container-hf';
     } else if ((widgetdata.width === 'full') && (widgetdata.height === 'full')) {
-      innersizecss = 'widget-chart-container-ff';
+      innerchartcss = 'widget-chart-container-ff';
+      innerdatacss = 'widget-data-container-ff';
       outersizecss = 'widget-container-ff';
     }
     return(
@@ -796,7 +835,8 @@ class Widget extends React.Component {
           }
         })()}
         <div style={{clear:'both'}}></div>
-        <div className={innersizecss} ref='chart'></div>
+        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'visible':'hidden')}} ref='chart'></div>
+        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back'?'visible':'hidden')}} ref='chartdata'></div>
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
           case 'pie':         return(<WidgetConfigPie widgetindex={props.widgetindex}/>);
@@ -808,6 +848,7 @@ class Widget extends React.Component {
           case 'scatter':     return(<WidgetConfigScatter widgetindex={props.widgetindex}/>);
           }
         })()}
+        <img className='widget-flippy-right' src='flippy.png' onClick={this.flipToOtherSide}></img>);
         </div>);
   }
 }
