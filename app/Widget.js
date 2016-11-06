@@ -77,8 +77,17 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
               return false;
             }
-            // Load the raw data into the raw data table.            
-            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Load the raw data into the raw data table and make it nice if necessary.
+            var tableData = JSON.parse(JSON.stringify(rawData.data));
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              tableData.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            if (data.aggDatetime === true) {
+              _.each(tableData,function(datum,i) {
+                tableData[i][data.metrics[0]] = niceDate(1000*datum[data.metrics[0]]);
+              });
+            }
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:tableData}));
             // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
@@ -100,10 +109,10 @@ class Widget extends React.Component {
             var final = [];
             _.each(metricNumData0,function(datum,i) {
               var z = datum;
-              if (data.aggDatetime == true) {
+              if (data.aggDatetime === true) {
                 z = niceDate(z);
               }
-              if (data.aggDatetime == true) {
+              if (data.aggDatetime === true) {
                 final.push({x:datum,y:metricNumData1[i],z:z,name:datum});
               } else {
                 final.push({y:metricNumData1[i],z:z,name:datum});
@@ -126,8 +135,13 @@ class Widget extends React.Component {
                   pie: {
                     dataLabels: {
                       enabled: (data.label !== 'hide' ? true : false),
-                      format:  '<b>{point.z}</b><br> {point.y:.2f} '//,
+                      format:  '<b>{point.z}</b><br>{point.y:.2f} '//,
                     }
+                  }
+                },
+                tooltip: {
+                  formatter: function () {
+                    return '<b>'+this.point.z+'</b><br>'+this.point.y;
                   }
                 },
                 xAxis: {
@@ -170,8 +184,17 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
               return false;
             }
-            // Load the raw data into the raw data table.            
-            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Load the raw data into the raw data table and make it nice if necessary.
+            var tableData = JSON.parse(JSON.stringify(rawData.data));
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              tableData.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            if (data.aggDatetime === true) {
+              _.each(tableData,function(datum,i) {
+                tableData[i][data.metrics[0]] = niceDate(1000*datum[data.metrics[0]]);
+              });
+            }
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:tableData}));            
             // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
@@ -223,6 +246,11 @@ class Widget extends React.Component {
                     }
                   }
                 },
+                tooltip: {
+                  formatter: function () {
+                    return '<b>'+this.point.z+'</b><br>'+this.point.y;
+                  }
+                },
                 xAxis: {
                   type: (data.aggDatetime == true ? 'datetime' : 'category')
                 },
@@ -263,8 +291,17 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
               return false;
             }
-            // Load the raw data into the raw data table.            
-            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Load the raw data into the raw data table and make it nice if necessary.
+            var tableData = JSON.parse(JSON.stringify(rawData.data));
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              tableData.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            if (data.aggDatetime === true) {
+              _.each(tableData,function(datum,i) {
+                tableData[i][data.metrics[0]] = niceDate(1000*datum[data.metrics[0]]);
+              });
+            }
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:tableData}));
             // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
@@ -316,6 +353,11 @@ class Widget extends React.Component {
                     }
                   }
                 },
+                tooltip: {
+                  formatter: function () {
+                    return '<b>'+this.point.z+'</b><br>'+this.point.y;
+                  }
+                },
                 xAxis: {
                   type: (data.aggDatetime == true ? 'datetime' : 'category')
                 },
@@ -356,8 +398,17 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
               return false;
             }
-            // Load the raw data into the raw data table.            
-            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+            // Load the raw data into the raw data table and make it nice if necessary.
+            var tableData = JSON.parse(JSON.stringify(rawData.data));
+            if ((data.aggNumeric == true) || (data.aggDatetime == true)) {
+              tableData.sort(function(a,b) {return a[data.metrics[0]] - b[data.metrics[0]];});
+            }
+            if (data.aggDatetime === true) {
+              _.each(tableData,function(datum,i) {
+                tableData[i][data.metrics[0]] = niceDate(1000*datum[data.metrics[0]]);
+              });
+            }
+            $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:tableData}));            
             // Then set up the plot.
             var plotdata = JSON.parse(JSON.stringify(rawData.data));
             if (data.aggDatetime == true) {
@@ -409,6 +460,11 @@ class Widget extends React.Component {
                     },
                   }
                 },
+                tooltip: {
+                  formatter: function () {
+                    return '<b>'+this.point.z+'</b><br>'+this.point.y;
+                  }
+                },
                 xAxis: {
                   type: (data.aggDatetime == true ? 'datetime' : 'category')
                 },
@@ -446,7 +502,7 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('Histogram widget has no data!');
               return false;
             }
-            // Load the raw data into the raw data table.            
+            // Load the raw data into the raw data table.
             $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
             // Then set up the plot.
             var plotdata = rawData.data;
@@ -528,7 +584,7 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
               return false;
             }
-            // Load the raw data into the raw data table.            
+            // Load the raw data into the raw data table.
             $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
             // Then set up the plot.
             var plotdata = rawData.data;
@@ -609,7 +665,7 @@ class Widget extends React.Component {
               $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
               return false;
             }
-            // Load the raw data into the raw data table.            
+            // Load the raw data into the raw data table.
             $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
             // Then set up the plot.
             var plotdata = rawData.data;
@@ -794,7 +850,7 @@ class Widget extends React.Component {
   }
   render() {
     var props = this.props;
-    var widgetdata = props.widgets[props.widgetindex].data;    
+    var widgetdata = props.widgets[props.widgetindex].data;
     var ranges = {
       'Today':        [moment(), moment()],
       'Yesterday':    [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -845,7 +901,7 @@ class Widget extends React.Component {
         <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
         </div>
         <img className='widget-flippy-right' src='flippy.png' onClick={this.flipToOtherSide}></img>
-        
+
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
           case 'pie':         return(<WidgetConfigPie widgetindex={props.widgetindex}/>);

@@ -154,16 +154,25 @@ html,body {
 }
 /* Stuff inside the widget container */
 
+.widget-cog-left:hover {
+  opacity: 0.5;
+}
 .widget-cog-left {
   cursor: pointer;
   height: 24px;
   width:  24px;
   float:  left;
 }
+.widget-cog-right:hover {
+  opacity: 0.5;
+}
 .widget-cog-right {
   height: 24px;
   width:  24px;
   float:  right;
+}
+.widget-flippy-right:hover {
+  opacity: 0.5;
 }
 .widget-flippy-right {
   cursor: pointer;
@@ -357,6 +366,9 @@ html,body {
   margin-right:     5px;
 }
 
+.daterangepickerholder-small:hover {
+  opacity: 0.5;
+}
 .daterangepickerholder-small {
   border:           1px solid var(--widget-datepicker-border-color);
   border-radius:    0px;
