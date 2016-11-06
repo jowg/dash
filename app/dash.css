@@ -59,20 +59,20 @@ html,body {
   float:            left;
   text-align:       center;
 }
+.widget-sub-container-hh {
+  height: 300px;
+}
 .widget-chart-container-hh {
   width:  300px;
   height: 300px;
-  display: inline-block;
 }
 .widget-data-container-hh {
   padding: 10px;
   width: 300px;
-  height: 300px;
-  top: -300px;
+  height: 90%;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
-  display: inline-block;
 }
 .widget-container-fh {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
@@ -85,20 +85,20 @@ html,body {
   float:            left;
   text-align:       center;
 }
+.widget-sub-container-fh {
+  height: 300px;
+}
 .widget-chart-container-fh {
   width:  650px;
   height: 300px;
-  display: inline-block;
 }
 .widget-data-container-fh {
   padding: 10px;
   width: 650px;
-  height: 300px;
-  top: -300px;
+  height: 90%;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
-  display: inline-block;
 }
 .widget-container-hf {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
@@ -111,20 +111,20 @@ html,body {
   float:            left;
   text-align:       center;
 }
+.widget-sub-container-hf {
+  height: 650px;
+}
 .widget-chart-container-hf {
   width:  300px;
-  height: 600px;
-  display: inline-block;
+  height: 650px;
 }
 .widget-data-container-hf {
   padding: 10px;
   width: 300px;
-  height: 600px;
-  top: -600px;
+  height: 90%;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
-  display: inline-block;
 }
 .widget-container-ff {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
@@ -137,20 +137,20 @@ html,body {
   float:            left;
   text-align:       center;
 }
+.widget-sub-container-ff {
+  height: 650px;
+}
 .widget-chart-container-ff {
   width:  650px;;
-  height: 600px;
-  display: inline-block;
+  height: 650px;
 }
 .widget-data-container-ff {
   padding: 10px;
   width: 650px;
-  height: 600px;
-  top: -600px;
+  height: 90%;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
-  display: inline-block;
 }
 /* Stuff inside the widget container */
 
@@ -289,6 +289,7 @@ html,body {
   height:       100%;
   padding-left: 16px;
   padding-top:  48px;
+  display: inline-block;
 }
 .tabsheet-invisible {
   position:     absolute;

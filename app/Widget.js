@@ -805,24 +805,29 @@ class Widget extends React.Component {
       'This Year':    [moment().startOf('year'), moment().endOf('year')],
     };
     var outersizecss = '';
+    var innersubcss = '';
     var innerchartcss = '';
     var innerdatacss = '';
     if ((widgetdata.width === 'half') && (widgetdata.height === 'half')) {
       innerchartcss = 'widget-chart-container-hh';
       innerdatacss = 'widget-data-container-hh';
       outersizecss = 'widget-container-hh';
+      innersubcss = 'widget-sub-container-hh';
     } else if ((widgetdata.width === 'full') && (widgetdata.height === 'half')) {
       innerchartcss = 'widget-chart-container-fh';
       innerdatacss = 'widget-data-container-fh';
       outersizecss = 'widget-container-fh';
+      innersubcss = 'widget-sub-container-fh';
     } else if ((widgetdata.width === 'half') && (widgetdata.height === 'full')) {
       innerchartcss = 'widget-chart-container-hf';
       innerdatacss = 'widget-data-container-hf';
       outersizecss = 'widget-container-hf';
+      innersubcss = 'widget-sub-container-hf';
     } else if ((widgetdata.width === 'full') && (widgetdata.height === 'full')) {
       innerchartcss = 'widget-chart-container-ff';
       innerdatacss = 'widget-data-container-ff';
       outersizecss = 'widget-container-ff';
+      innersubcss = 'widget-sub-container-ff';
     }
     return(
         <div className={outersizecss}>
@@ -831,12 +836,16 @@ class Widget extends React.Component {
           switch (widgetdata.timeframe) {
           case 'tab':  return(<img className='widget-cog-right' src='lock_time.png'/>);
           case 'custom': return(<div className='daterangepickerholder-small'><DateRangePicker onApply={this.datepickerUpdate} startDate={moment(widgetdata.myStartDateISO)} endDate={moment(widgetdata.myEndDateISO)} ranges={ranges} alwaysShowCalendars={false}><div>{moment(widgetdata.myStartDateISO).format('MM/DD/YYYY')}-{moment(widgetdata.myEndDateISO).format('MM/DD/YYYY')}</div></DateRangePicker></div>);
-          default: return (<div className='widget-cog-right'></div>);
+          default: return (<div className='widget-cog-right' style={{visible:'hidden'}}></div>);
           }
         })()}
         <div style={{clear:'both'}}></div>
-        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'visible':'hidden')}} ref='chart'></div>
-        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back'?'visible':'hidden')}} ref='chartdata'></div>
+        <div className={innersubcss}>
+        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'></div>
+        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
+        </div>
+        <img className='widget-flippy-right' src='flippy.png' onClick={this.flipToOtherSide}></img>
+        
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
           case 'pie':         return(<WidgetConfigPie widgetindex={props.widgetindex}/>);
@@ -848,7 +857,6 @@ class Widget extends React.Component {
           case 'scatter':     return(<WidgetConfigScatter widgetindex={props.widgetindex}/>);
           }
         })()}
-        <img className='widget-flippy-right' src='flippy.png' onClick={this.flipToOtherSide}></img>);
         </div>);
   }
 }
