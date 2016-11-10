@@ -12,12 +12,6 @@ import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawDat
 class WidgetStats extends React.Component {
   constructor(props) {
     super();
-    this.state = {
-      data: undefined,
-      lat: 40.7831,      
-      lng: -73.9712,
-      zoom: 9
-    };
     this.updateInternals = this.updateInternals.bind(this);
   }
 

@@ -2,7 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var moment = require('moment');
 
-import { Map ,TileLayer,GeoJson } from 'react-leaflet';
+import {Map,TileLayer,GeoJson} from 'react-leaflet';
 import {dataRestPoint,completeParams,jsonRestPoint,getColor,tableFromRawData} from './support.js';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -12,13 +12,22 @@ class WidgetGeospatial extends React.Component {
     super();
     this.state = {
       data: undefined,
-      lat: 40.7831,
-      lng: -73.9712,
-      zoom: 10,
+      longitude: props.widgets[props.widgetindex].data.longitude,
+      latitude: props.widgets[props.widgetindex].data.latitude,
+      zoom: props.widgets[props.widgetindex].data.zoom,
       key: 0
     };
     this.updateInternals = this.updateInternals.bind(this);
     this.style = this.style.bind(this);
+    this.onEachFeature = this.onEachFeature.bind(this);
+  }
+
+  onEachFeature(feature,layer) {
+    var widgetdata = this.props.widgets[this.props.widgetindex].data;
+    const datum = '<h3>'+widgetdata.metrics[0]+': '+feature.properties[widgetdata.metrics[0]]+'</h3>';
+    layer.bindPopup(datum);
+    //layer.on('click', function (e) {
+    //});
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -50,7 +59,7 @@ class WidgetGeospatial extends React.Component {
         (data.metrics[0] === '(undefined)') ||
         (data.metrics[1] === '(undefined)') ||
         (data.label      === '(undefined)') ||
-        (data.timeframe  === '(undefined)')) {   
+        (data.timeframe  === '(undefined)')) {
       var dummy = {
         type: 'FeatureCollection',
         crs: {
@@ -166,13 +175,12 @@ class WidgetGeospatial extends React.Component {
       outersizecss = 'widget-container-ff';
       innersubcss = 'widget-sub-container-ff';
     }
-
     return (
         <div>
         <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
-        <Map center={[this.state.lat,this.state.lng]} zoom={this.state.zoom} scrollWheelZoom={false}>
+        <Map center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
         <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
-        {this.state.data !== undefined ? <GeoJson key={this.state.key} style={this.style} data={this.state.data}/> : <div/>}
+        {this.state.data !== undefined ? <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}/> : <div/>}
       </Map>
         </div>
         <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>

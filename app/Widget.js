@@ -88,10 +88,10 @@ class Widget extends React.Component {
     }
     return(
         <div className={outersizecss}>
-        <img className='widget-cog-left' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>
+        <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>
         {(() => {
           switch (widgetdata.timeframe) {
-          case 'tab':  return(<img className='widget-cog-right' src='lock_time.png'/>);
+          case 'tab':  return(<img className='widget-cog-right' title='Locked to Tab' src='lock_time.png'/>);
           case 'custom': return(
               <div className='daterangepickerholder-small'>
               <DateRangePicker onApply={this.datepickerUpdate} startDate={moment(widgetdata.myStartDateISO)} endDate={moment(widgetdata.myEndDateISO)} ranges={ranges} alwaysShowCalendars={false}>
@@ -116,9 +116,9 @@ class Widget extends React.Component {
           case 'geospatial':  return(<WidgetGeospatial widgetindex={this.props.widgetindex}/>);
           }
         })()}
-
-        </div>
-        <img className='widget-flippy-right' src='flippy.png' onClick={this.flipToOtherSide}></img>
+      </div>
+        <img className='widget-flippy-right' src='flippy.png' title='Flip to View Data' onClick={this.flipToOtherSide}>
+        </img>
 
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {

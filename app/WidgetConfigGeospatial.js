@@ -23,6 +23,9 @@ class WidgetConfigGeospatial extends React.Component {
       timeframe:   data.timeframe,
       width:       data.width,
       height:      data.height,
+      latitude:    data.latitude,
+      longitude:   data.longitude,
+      zoom:        data.zoom,
       moveValue:   -0.5
     }
     this.selectSourceUpdate      = this.selectSourceUpdate.bind(this);
@@ -35,6 +38,9 @@ class WidgetConfigGeospatial extends React.Component {
     this.deleteWidget            = this.deleteWidget.bind(this);
     this.selectTimeframeUpdate   = this.selectTimeframeUpdate.bind(this);
     this.selectSizeUpdate        = this.selectSizeUpdate.bind(this);
+    this.onChangeLatitude        = this.onChangeLatitude.bind(this);
+    this.onChangeLongitude       = this.onChangeLongitude.bind(this);
+    this.onChangeZoom            = this.onChangeZoom.bind(this);
   }
   selectSourceUpdate(e) {
     this.setState({
@@ -71,7 +77,10 @@ class WidgetConfigGeospatial extends React.Component {
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
       width:         this.state.width,
-      height:        this.state.height
+      height:        this.state.height,
+      latitude:      Number(this.state.latitude),
+      longitude:     Number(this.state.longitude),
+      zoom:          Number(this.state.zoom)
     });
   }
   cancelConfig() {
@@ -80,11 +89,24 @@ class WidgetConfigGeospatial extends React.Component {
     this.setState({
       source:        oldState.source,
       metrics:       oldState.metrics,
+      timeframe:     oldState.timeframe,
       filters:       oldState.filters,
       width:         oldState.width,
-      height:        oldState.height
+      height:        oldState.height,
+      latitude:      oldState.latitude,
+      longitude:     oldState.longitude,
+      zoom:          oldState.zoom
     });
     this.props.update_widget(this.props.widgetindex,{configDisplay: 'none'});
+  }
+  onChangeLatitude(e) {
+    this.setState({latitude: e.target.value});
+  }
+  onChangeLongitude(e) {
+    this.setState({longitude: e.target.value});
+  }
+  onChangeZoom(e) {
+    this.setState({zoom: e.target.value});
   }
   deleteWidget() {
     this.props.delete_widget(this.props.widgetindex);
@@ -134,6 +156,16 @@ class WidgetConfigGeospatial extends React.Component {
         <select onChange={this.selectTimeframeUpdate} value={this.state.timeframe}>
         {timeframeOptions.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
       </select>
+        </div>
+        <div className='simpleborder'>
+        Initial Latitude:
+        <input type="text" value={this.state.latitude} onChange={this.onChangeLatitude.bind(this)}/>
+        <br/>
+        Initial Longitude:
+        <input type="text" value={this.state.longitude} onChange={this.onChangeLongitude.bind(this)}/>
+        <br/>
+        Initial Zoom:
+        <input type="text" value={this.state.zoom} onChange={this.onChangeZoom.bind(this)}/>
         </div>
         <div className='simpleborder'>
         <SelectSize selectSizeUpdate={this.selectSizeUpdate} width={this.state.width} height={this.state.height} layout={props.dashLayout[props.currentTab].layout} widgetindex={props.widgetindex}/>
