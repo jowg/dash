@@ -222,7 +222,7 @@ html,body {
   margin-left:      -250px;
   width:            500px;
   height:           auto;
-  z-index:          10;
+  z-index:          1000;
   background-color: #ffffff;
   border:           var(--config-window-border-thickness) solid var(--config-window-border-color);
   border-radius:    10px;
@@ -286,7 +286,7 @@ html,body {
   width:            100%;
   height:           36px;
   background-color: var(--tabholder-color);
-  z-index:          4;
+  z-index:          900;
 }
 
 
@@ -298,7 +298,8 @@ html,body {
   height:       100%;
   padding-left: 16px;
   padding-top:  48px;
-  display: inline-block;
+  display:      inline-block;
+  visibility:   visible;
 }
 .tabsheet-invisible {
   position:     absolute;
@@ -306,9 +307,10 @@ html,body {
   top:          0px;
   width:        100%;
   height:       100%;
-  display:      none;
   padding-left: 16px;
   padding-top:  48px;
+  display:      inline-block;
+  visibility:   hidden;
 }
 .tabholder-left {
   padding-top:      36px;
@@ -318,7 +320,7 @@ html,body {
   width:            var(--tabholder-width);
   height:           100%;
   background-color: var(--tabholder-color);
-  z-index:          3;
+  z-index:          899;
 }
 
 .tab-selected {
@@ -441,7 +443,7 @@ html,body {
   width:            100%;
   height:           100%;
   opacity:          0.5;
-  z-index:          5;
+  z-index:          999;
   background-color: #555555;
 }
 
@@ -473,7 +475,7 @@ html,body {
   margin-top:       -200px;
   width:            500px;
   height:           400px;
-  z-index:          10;
+  z-index:          1000;
   background-color: #ffffff;
   font-family:      var(--global-font);
   font-size:        var(--global-font-size-small);
@@ -512,7 +514,7 @@ html,body {
   margin-left:      -200px;
   width:            300px;
   height:           200px;
-  z-index:          10;
+  z-index:          1000;
   background-color: #ffffff;
   font-family:      var(--global-font);
   font-size:        var(--global-font-size-small);
@@ -639,3 +641,10 @@ html,body {
 svg {
   overflow: visible;
 }
+
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+

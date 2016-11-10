@@ -36,11 +36,14 @@ export function getMetricsForSource(source) {
   if (source == 'source02') {
     return ['name','country','age','happiness','income','strength'];
   }
+  if (source == 'source03') {
+    return ['precinct','numberofcrimes','policesatisfaction'];
+  }
   return [];
 }
 
 export function getSources() {
-  return ['(undefined)','source01','source02'];
+  return ['(undefined)','source01','source02','source03'];
 }
 
 export function getAggMethods() {
@@ -165,19 +168,24 @@ export function saveloadRestPoint() {
   //return("http://lvh.me/cgi-bin/rest/rest_saveload.py");
   return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_saveload.py");
 }
-
-// This rest point will create the token in the database
-// and return the cookie which includes the token.
-// Am I getting that right?
 export function attemptloginRestPoint() {
   return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_attemptlogin.py");
 }
-
 export function getDashboardForTokenRestPoint() {
   return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_getDashboardForToken.py");
 }
-
+export function jsonRestPoint() {
+  return("http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_rest/REST_getJSON.py");
+}
 export function completeParams(params) {
   params.token = cookieExtract('token');
   return(params);
 }
+
+
+export function getColor(v) {
+  var carray = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
+  return carray[Math.round(9*v)];
+}
+
+
