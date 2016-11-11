@@ -28,7 +28,7 @@ class WidgetGeospatial extends React.Component {
     var thisthis = this;
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
     const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.metrics[0]+': '+feature.properties[widgetdata.metrics[0]];
-    //layer.bindPopup(datum);
+    layer.bindPopup(datum);
     layer.on('mouseover', function (e) {
       thisthis.setState({currentLabel: datum});      
     });
@@ -158,7 +158,9 @@ class WidgetGeospatial extends React.Component {
         <Map center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
         <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
         {this.state.data !== undefined ?
-         <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}><WidgetGeospatialInfo myLabel={this.state.currentLabel}/></GeoJson> :
+         <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}>
+         {/*<WidgetGeospatialInfo key={this.state.key} myLabel={this.state.currentLabel}/>*/}
+         </GeoJson> :
          <div/>}
       </Map>
         </div>

@@ -38404,7 +38404,7 @@
 	      var thisthis = this;
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var datum = widgetdata.metrics[1] + ': ' + feature.properties[widgetdata.metrics[1]] + '<br>' + widgetdata.metrics[0] + ': ' + feature.properties[widgetdata.metrics[0]];
-	      //layer.bindPopup(datum);
+	      layer.bindPopup(datum);
 	      layer.on('mouseover', function (e) {
 	        thisthis.setState({ currentLabel: datum });
 	      });
@@ -38519,7 +38519,7 @@
 	      var innersubcss = 'widget-sub-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }, React.createElement(_reactLeaflet.Map, { center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }), this.state.data !== undefined ? React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, onEachFeature: this.onEachFeature, style: this.style, data: this.state.data }, React.createElement(_WidgetGeospatialInfo2.default, { myLabel: this.state.currentLabel })) : React.createElement('div', null))), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }, React.createElement(_reactLeaflet.Map, { center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }), this.state.data !== undefined ? React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, onEachFeature: this.onEachFeature, style: this.style, data: this.state.data }) : React.createElement('div', null))), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
