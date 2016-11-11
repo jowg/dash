@@ -35,9 +35,8 @@ class WidgetGeospatial extends React.Component {
     layer.on('mouseout', function (e) {
       thisthis.setState({currentLabel: 'Hover for Data'});      
     });
-
   }
-
+  
   componentDidUpdate(prevProps,prevState) {
     var newData = this.props.widgets[this.props.widgetindex].data;
     var oldData = prevProps.widgets[prevProps.widgetindex].data;
@@ -81,6 +80,8 @@ class WidgetGeospatial extends React.Component {
       thisthis.setState({data: dummy,key: 1-thisthis.state.key })
       //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Geospatial Widget Not Configured</div>');
     } else {
+      //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
+      this.setState({data:undefined});
       $.post(
         dataRestPoint(),
         completeParams({
@@ -155,14 +156,16 @@ class WidgetGeospatial extends React.Component {
     return (
         <div>
         <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
-        <Map center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
-        <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
         {this.state.data !== undefined ?
+         <div>
+         <Map key={this.state.key} center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
+         <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
          <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}>
          {/*<WidgetGeospatialInfo key={this.state.key} myLabel={this.state.currentLabel}/>*/}
-         </GeoJson> :
-         <div/>}
-      </Map>
+         </GeoJson> 
+         </Map>
+         </div>
+         : <div className={innerchartcss}>Retrieving Data</div>}
         </div>
         <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
         </div>

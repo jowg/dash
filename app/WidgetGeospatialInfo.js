@@ -6,6 +6,7 @@ import {MapControl} from 'react-leaflet';
 export default class CenterControl extends MapControl { 
 
   constructor(props) {
+    console.log('connnnstructor!');
     super();
     this.state = {
       myLabel:props.myLabel,
@@ -19,6 +20,9 @@ export default class CenterControl extends MapControl {
       ReactDOM.render(jsx, div);
       return div;
     };
+    this.state.centerControl.onRemove = function(map) {
+      console.log('bonk');
+    }
     this.leafletElement = this.state.centerControl;    
   }
 
