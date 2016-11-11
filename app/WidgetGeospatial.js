@@ -6,6 +6,7 @@ import {Map,TileLayer,GeoJson} from 'react-leaflet';
 import {dataRestPoint,completeParams,jsonRestPoint,getColor,tableFromRawData} from './support.js';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import WidgetGeospatialInfo from './WidgetGeospatialInfo.js';
 
 class WidgetGeospatial extends React.Component {
   constructor(props) {
@@ -15,7 +16,8 @@ class WidgetGeospatial extends React.Component {
       longitude: props.widgets[props.widgetindex].data.longitude,
       latitude: props.widgets[props.widgetindex].data.latitude,
       zoom: props.widgets[props.widgetindex].data.zoom,
-      key: 0
+      key: 0,
+      currentLabel: 'Hover for Data'
     };
     this.updateInternals = this.updateInternals.bind(this);
     this.style = this.style.bind(this);
@@ -23,11 +25,17 @@ class WidgetGeospatial extends React.Component {
   }
 
   onEachFeature(feature,layer) {
+    var thisthis = this;
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
-    const datum = '<h3>'+widgetdata.metrics[0]+': '+feature.properties[widgetdata.metrics[0]]+'</h3>';
-    layer.bindPopup(datum);
-    //layer.on('click', function (e) {
-    //});
+    const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.metrics[0]+': '+feature.properties[widgetdata.metrics[0]];
+    //layer.bindPopup(datum);
+    layer.on('mouseover', function (e) {
+      thisthis.setState({currentLabel: datum});      
+    });
+    layer.on('mouseout', function (e) {
+      thisthis.setState({currentLabel: 'Hover for Data'});      
+    });
+
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -100,6 +108,7 @@ class WidgetGeospatial extends React.Component {
             if (v < min) {min = v;}
             if (v > max) {max = v;}
             datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
+            datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
             g.push(datum.geojsonfeature);
           });
           // The data property is not dynamic, meaning that changing it
@@ -131,8 +140,8 @@ class WidgetGeospatial extends React.Component {
       fillColor: getColor(v),
       weight: 1,
       opacity: 1,
-      color: 'white',
-      dashArray: '3',
+      color: '#555555',
+      //dashArray: '3',
       fillOpacity: 0.7
     };
   }
@@ -148,7 +157,9 @@ class WidgetGeospatial extends React.Component {
         <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
         <Map center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
         <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
-        {this.state.data !== undefined ? <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}/> : <div/>}
+        {this.state.data !== undefined ?
+         <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}><WidgetGeospatialInfo myLabel={this.state.currentLabel}/></GeoJson> :
+         <div/>}
       </Map>
         </div>
         <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>

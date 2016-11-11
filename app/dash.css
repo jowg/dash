@@ -648,3 +648,17 @@ svg {
   height: 100%;
 }
 
+/* leaflet box div */
+.myinfobox {
+  text-align: left;
+  width: 200px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #eeeeee;
+  color: black;
+  font-weight: bold;
+  font-family: var(--global-font);
+  font-size:   var(--global-font-size-small);
+}
