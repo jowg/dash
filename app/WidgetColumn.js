@@ -37,10 +37,10 @@ class WidgetColumn extends React.Component {
       this.updateInternals();
     }
   }
-  
+
   updateInternals() {
     var thisthis = this;
-    var chart = this.refs.chart;        
+    var chart = this.refs.chart;
     var props = this.props;
     var data = props.widgets[props.widgetindex].data;
     var fs = data.filters.map(function(f) {
@@ -76,6 +76,10 @@ class WidgetColumn extends React.Component {
         function(rawData) {
           if (rawData.data.length === 0) {
             $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+            return false;
+          }
+          if (rawData.error === 1) {
+            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Data Error</div>');
             return false;
           }
           // Load the raw data into the raw data table and make it nice if necessary.
@@ -163,7 +167,7 @@ class WidgetColumn extends React.Component {
           }
         }
       );
-    }    
+    }
   }
 
   componentDidMount() {
@@ -171,42 +175,11 @@ class WidgetColumn extends React.Component {
   }
 
   render() {
-    var props = this.props;
-    var widgetdata = props.widgets[props.widgetindex].data;
-    var ranges = {
-      'Today':        [moment(), moment()],
-      'Yesterday':    [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-      'Last 7 Days':  [moment().subtract(6, 'days'), moment()],
-      'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-      'This Month':   [moment().startOf('month'), moment().endOf('month')],
-      'Last Month':   [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-      'This Year':    [moment().startOf('year'), moment().endOf('year')],
-    };
-    var outersizecss = '';
-    var innersubcss = '';
-    var innerchartcss = '';
-    var innerdatacss = '';
-    if ((widgetdata.width === 'half') && (widgetdata.height === 'half')) {
-      innerchartcss = 'widget-chart-container-hh';
-      innerdatacss = 'widget-data-container-hh';
-      outersizecss = 'widget-container-hh';
-      innersubcss = 'widget-sub-container-hh';
-    } else if ((widgetdata.width === 'full') && (widgetdata.height === 'half')) {
-      innerchartcss = 'widget-chart-container-fh';
-      innerdatacss = 'widget-data-container-fh';
-      outersizecss = 'widget-container-fh';
-      innersubcss = 'widget-sub-container-fh';
-    } else if ((widgetdata.width === 'half') && (widgetdata.height === 'full')) {
-      innerchartcss = 'widget-chart-container-hf';
-      innerdatacss = 'widget-data-container-hf';
-      outersizecss = 'widget-container-hf';
-      innersubcss = 'widget-sub-container-hf';
-    } else if ((widgetdata.width === 'full') && (widgetdata.height === 'full')) {
-      innerchartcss = 'widget-chart-container-ff';
-      innerdatacss = 'widget-data-container-ff';
-      outersizecss = 'widget-container-ff';
-      innersubcss = 'widget-sub-container-ff';
-    }
+    var widgetdata = this.props.widgets[this.props.widgetindex].data;
+    var outersizecss = 'widget-container-'+widgetdata.width+'-'+widgetdata.height;
+    var innersubcss = 'widget-sub-container-'+widgetdata.width+'-'+widgetdata.height;
+    var innerchartcss = 'widget-chart-container-'+widgetdata.width+'-'+widgetdata.height;
+    var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
         <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'/>

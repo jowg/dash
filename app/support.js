@@ -47,7 +47,7 @@ export function getSources() {
 }
 
 export function getAggMethods() {
-  return ['(undefined)','mean','sum'];
+  return ['(undefined)','mean','sum','count'];
 }
 
 export function getTimeframeOptions() {

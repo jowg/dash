@@ -48,7 +48,7 @@ html,body {
 .visible {
   display: inline-block;
 }
-.widget-container-hh {
+.widget-container-half-half {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
   border-radius:    var(--widget-border-radius);
@@ -59,14 +59,14 @@ html,body {
   float:            left;
   text-align:       center;
 }
-.widget-sub-container-hh {
+.widget-sub-container-half-half {
   height: 300px;
 }
-.widget-chart-container-hh {
+.widget-chart-container-half-half {
   width:  300px;
   height: 300px;
 }
-.widget-data-container-hh {
+.widget-data-container-half-half {
   padding: 10px;
   width: 300px;
   height: 90%;
@@ -74,7 +74,7 @@ html,body {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.widget-container-fh {
+.widget-container-full-half {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
   border-radius:    var(--widget-border-radius);
@@ -85,14 +85,14 @@ html,body {
   float:            left;
   text-align:       center;
 }
-.widget-sub-container-fh {
+.widget-sub-container-full-half {
   height: 300px;
 }
-.widget-chart-container-fh {
+.widget-chart-container-full-half {
   width:  650px;
   height: 300px;
 }
-.widget-data-container-fh {
+.widget-data-container-full-half {
   padding: 10px;
   width: 650px;
   height: 90%;
@@ -100,7 +100,7 @@ html,body {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.widget-container-hf {
+.widget-container-half-full {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
   border-radius:    var(--widget-border-radius);
@@ -111,14 +111,14 @@ html,body {
   float:            left;
   text-align:       center;
 }
-.widget-sub-container-hf {
+.widget-sub-container-half-full {
   height: 650px;
 }
-.widget-chart-container-hf {
+.widget-chart-container-half-full {
   width:  300px;
   height: 650px;
 }
-.widget-data-container-hf {
+.widget-data-container-half-full {
   padding: 10px;
   width: 300px;
   height: 90%;
@@ -126,7 +126,7 @@ html,body {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.widget-container-ff {
+.widget-container-full-full {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
   border-radius:    var(--widget-border-radius);
@@ -137,14 +137,14 @@ html,body {
   float:            left;
   text-align:       center;
 }
-.widget-sub-container-ff {
+.widget-sub-container-full-full {
   height: 650px;
 }
-.widget-chart-container-ff {
+.widget-chart-container-full-full {
   width:  650px;;
   height: 650px;
 }
-.widget-data-container-ff {
+.widget-data-container-full-full {
   padding: 10px;
   width: 650px;
   height: 90%;

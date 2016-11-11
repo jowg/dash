@@ -71,21 +71,8 @@ class Widget extends React.Component {
       'Last Month':   [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
       'This Year':    [moment().startOf('year'), moment().endOf('year')],
     };
-    var outersizecss = '';
-    var innersubcss = '';
-    if ((widgetdata.width === 'half') && (widgetdata.height === 'half')) {
-      outersizecss = 'widget-container-hh';
-      innersubcss = 'widget-sub-container-hh';
-    } else if ((widgetdata.width === 'full') && (widgetdata.height === 'half')) {
-      outersizecss = 'widget-container-fh';
-      innersubcss = 'widget-sub-container-fh';
-    } else if ((widgetdata.width === 'half') && (widgetdata.height === 'full')) {
-      outersizecss = 'widget-container-hf';
-      innersubcss = 'widget-sub-container-hf';
-    } else if ((widgetdata.width === 'full') && (widgetdata.height === 'full')) {
-      outersizecss = 'widget-container-ff';
-      innersubcss = 'widget-sub-container-ff';
-    }
+    var outersizecss = 'widget-container-'+widgetdata.width+'-'+widgetdata.height;
+    var innersubcss = 'widget-sub-container-'+widgetdata.width+'-'+widgetdata.height;
     return(
         <div className={outersizecss}>
         <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>
@@ -117,7 +104,7 @@ class Widget extends React.Component {
           }
         })()}
       </div>
-        <img className='widget-flippy-right' src='flippy.png' title='Flip to View Data' onClick={this.flipToOtherSide}>
+        <img className='widget-flippy-right' src='flippy.png' title={widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic'} onClick={this.flipToOtherSide}>
         </img>
 
         {(() => {
