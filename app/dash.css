@@ -1,12 +1,12 @@
 :root {
-  --body-color:                         #aaaaaa;
-  --tabholder-color:                    #4a708b;
-  --tabholder-color-light:              #5a809b;
+  --body-color:                         #cccccc;
+  --topbar-color:                       #4a708b;
+  --tabholder-color:                    #ffffff;
   --tabholder-width:                    160px;
-  --tab-selected-background-color:      #aaaaaa;
-  --tab-unselected-background-color:    #4a708b;
-  --tab-hover-background-color:         #777777;
-  --tab-default-color:                  #eeeeee;
+  --tab-selected-background-color:      #e0e0e0;
+  --tab-hover-background-color:         #eeeeee;
+  --tab-default-color:                  #000000;
+  --topbar-default-color:               #ffffff;
   --widget-border-color:                #cccccc;
   --widget-border-radius:               5px;
   --widget-border-thickness:            1px;
@@ -59,6 +59,7 @@ html,body {
   height:           350px;
   float:            left;
   text-align:       center;
+  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
 }
 .widget-sub-container-half-half {
   height: 300px;
@@ -89,6 +90,7 @@ html,body {
   height:           350px;
   float:            left;
   text-align:       center;
+  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
 }
 .widget-sub-container-full-half {
   height: 300px;
@@ -119,6 +121,7 @@ html,body {
   height:           700px;
   float:            left;
   text-align:       center;
+  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
 }
 .widget-sub-container-half-full {
   height: 650px;
@@ -149,6 +152,7 @@ html,body {
   height:           700px;
   float:            left;
   text-align:       center;
+  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
 }
 .widget-sub-container-full-full {
   height: 650px;
@@ -302,7 +306,7 @@ html,body {
   top:              0px;
   width:            100%;
   height:           36px;
-  background-color: var(--tabholder-color);
+  background-color: var(--topbar-color);
   z-index:          900;
 }
 
@@ -330,14 +334,16 @@ html,body {
   visibility:   hidden;
 }
 .tabholder-left {
-  padding-top:      36px;
+  margin-top:       10px;
   position:         fixed;
-  left:             0px;
-  top:              0px;
+  left:             4px;
+  top:              46px;
+  bottom:           10px;
   width:            var(--tabholder-width);
-  height:           100%;
   background-color: var(--tabholder-color);
   z-index:          899;
+  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);
+  corner-radius:    var(--widget-border-radius);
 }
 
 .tab-selected {
@@ -351,18 +357,12 @@ html,body {
   padding-bottom:            5px;
   margin-top:                0px;
   margin-bottom:             0px;
-  border:                    0px;
-  border-top:                1px solid var(--tab-selected-background-color);
-  border-bottom:             1px solid var(--tab-selected-background-color);
-  border-left:               1px solid var(--tab-selected-background-color);
-  border-top-left-radius:    15px;
-  border-bottom-left-radius: 15px;
   z-index:                   3;
   cursor:                    pointer;
 }
 .tab-unselected {
   color:                     var(--tab-default-color);
-  background-color:          var(--tab-unselected-background-color);
+  background-color:          var(--tabholder-color);
   font-family:               var(--global-font);
   font-size:                 var(--global-font-size-small);
   padding-left:              10px;
@@ -371,18 +371,11 @@ html,body {
   padding-bottom:            5px;
   margin-top:                0px;
   margin-bottom:             0px;
-  border:                    0px;
-  border-top:                1px solid var(--tab-unselected-background-color);
-  border-bottom:             1px solid var(--tab-unselected-background-color);
-  border-left:               1px solid var(--tab-unselected-background-color);
-  border-top-left-radius:    15px;
-  border-bottom-left-radius: 15px;
   z-index:                   3;
   cursor:                    pointer;
 }
 .tab-unselected:hover {
-  background-color: var(--tab-selected-background-color);
-  margin-right:     5px;
+  background-color: var(--tab-hover-background-color);
 }
 
 .daterangepickerholder-small:hover {
@@ -409,7 +402,7 @@ html,body {
   width:                   45%;
   height:                  32px;
   line-height:             32px;
-  color:                   var(--tab-default-color);
+  color:                   var(--topbar-default-color);
   background-color:        var(--datepicker-background-color);
   font-family:             var(--global-font);
   font-size:               var(--global-font-size-medium);
@@ -434,7 +427,7 @@ html,body {
   width:                   45%;
   height:                  32px;
   line-height:             32px;
-  color:                   var(--tab-default-color);
+  color:                   var(--topbar-default-color);
   background-color:        var(--datepicker-background-color);
   font-family:             var(--global-font);
   font-size:               var(--global-font-size-medium);
@@ -508,7 +501,7 @@ html,body {
 }
 
 .addstuffbutton:hover {
-  background-color: var(--tabholder-color-light);
+  background-color: var(--tab-selected-background-color);
 }
 .addstuffbutton {
   color:          var(--tab-default-color);
@@ -547,22 +540,24 @@ html,body {
 
 .dropbtn {
   color:                     var(--tab-default-color);
-  background-color:          var(--tab-unselected-background-color);
+  background-color:          var(--tabholder-color);
   font-family:               var(--global-font);
   font-size:                 var(--global-font-size-medium);
+  padding-left:              10px;
+  padding-right:             10px;
   padding-top:               5px;
   padding-bottom:            5px;
   margin-top:                0px;
   margin-bottom:             0px;
-  margin-left:               10px;
+  margin-left:               0px;
   cursor:                    pointer;
   z-index:                   4;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
-  position: fixed;
-  bottom:   8px;
+  position: absolute;
+  bottom:   0px;
   left:     0px;
   display:  inline-block;
   width:    var(--tabholder-width);
@@ -578,7 +573,7 @@ html,body {
   box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 .dropdown:hover .dropbtn {
-  background-color: var(--tabholder-color-light);
+  background-color: var(--tab-selected-background-color);
 }
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
