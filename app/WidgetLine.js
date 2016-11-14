@@ -37,6 +37,7 @@ class WidgetLine extends React.Component {
         (newData.width                   !== oldData.width) ||
         (newData.height                  !== oldData.height) ||
         (newData.linetype                !== oldData.linetype) ||
+        (newData.marker                  !== oldData.marker) ||
         ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
                                            (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
       this.updateInternals();
@@ -68,6 +69,7 @@ class WidgetLine extends React.Component {
     if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Not Configured</div>');
     } else {
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
         dataRestPoint(),
         completeParams({
@@ -143,6 +145,27 @@ class WidgetLine extends React.Component {
               },
               plotOptions: {
                 line: {
+                  marker: {
+                    enabled: data.marker === 'none' ? false : true
+                  },
+                  dataLabels: {
+                    enabled: false,
+                    format:  '<b>{point.z}</b>: {point.y:.2f} '//,
+                  },
+                },
+                spline: {
+                  marker: {
+                    enabled: data.marker === 'none' ? false : true
+                  },
+                  dataLabels: {
+                    enabled: false,
+                    format:  '<b>{point.z}</b>: {point.y:.2f} '//,
+                  },
+                },
+                area: {
+                  marker: {
+                    enabled: data.marker === 'none' ? false : true
+                  },
                   dataLabels: {
                     enabled: false,
                     format:  '<b>{point.z}</b>: {point.y:.2f} '//,

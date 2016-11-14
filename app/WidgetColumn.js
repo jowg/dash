@@ -63,6 +63,7 @@ class WidgetColumn extends React.Component {
     if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.metrics[1] === '(undefined)') || (data.aggMethod === '(undefined)') || (data.timeframe === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Not Configured</div>');
     } else {
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
         dataRestPoint(),
         completeParams({

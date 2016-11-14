@@ -678,13 +678,16 @@ svg {
 }
 
 /* Fancy Select Button */
+.widget-bar-holder {
+  display: inline-block;  
+}
 .widget-options-div-selected {
   display: inline-block;
   border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
   font-family: var(--global-font);  
-  font-size:   var(--global-font-size-90);
+  font-size:   var(--global-font-size-90);  
 }
 .widget-options-div {
   display: inline-block;
@@ -704,6 +707,7 @@ svg {
   border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
+  margin-left: 2px;
   font-family: var(--global-font);  
   font-size:   var(--global-font-size-90);
   border-top-left-radius:  5px;
@@ -714,6 +718,7 @@ svg {
   border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
+  margin-left: 2px;
   font-family: var(--global-font);  
   font-size:   var(--global-font-size-90);
   border-top-left-radius:  5px;
@@ -729,6 +734,7 @@ svg {
   border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
+  margin-right: 2px;
   font-family: var(--global-font);  
   font-size:   var(--global-font-size-90);
   border-top-right-radius:  5px;
@@ -740,6 +746,7 @@ svg {
   border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
+  margin-right: 2px;
   font-family: var(--global-font);  
   font-size:   var(--global-font-size-90);
   border-top-right-radius:  5px;

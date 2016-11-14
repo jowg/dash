@@ -60,6 +60,7 @@ class WidgetHistogram extends React.Component {
     if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.buckets === '(undefined)') || (data.timeframe === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Not Configured!');
     } else {
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
         dataRestPoint(),
         completeParams({

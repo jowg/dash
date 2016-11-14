@@ -69,6 +69,7 @@ class WidgetPie extends React.Component {
         (data.timeframe  === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
     } else {
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
         dataRestPoint(),
         completeParams({

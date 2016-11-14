@@ -16,12 +16,13 @@ class SelectBar extends React.Component {
     //var data = props.widgets[props.widgetindex].data;
     this.state = {
       control:     props.control,
-      current:     props.current,
+      current:     props.current === undefined ? props.choices[0] : props.current,
       choices:     props.choices
     }
     this.selectChoiceUpdate      = this.selectChoiceUpdate.bind(this);
   }
   selectChoiceUpdate(e) {
+    console.log(e);
     this.setState({
       current: e
     });
@@ -36,11 +37,11 @@ class SelectBar extends React.Component {
         <div style={{display:'inline-block'}}>
         {thisthis.state.choices.map(function(option,index) {
           if (index == 0) {
-            return(<div className={option===thisthis.state.current ? 'widget-options-div-left-selected' : 'widget-options-div-left'} onClick={thisthis.selectChoiceUpdate.bind(thisthis,option)}>{option}</div>)
+            return(<div className={option===thisthis.state.current ? 'widget-options-div-left-selected' : 'widget-options-div-left'} style={{width:thisthis.props.width}} onClick={thisthis.selectChoiceUpdate.bind(thisthis,option)}>{option}</div>)
           } else if (index === thisthis.state.choices.length-1) {
-            return(<div className={option===thisthis.state.current ? 'widget-options-div-right-selected' : 'widget-options-div-right'} onClick={thisthis.selectChoiceUpdate.bind(thisthis,option)}>{option}</div>)
+            return(<div className={option===thisthis.state.current ? 'widget-options-div-right-selected' : 'widget-options-div-right'} style={{width:thisthis.props.width}} onClick={thisthis.selectChoiceUpdate.bind(thisthis,option)}>{option}</div>)
           } else {
-            return(<div className={option===thisthis.state.current ? 'widget-options-div-selected' : 'widget-options-div'} onClick={thisthis.selectChoiceUpdate.bind(thisthis,option)}>{option}</div>)
+            return(<div className={option===thisthis.state.current ? 'widget-options-div-selected' : 'widget-options-div'} style={{width:thisthis.props.width}} onClick={thisthis.selectChoiceUpdate.bind(thisthis,option)}>{option}</div>)
           }
         })}
       </div>

@@ -77,28 +77,29 @@ class Widget extends React.Component {
     var innersubcss = 'widget-sub-container-'+widgetdata.width+'-'+widgetdata.height;
     return(
         <div className={outersizecss}>
-        <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>        
+        <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>
+        {/* Any widget-specific selects at the top. */}
+        {(widgetdata.fob === 'front' && widgetdata.type === 'line') ?          
+         <div className='widget-bar-holder'>
+         <SelectBar widgetindex={this.props.widgetindex} control={'linetype'} width={50} current={widgetdata.linetype} choices={['line','spline','area']}/>
+         <SelectBar widgetindex={this.props.widgetindex} control={'marker'} width={50} current={widgetdata.marker} choices={['points','none']}/>
+         </div> : <div style={{display:'inline-block'}}/>}
+        {/* Timeframe */}
         {(() => {
-          switch (widgetdata.type) {
-          case 'line': return(<SelectBar widgetindex={this.props.widgetindex} control={'linetype'} current={widgetdata.linetype || 'line'} choices={['line','spline','area']}/>);
-          default: return(<div style={{display:'inline-block'}}/>);
-          }
-        })()}      
-      {(() => {
         switch (widgetdata.timeframe) {
-          case 'tab':  return(<img className='widget-cog-right' title='Locked to Tab' src='lock_time.png'/>);
-          case 'custom': return(
-              <div className='daterangepickerholder-small'>
-              <DateRangePicker onApply={this.datepickerUpdate} startDate={moment(widgetdata.myStartDateISO)} endDate={moment(widgetdata.myEndDateISO)} ranges={ranges} alwaysShowCalendars={false}>
-              <div>{moment(widgetdata.myStartDateISO).format('MM/DD/YYYY')}-{moment(widgetdata.myEndDateISO).format('MM/DD/YYYY')}</div>
-              </DateRangePicker>
-              </div>);
-          default: return (<div className='widget-cog-right' style={{visible:'hidden'}}></div>);
-          }
+        case 'tab':  return(<img className='widget-cog-right' title='Locked to Tab' src='lock_time.png'/>);
+        case 'custom': return(
+            <div className='daterangepickerholder-small'>
+            <DateRangePicker onApply={this.datepickerUpdate} startDate={moment(widgetdata.myStartDateISO)} endDate={moment(widgetdata.myEndDateISO)} ranges={ranges} alwaysShowCalendars={false}>
+            <div>{moment(widgetdata.myStartDateISO).format('MM/DD/YYYY')}-{moment(widgetdata.myEndDateISO).format('MM/DD/YYYY')}</div>
+            </DateRangePicker>
+            </div>);
+        default: return (<div className='widget-cog-right' style={{visible:'hidden'}}></div>);
+        }
         })()}
+        {/* The widget itself. */}
         <div style={{clear:'both'}}></div>
         <div className={innersubcss}>
-
         {(() => {
           switch (widgetdata.type) {
           case 'pie':         return(<WidgetPie        widgetindex={this.props.widgetindex}/>);
@@ -110,11 +111,10 @@ class Widget extends React.Component {
           case 'line':        return(<WidgetLine       widgetindex={this.props.widgetindex}/>);
           case 'geospatial':  return(<WidgetGeospatial widgetindex={this.props.widgetindex}/>);
           }
-        })()}
-      </div>
-        <img className='widget-flippy-right' src='flippy.png' title={widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic'} onClick={this.flipToOtherSide}>
-        </img>
-
+        })()}</div>
+        {/* The widget flip control. */}
+        <img className='widget-flippy-right' src='flippy.png' title={widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic'} onClick={this.flipToOtherSide}></img>
+        {/* The widget config. */}
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
           case 'pie':         return(<WidgetConfigPie        widgetindex={props.widgetindex}/>);
