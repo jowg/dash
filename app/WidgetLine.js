@@ -3,11 +3,9 @@ var ReactDOM = require('react-dom');
 var moment = require('moment');
 var Highcharts = require('highcharts');
 
-import { Map ,TileLayer,GeoJson } from 'react-leaflet';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
-
 
 class WidgetLine extends React.Component {
   constructor(props) {
@@ -38,6 +36,7 @@ class WidgetLine extends React.Component {
         (newData.aggMethod               !== oldData.aggMethod) ||
         (newData.width                   !== oldData.width) ||
         (newData.height                  !== oldData.height) ||
+        (newData.linetype                !== oldData.linetype) ||
         ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
                                            (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
       this.updateInternals();
@@ -134,7 +133,7 @@ class WidgetLine extends React.Component {
           } else {
 	          Highcharts.chart(ReactDOM.findDOMNode(chart),{
               chart: {
-                type: 'line'
+                type: data.linetype || 'line'
               },
               credits: {
                 enabled: false

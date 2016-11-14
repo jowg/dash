@@ -167,7 +167,7 @@ class WidgetGeospatial extends React.Component {
          </div>
          : <div className={innerchartcss}>Retrieving Data</div>}
         </div>
-        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
+        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back' ? 'inline-block':'none')}} ref='chartdata'></div>
         </div>
     );
   }

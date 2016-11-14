@@ -67,7 +67,7 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
+	var moment = __webpack_require__(/*! moment */ 418);
 	
 	// Mine.
 	
@@ -17372,19 +17372,19 @@
 	
 	var _Widget2 = _interopRequireDefault(_Widget);
 	
-	var _ConfigureAddWidget = __webpack_require__(/*! ./ConfigureAddWidget.js */ 541);
+	var _ConfigureAddWidget = __webpack_require__(/*! ./ConfigureAddWidget.js */ 543);
 	
 	var _ConfigureAddWidget2 = _interopRequireDefault(_ConfigureAddWidget);
 	
-	var _ConfigureAddTab = __webpack_require__(/*! ./ConfigureAddTab.js */ 542);
+	var _ConfigureAddTab = __webpack_require__(/*! ./ConfigureAddTab.js */ 544);
 	
 	var _ConfigureAddTab2 = _interopRequireDefault(_ConfigureAddTab);
 	
-	var _ConfigureEditTab = __webpack_require__(/*! ./ConfigureEditTab.js */ 543);
+	var _ConfigureEditTab = __webpack_require__(/*! ./ConfigureEditTab.js */ 545);
 	
 	var _ConfigureEditTab2 = _interopRequireDefault(_ConfigureEditTab);
 	
-	var _ConfigureLogin = __webpack_require__(/*! ./ConfigureLogin.js */ 544);
+	var _ConfigureLogin = __webpack_require__(/*! ./ConfigureLogin.js */ 546);
 	
 	var _ConfigureLogin2 = _interopRequireDefault(_ConfigureLogin);
 	
@@ -17415,8 +17415,8 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 531);
-	var moment = __webpack_require__(/*! moment */ 417);
+	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 533);
+	var moment = __webpack_require__(/*! moment */ 418);
 	
 	__webpack_require__(/*! ./dash.css */ 197);
 	
@@ -17726,33 +17726,37 @@
 	
 	var _WidgetGeospatial2 = _interopRequireDefault(_WidgetGeospatial);
 	
-	var _WidgetPie = __webpack_require__(/*! ./WidgetPie.js */ 523);
+	var _WidgetPie = __webpack_require__(/*! ./WidgetPie.js */ 524);
 	
 	var _WidgetPie2 = _interopRequireDefault(_WidgetPie);
 	
-	var _WidgetHistogram = __webpack_require__(/*! ./WidgetHistogram.js */ 525);
+	var _WidgetHistogram = __webpack_require__(/*! ./WidgetHistogram.js */ 526);
 	
 	var _WidgetHistogram2 = _interopRequireDefault(_WidgetHistogram);
 	
-	var _WidgetBar = __webpack_require__(/*! ./WidgetBar.js */ 526);
+	var _WidgetBar = __webpack_require__(/*! ./WidgetBar.js */ 527);
 	
 	var _WidgetBar2 = _interopRequireDefault(_WidgetBar);
 	
-	var _WidgetColumn = __webpack_require__(/*! ./WidgetColumn.js */ 527);
+	var _WidgetColumn = __webpack_require__(/*! ./WidgetColumn.js */ 528);
 	
 	var _WidgetColumn2 = _interopRequireDefault(_WidgetColumn);
 	
-	var _WidgetStats = __webpack_require__(/*! ./WidgetStats.js */ 528);
+	var _WidgetStats = __webpack_require__(/*! ./WidgetStats.js */ 529);
 	
 	var _WidgetStats2 = _interopRequireDefault(_WidgetStats);
 	
-	var _WidgetScatter = __webpack_require__(/*! ./WidgetScatter.js */ 529);
+	var _WidgetScatter = __webpack_require__(/*! ./WidgetScatter.js */ 530);
 	
 	var _WidgetScatter2 = _interopRequireDefault(_WidgetScatter);
 	
-	var _WidgetLine = __webpack_require__(/*! ./WidgetLine.js */ 530);
+	var _WidgetLine = __webpack_require__(/*! ./WidgetLine.js */ 531);
 	
 	var _WidgetLine2 = _interopRequireDefault(_WidgetLine);
+	
+	var _SelectBar = __webpack_require__(/*! ./SelectBar.js */ 532);
+	
+	var _SelectBar2 = _interopRequireDefault(_SelectBar);
 	
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
@@ -17778,17 +17782,17 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 531);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var DateRangePicker = __webpack_require__(/*! react-bootstrap-daterangepicker */ 533);
 	var L = __webpack_require__(/*! leaflet */ 210);
 	
 	//import {Map,TileLayer } from 'react-leaflet';
 	
 	
 	__webpack_require__(/*! ./dash.css */ 197);
-	__webpack_require__(/*! ./daterangepicker.css */ 534);
-	__webpack_require__(/*! ./leaflet.css */ 536);
+	__webpack_require__(/*! ./daterangepicker.css */ 536);
+	__webpack_require__(/*! ./leaflet.css */ 538);
 	
 	// How does the dash get access to the store?
 	
@@ -17849,6 +17853,13 @@
 	      var outersizecss = 'widget-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innersubcss = 'widget-sub-container-' + widgetdata.width + '-' + widgetdata.height;
 	      return React.createElement('div', { className: outersizecss }, React.createElement('img', { className: 'widget-cog-left', title: 'Configure Widget', onClick: this.openWidgetConfig.bind(this), src: 'cog_icon.png' }), function () {
+	        switch (widgetdata.type) {
+	          case 'line':
+	            return React.createElement(_SelectBar2.default, { widgetindex: _this2.props.widgetindex, control: 'linetype', current: widgetdata.linetype, choices: ['line', 'spline', 'area'] });
+	          default:
+	            return React.createElement('div', { style: { display: 'inline-block' } });
+	        }
+	      }(), function () {
 	        switch (widgetdata.timeframe) {
 	          case 'tab':
 	            return React.createElement('img', { className: 'widget-cog-right', title: 'Locked to Tab', src: 'lock_time.png' });
@@ -36122,7 +36133,7 @@
 	
 	
 	// module
-	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 300px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 300px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 650px;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 650px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 650px;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 650px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #0000ff;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  corner-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   0px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n", ""]);
+	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 300px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 300px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 650px;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 650px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 650px;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 650px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #0000ff;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #0000ff;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-options-div-selected {\n  display: inline-block;\n  border: 1px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div {\n  display: inline-block;\n  border: 1px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border: 1px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display: inline-block;\n  border: 1px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display: inline-block;\n  border: 1px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right {\n  \n  display: inline-block;\n  border: 1px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}", ""]);
 	
 	// exports
 
@@ -38346,7 +38357,7 @@
 	
 	var _redux = __webpack_require__(/*! redux */ 38);
 	
-	var _WidgetGeospatialInfo = __webpack_require__(/*! ./WidgetGeospatialInfo.js */ 545);
+	var _WidgetGeospatialInfo = __webpack_require__(/*! ./WidgetGeospatialInfo.js */ 417);
 	
 	var _WidgetGeospatialInfo2 = _interopRequireDefault(_WidgetGeospatialInfo);
 	
@@ -38374,7 +38385,7 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
+	var moment = __webpack_require__(/*! moment */ 418);
 	
 	var WidgetGeospatial = function (_React$Component) {
 	  _inherits(WidgetGeospatial, _React$Component);
@@ -60587,6 +60598,112 @@
 
 /***/ },
 /* 417 */
+/*!*********************************!*\
+  !*** ./WidgetGeospatialInfo.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _react = __webpack_require__(/*! react */ 4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 64);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _leaflet = __webpack_require__(/*! leaflet */ 210);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var CenterControl = function (_MapControl) {
+	  _inherits(CenterControl, _MapControl);
+	
+	  function CenterControl(props) {
+	    _classCallCheck(this, CenterControl);
+	
+	    console.log('connnnstructor!');
+	
+	    var _this = _possibleConstructorReturn(this, (CenterControl.__proto__ || Object.getPrototypeOf(CenterControl)).call(this));
+	
+	    _this.state = {
+	      myLabel: props.myLabel,
+	      centerControl: _leaflet2.default.control({ position: 'bottomright' })
+	    };
+	    return _this;
+	  }
+	
+	  _createClass(CenterControl, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var jsx = _react2.default.createElement('div', { className: 'myinfobox' }, this.state.myLabel);
+	      this.state.centerControl.onAdd = function (map) {
+	        var div = _leaflet2.default.DomUtil.create('div', '');
+	        _reactDom2.default.render(jsx, div);
+	        return div;
+	      };
+	      this.state.centerControl.onRemove = function (map) {
+	        console.log('bonk');
+	      };
+	      this.leafletElement = this.state.centerControl;
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      var jsx = "<div class='myinfobox'>" + nextProps.myLabel + "</div>";
+	      this.state.centerControl.getContainer().innerHTML = jsx;
+	      this.setState({ myLabel: nextProps.myLabel });
+	    }
+	  }]);
+	
+	  return CenterControl;
+	}(_reactLeaflet.MapControl);
+	
+	exports.default = CenterControl;
+
+/***/ },
+/* 418 */
 /*!*****************************!*\
   !*** ../~/moment/moment.js ***!
   \*****************************/
@@ -62388,7 +62505,7 @@
 	                module && module.exports) {
 	            try {
 	                oldLocale = globalLocale._abbr;
-	                __webpack_require__(/*! ./locale */ 418)("./" + name);
+	                __webpack_require__(/*! ./locale */ 419)("./" + name);
 	                // because defineLocale currently also sets the global locale, we
 	                // want to undo that for lazy loaded locales
 	                locale_locales__getSetGlobalLocale(oldLocale);
@@ -64829,221 +64946,221 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../webpack/buildin/module.js */ 46)(module)))
 
 /***/ },
-/* 418 */
+/* 419 */
 /*!***********************************!*\
   !*** ../~/moment/locale ^\.\/.*$ ***!
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./af": 419,
-		"./af.js": 419,
-		"./ar": 420,
-		"./ar-ly": 421,
-		"./ar-ly.js": 421,
-		"./ar-ma": 422,
-		"./ar-ma.js": 422,
-		"./ar-sa": 423,
-		"./ar-sa.js": 423,
-		"./ar-tn": 424,
-		"./ar-tn.js": 424,
-		"./ar.js": 420,
-		"./az": 425,
-		"./az.js": 425,
-		"./be": 426,
-		"./be.js": 426,
-		"./bg": 427,
-		"./bg.js": 427,
-		"./bn": 428,
-		"./bn.js": 428,
-		"./bo": 429,
-		"./bo.js": 429,
-		"./br": 430,
-		"./br.js": 430,
-		"./bs": 431,
-		"./bs.js": 431,
-		"./ca": 432,
-		"./ca.js": 432,
-		"./cs": 433,
-		"./cs.js": 433,
-		"./cv": 434,
-		"./cv.js": 434,
-		"./cy": 435,
-		"./cy.js": 435,
-		"./da": 436,
-		"./da.js": 436,
-		"./de": 437,
-		"./de-at": 438,
-		"./de-at.js": 438,
-		"./de.js": 437,
-		"./dv": 439,
-		"./dv.js": 439,
-		"./el": 440,
-		"./el.js": 440,
-		"./en-au": 441,
-		"./en-au.js": 441,
-		"./en-ca": 442,
-		"./en-ca.js": 442,
-		"./en-gb": 443,
-		"./en-gb.js": 443,
-		"./en-ie": 444,
-		"./en-ie.js": 444,
-		"./en-nz": 445,
-		"./en-nz.js": 445,
-		"./eo": 446,
-		"./eo.js": 446,
-		"./es": 447,
-		"./es-do": 448,
-		"./es-do.js": 448,
-		"./es.js": 447,
-		"./et": 449,
-		"./et.js": 449,
-		"./eu": 450,
-		"./eu.js": 450,
-		"./fa": 451,
-		"./fa.js": 451,
-		"./fi": 452,
-		"./fi.js": 452,
-		"./fo": 453,
-		"./fo.js": 453,
-		"./fr": 454,
-		"./fr-ca": 455,
-		"./fr-ca.js": 455,
-		"./fr-ch": 456,
-		"./fr-ch.js": 456,
-		"./fr.js": 454,
-		"./fy": 457,
-		"./fy.js": 457,
-		"./gd": 458,
-		"./gd.js": 458,
-		"./gl": 459,
-		"./gl.js": 459,
-		"./he": 460,
-		"./he.js": 460,
-		"./hi": 461,
-		"./hi.js": 461,
-		"./hr": 462,
-		"./hr.js": 462,
-		"./hu": 463,
-		"./hu.js": 463,
-		"./hy-am": 464,
-		"./hy-am.js": 464,
-		"./id": 465,
-		"./id.js": 465,
-		"./is": 466,
-		"./is.js": 466,
-		"./it": 467,
-		"./it.js": 467,
-		"./ja": 468,
-		"./ja.js": 468,
-		"./jv": 469,
-		"./jv.js": 469,
-		"./ka": 470,
-		"./ka.js": 470,
-		"./kk": 471,
-		"./kk.js": 471,
-		"./km": 472,
-		"./km.js": 472,
-		"./ko": 473,
-		"./ko.js": 473,
-		"./ky": 474,
-		"./ky.js": 474,
-		"./lb": 475,
-		"./lb.js": 475,
-		"./lo": 476,
-		"./lo.js": 476,
-		"./lt": 477,
-		"./lt.js": 477,
-		"./lv": 478,
-		"./lv.js": 478,
-		"./me": 479,
-		"./me.js": 479,
-		"./mi": 480,
-		"./mi.js": 480,
-		"./mk": 481,
-		"./mk.js": 481,
-		"./ml": 482,
-		"./ml.js": 482,
-		"./mr": 483,
-		"./mr.js": 483,
-		"./ms": 484,
-		"./ms-my": 485,
-		"./ms-my.js": 485,
-		"./ms.js": 484,
-		"./my": 486,
-		"./my.js": 486,
-		"./nb": 487,
-		"./nb.js": 487,
-		"./ne": 488,
-		"./ne.js": 488,
-		"./nl": 489,
-		"./nl.js": 489,
-		"./nn": 490,
-		"./nn.js": 490,
-		"./pa-in": 491,
-		"./pa-in.js": 491,
-		"./pl": 492,
-		"./pl.js": 492,
-		"./pt": 493,
-		"./pt-br": 494,
-		"./pt-br.js": 494,
-		"./pt.js": 493,
-		"./ro": 495,
-		"./ro.js": 495,
-		"./ru": 496,
-		"./ru.js": 496,
-		"./se": 497,
-		"./se.js": 497,
-		"./si": 498,
-		"./si.js": 498,
-		"./sk": 499,
-		"./sk.js": 499,
-		"./sl": 500,
-		"./sl.js": 500,
-		"./sq": 501,
-		"./sq.js": 501,
-		"./sr": 502,
-		"./sr-cyrl": 503,
-		"./sr-cyrl.js": 503,
-		"./sr.js": 502,
-		"./ss": 504,
-		"./ss.js": 504,
-		"./sv": 505,
-		"./sv.js": 505,
-		"./sw": 506,
-		"./sw.js": 506,
-		"./ta": 507,
-		"./ta.js": 507,
-		"./te": 508,
-		"./te.js": 508,
-		"./th": 509,
-		"./th.js": 509,
-		"./tl-ph": 510,
-		"./tl-ph.js": 510,
-		"./tlh": 511,
-		"./tlh.js": 511,
-		"./tr": 512,
-		"./tr.js": 512,
-		"./tzl": 513,
-		"./tzl.js": 513,
-		"./tzm": 514,
-		"./tzm-latn": 515,
-		"./tzm-latn.js": 515,
-		"./tzm.js": 514,
-		"./uk": 516,
-		"./uk.js": 516,
-		"./uz": 517,
-		"./uz.js": 517,
-		"./vi": 518,
-		"./vi.js": 518,
-		"./x-pseudo": 519,
-		"./x-pseudo.js": 519,
-		"./zh-cn": 520,
-		"./zh-cn.js": 520,
-		"./zh-hk": 521,
-		"./zh-hk.js": 521,
-		"./zh-tw": 522,
-		"./zh-tw.js": 522
+		"./af": 420,
+		"./af.js": 420,
+		"./ar": 421,
+		"./ar-ly": 422,
+		"./ar-ly.js": 422,
+		"./ar-ma": 423,
+		"./ar-ma.js": 423,
+		"./ar-sa": 424,
+		"./ar-sa.js": 424,
+		"./ar-tn": 425,
+		"./ar-tn.js": 425,
+		"./ar.js": 421,
+		"./az": 426,
+		"./az.js": 426,
+		"./be": 427,
+		"./be.js": 427,
+		"./bg": 428,
+		"./bg.js": 428,
+		"./bn": 429,
+		"./bn.js": 429,
+		"./bo": 430,
+		"./bo.js": 430,
+		"./br": 431,
+		"./br.js": 431,
+		"./bs": 432,
+		"./bs.js": 432,
+		"./ca": 433,
+		"./ca.js": 433,
+		"./cs": 434,
+		"./cs.js": 434,
+		"./cv": 435,
+		"./cv.js": 435,
+		"./cy": 436,
+		"./cy.js": 436,
+		"./da": 437,
+		"./da.js": 437,
+		"./de": 438,
+		"./de-at": 439,
+		"./de-at.js": 439,
+		"./de.js": 438,
+		"./dv": 440,
+		"./dv.js": 440,
+		"./el": 441,
+		"./el.js": 441,
+		"./en-au": 442,
+		"./en-au.js": 442,
+		"./en-ca": 443,
+		"./en-ca.js": 443,
+		"./en-gb": 444,
+		"./en-gb.js": 444,
+		"./en-ie": 445,
+		"./en-ie.js": 445,
+		"./en-nz": 446,
+		"./en-nz.js": 446,
+		"./eo": 447,
+		"./eo.js": 447,
+		"./es": 448,
+		"./es-do": 449,
+		"./es-do.js": 449,
+		"./es.js": 448,
+		"./et": 450,
+		"./et.js": 450,
+		"./eu": 451,
+		"./eu.js": 451,
+		"./fa": 452,
+		"./fa.js": 452,
+		"./fi": 453,
+		"./fi.js": 453,
+		"./fo": 454,
+		"./fo.js": 454,
+		"./fr": 455,
+		"./fr-ca": 456,
+		"./fr-ca.js": 456,
+		"./fr-ch": 457,
+		"./fr-ch.js": 457,
+		"./fr.js": 455,
+		"./fy": 458,
+		"./fy.js": 458,
+		"./gd": 459,
+		"./gd.js": 459,
+		"./gl": 460,
+		"./gl.js": 460,
+		"./he": 461,
+		"./he.js": 461,
+		"./hi": 462,
+		"./hi.js": 462,
+		"./hr": 463,
+		"./hr.js": 463,
+		"./hu": 464,
+		"./hu.js": 464,
+		"./hy-am": 465,
+		"./hy-am.js": 465,
+		"./id": 466,
+		"./id.js": 466,
+		"./is": 467,
+		"./is.js": 467,
+		"./it": 468,
+		"./it.js": 468,
+		"./ja": 469,
+		"./ja.js": 469,
+		"./jv": 470,
+		"./jv.js": 470,
+		"./ka": 471,
+		"./ka.js": 471,
+		"./kk": 472,
+		"./kk.js": 472,
+		"./km": 473,
+		"./km.js": 473,
+		"./ko": 474,
+		"./ko.js": 474,
+		"./ky": 475,
+		"./ky.js": 475,
+		"./lb": 476,
+		"./lb.js": 476,
+		"./lo": 477,
+		"./lo.js": 477,
+		"./lt": 478,
+		"./lt.js": 478,
+		"./lv": 479,
+		"./lv.js": 479,
+		"./me": 480,
+		"./me.js": 480,
+		"./mi": 481,
+		"./mi.js": 481,
+		"./mk": 482,
+		"./mk.js": 482,
+		"./ml": 483,
+		"./ml.js": 483,
+		"./mr": 484,
+		"./mr.js": 484,
+		"./ms": 485,
+		"./ms-my": 486,
+		"./ms-my.js": 486,
+		"./ms.js": 485,
+		"./my": 487,
+		"./my.js": 487,
+		"./nb": 488,
+		"./nb.js": 488,
+		"./ne": 489,
+		"./ne.js": 489,
+		"./nl": 490,
+		"./nl.js": 490,
+		"./nn": 491,
+		"./nn.js": 491,
+		"./pa-in": 492,
+		"./pa-in.js": 492,
+		"./pl": 493,
+		"./pl.js": 493,
+		"./pt": 494,
+		"./pt-br": 495,
+		"./pt-br.js": 495,
+		"./pt.js": 494,
+		"./ro": 496,
+		"./ro.js": 496,
+		"./ru": 497,
+		"./ru.js": 497,
+		"./se": 498,
+		"./se.js": 498,
+		"./si": 499,
+		"./si.js": 499,
+		"./sk": 500,
+		"./sk.js": 500,
+		"./sl": 501,
+		"./sl.js": 501,
+		"./sq": 502,
+		"./sq.js": 502,
+		"./sr": 503,
+		"./sr-cyrl": 504,
+		"./sr-cyrl.js": 504,
+		"./sr.js": 503,
+		"./ss": 505,
+		"./ss.js": 505,
+		"./sv": 506,
+		"./sv.js": 506,
+		"./sw": 507,
+		"./sw.js": 507,
+		"./ta": 508,
+		"./ta.js": 508,
+		"./te": 509,
+		"./te.js": 509,
+		"./th": 510,
+		"./th.js": 510,
+		"./tl-ph": 511,
+		"./tl-ph.js": 511,
+		"./tlh": 512,
+		"./tlh.js": 512,
+		"./tr": 513,
+		"./tr.js": 513,
+		"./tzl": 514,
+		"./tzl.js": 514,
+		"./tzm": 515,
+		"./tzm-latn": 516,
+		"./tzm-latn.js": 516,
+		"./tzm.js": 515,
+		"./uk": 517,
+		"./uk.js": 517,
+		"./uz": 518,
+		"./uz.js": 518,
+		"./vi": 519,
+		"./vi.js": 519,
+		"./x-pseudo": 520,
+		"./x-pseudo.js": 520,
+		"./zh-cn": 521,
+		"./zh-cn.js": 521,
+		"./zh-hk": 522,
+		"./zh-hk.js": 522,
+		"./zh-tw": 523,
+		"./zh-tw.js": 523
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -65056,11 +65173,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 418;
+	webpackContext.id = 419;
 
 
 /***/ },
-/* 419 */
+/* 420 */
 /*!********************************!*\
   !*** ../~/moment/locale/af.js ***!
   \********************************/
@@ -65071,7 +65188,7 @@
 	//! author : Werner Mollentze : https://github.com/wernerm
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65140,7 +65257,7 @@
 	}));
 
 /***/ },
-/* 420 */
+/* 421 */
 /*!********************************!*\
   !*** ../~/moment/locale/ar.js ***!
   \********************************/
@@ -65153,7 +65270,7 @@
 	//! author : forabi https://github.com/forabi
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65284,7 +65401,7 @@
 	}));
 
 /***/ },
-/* 421 */
+/* 422 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-ly.js ***!
   \***********************************/
@@ -65295,7 +65412,7 @@
 	//! author : Ali Hmer: https://github.com/kikoanis
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65413,7 +65530,7 @@
 	}));
 
 /***/ },
-/* 422 */
+/* 423 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-ma.js ***!
   \***********************************/
@@ -65425,7 +65542,7 @@
 	//! author : Abdel Said : https://github.com/abdelsaid
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65480,7 +65597,7 @@
 	}));
 
 /***/ },
-/* 423 */
+/* 424 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-sa.js ***!
   \***********************************/
@@ -65491,7 +65608,7 @@
 	//! author : Suhail Alkowaileet : https://github.com/xsoh
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65591,7 +65708,7 @@
 	}));
 
 /***/ },
-/* 424 */
+/* 425 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ar-tn.js ***!
   \***********************************/
@@ -65602,7 +65719,7 @@
 	//! author : Nader Toukabri : https://github.com/naderio
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65657,7 +65774,7 @@
 	}));
 
 /***/ },
-/* 425 */
+/* 426 */
 /*!********************************!*\
   !*** ../~/moment/locale/az.js ***!
   \********************************/
@@ -65668,7 +65785,7 @@
 	//! author : topchiyev : https://github.com/topchiyev
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65769,7 +65886,7 @@
 	}));
 
 /***/ },
-/* 426 */
+/* 427 */
 /*!********************************!*\
   !*** ../~/moment/locale/be.js ***!
   \********************************/
@@ -65782,7 +65899,7 @@
 	//! Author : Menelion Elensúle : https://github.com/Oire
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -65910,7 +66027,7 @@
 	}));
 
 /***/ },
-/* 427 */
+/* 428 */
 /*!********************************!*\
   !*** ../~/moment/locale/bg.js ***!
   \********************************/
@@ -65921,7 +66038,7 @@
 	//! author : Krasen Borisov : https://github.com/kraz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66007,7 +66124,7 @@
 	}));
 
 /***/ },
-/* 428 */
+/* 429 */
 /*!********************************!*\
   !*** ../~/moment/locale/bn.js ***!
   \********************************/
@@ -66018,7 +66135,7 @@
 	//! author : Kaushik Gandhi : https://github.com/kaushikgandhi
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66133,7 +66250,7 @@
 	}));
 
 /***/ },
-/* 429 */
+/* 430 */
 /*!********************************!*\
   !*** ../~/moment/locale/bo.js ***!
   \********************************/
@@ -66144,7 +66261,7 @@
 	//! author : Thupten N. Chakrishar : https://github.com/vajradog
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66259,7 +66376,7 @@
 	}));
 
 /***/ },
-/* 430 */
+/* 431 */
 /*!********************************!*\
   !*** ../~/moment/locale/br.js ***!
   \********************************/
@@ -66270,7 +66387,7 @@
 	//! author : Jean-Baptiste Le Duigou : https://github.com/jbleduigou
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66374,7 +66491,7 @@
 	}));
 
 /***/ },
-/* 431 */
+/* 432 */
 /*!********************************!*\
   !*** ../~/moment/locale/bs.js ***!
   \********************************/
@@ -66386,7 +66503,7 @@
 	//! based on (hr) translation by Bojan Marković
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66524,7 +66641,7 @@
 	}));
 
 /***/ },
-/* 432 */
+/* 433 */
 /*!********************************!*\
   !*** ../~/moment/locale/ca.js ***!
   \********************************/
@@ -66535,7 +66652,7 @@
 	//! author : Juan G. Hurtado : https://github.com/juanghurtado
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66612,7 +66729,7 @@
 	}));
 
 /***/ },
-/* 433 */
+/* 434 */
 /*!********************************!*\
   !*** ../~/moment/locale/cs.js ***!
   \********************************/
@@ -66623,7 +66740,7 @@
 	//! author : petrbela : https://github.com/petrbela
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66791,7 +66908,7 @@
 	}));
 
 /***/ },
-/* 434 */
+/* 435 */
 /*!********************************!*\
   !*** ../~/moment/locale/cv.js ***!
   \********************************/
@@ -66802,7 +66919,7 @@
 	//! author : Anatoly Mironov : https://github.com/mirontoli
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66861,7 +66978,7 @@
 	}));
 
 /***/ },
-/* 435 */
+/* 436 */
 /*!********************************!*\
   !*** ../~/moment/locale/cy.js ***!
   \********************************/
@@ -66873,7 +66990,7 @@
 	//! author : https://github.com/ryangreaves
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -66949,7 +67066,7 @@
 	}));
 
 /***/ },
-/* 436 */
+/* 437 */
 /*!********************************!*\
   !*** ../~/moment/locale/da.js ***!
   \********************************/
@@ -66960,7 +67077,7 @@
 	//! author : Ulrik Nielsen : https://github.com/mrbase
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67016,7 +67133,7 @@
 	}));
 
 /***/ },
-/* 437 */
+/* 438 */
 /*!********************************!*\
   !*** ../~/moment/locale/de.js ***!
   \********************************/
@@ -67029,7 +67146,7 @@
 	//! author : Mikolaj Dadela : https://github.com/mik01aj
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67101,7 +67218,7 @@
 	}));
 
 /***/ },
-/* 438 */
+/* 439 */
 /*!***********************************!*\
   !*** ../~/moment/locale/de-at.js ***!
   \***********************************/
@@ -67115,7 +67232,7 @@
 	//! author : Mikolaj Dadela : https://github.com/mik01aj
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67187,7 +67304,7 @@
 	}));
 
 /***/ },
-/* 439 */
+/* 440 */
 /*!********************************!*\
   !*** ../~/moment/locale/dv.js ***!
   \********************************/
@@ -67198,7 +67315,7 @@
 	//! author : Jawish Hameed : https://github.com/jawish
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67293,7 +67410,7 @@
 	}));
 
 /***/ },
-/* 440 */
+/* 441 */
 /*!********************************!*\
   !*** ../~/moment/locale/el.js ***!
   \********************************/
@@ -67304,7 +67421,7 @@
 	//! author : Aggelos Karalias : https://github.com/mehiel
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67398,7 +67515,7 @@
 	}));
 
 /***/ },
-/* 441 */
+/* 442 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-au.js ***!
   \***********************************/
@@ -67409,7 +67526,7 @@
 	//! author : Jared Morse : https://github.com/jarcoal
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67472,7 +67589,7 @@
 	}));
 
 /***/ },
-/* 442 */
+/* 443 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-ca.js ***!
   \***********************************/
@@ -67483,7 +67600,7 @@
 	//! author : Jonathan Abourbih : https://github.com/jonbca
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67542,7 +67659,7 @@
 	}));
 
 /***/ },
-/* 443 */
+/* 444 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-gb.js ***!
   \***********************************/
@@ -67553,7 +67670,7 @@
 	//! author : Chris Gedrim : https://github.com/chrisgedrim
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67616,7 +67733,7 @@
 	}));
 
 /***/ },
-/* 444 */
+/* 445 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-ie.js ***!
   \***********************************/
@@ -67627,7 +67744,7 @@
 	//! author : Chris Cartlidge : https://github.com/chriscartlidge
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67690,7 +67807,7 @@
 	}));
 
 /***/ },
-/* 445 */
+/* 446 */
 /*!***********************************!*\
   !*** ../~/moment/locale/en-nz.js ***!
   \***********************************/
@@ -67701,7 +67818,7 @@
 	//! author : Luke McGregor : https://github.com/lukemcgregor
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67764,7 +67881,7 @@
 	}));
 
 /***/ },
-/* 446 */
+/* 447 */
 /*!********************************!*\
   !*** ../~/moment/locale/eo.js ***!
   \********************************/
@@ -67777,7 +67894,7 @@
 	//!          Se ne, bonvolu korekti kaj avizi min por ke mi povas lerni!
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67844,7 +67961,7 @@
 	}));
 
 /***/ },
-/* 447 */
+/* 448 */
 /*!********************************!*\
   !*** ../~/moment/locale/es.js ***!
   \********************************/
@@ -67855,7 +67972,7 @@
 	//! author : Julio Napurí : https://github.com/julionc
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -67932,7 +68049,7 @@
 	}));
 
 /***/ },
-/* 448 */
+/* 449 */
 /*!***********************************!*\
   !*** ../~/moment/locale/es-do.js ***!
   \***********************************/
@@ -67942,7 +68059,7 @@
 	//! locale : Spanish (Dominican Republic) [es-do]
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68019,7 +68136,7 @@
 	}));
 
 /***/ },
-/* 449 */
+/* 450 */
 /*!********************************!*\
   !*** ../~/moment/locale/et.js ***!
   \********************************/
@@ -68031,7 +68148,7 @@
 	//! improvements : Illimar Tambek : https://github.com/ragulka
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68106,7 +68223,7 @@
 	}));
 
 /***/ },
-/* 450 */
+/* 451 */
 /*!********************************!*\
   !*** ../~/moment/locale/eu.js ***!
   \********************************/
@@ -68117,7 +68234,7 @@
 	//! author : Eneko Illarramendi : https://github.com/eillarra
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68179,7 +68296,7 @@
 	}));
 
 /***/ },
-/* 451 */
+/* 452 */
 /*!********************************!*\
   !*** ../~/moment/locale/fa.js ***!
   \********************************/
@@ -68190,7 +68307,7 @@
 	//! author : Ebrahim Byagowi : https://github.com/ebraminio
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68292,7 +68409,7 @@
 	}));
 
 /***/ },
-/* 452 */
+/* 453 */
 /*!********************************!*\
   !*** ../~/moment/locale/fi.js ***!
   \********************************/
@@ -68303,7 +68420,7 @@
 	//! author : Tarmo Aidantausta : https://github.com/bleadof
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68406,7 +68523,7 @@
 	}));
 
 /***/ },
-/* 453 */
+/* 454 */
 /*!********************************!*\
   !*** ../~/moment/locale/fo.js ***!
   \********************************/
@@ -68417,7 +68534,7 @@
 	//! author : Ragnar Johannesen : https://github.com/ragnar123
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68473,7 +68590,7 @@
 	}));
 
 /***/ },
-/* 454 */
+/* 455 */
 /*!********************************!*\
   !*** ../~/moment/locale/fr.js ***!
   \********************************/
@@ -68484,7 +68601,7 @@
 	//! author : John Fischer : https://github.com/jfroffice
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68544,7 +68661,7 @@
 	}));
 
 /***/ },
-/* 455 */
+/* 456 */
 /*!***********************************!*\
   !*** ../~/moment/locale/fr-ca.js ***!
   \***********************************/
@@ -68555,7 +68672,7 @@
 	//! author : Jonathan Abourbih : https://github.com/jonbca
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68611,7 +68728,7 @@
 	}));
 
 /***/ },
-/* 456 */
+/* 457 */
 /*!***********************************!*\
   !*** ../~/moment/locale/fr-ch.js ***!
   \***********************************/
@@ -68622,7 +68739,7 @@
 	//! author : Gaspard Bucher : https://github.com/gaspard
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68682,7 +68799,7 @@
 	}));
 
 /***/ },
-/* 457 */
+/* 458 */
 /*!********************************!*\
   !*** ../~/moment/locale/fy.js ***!
   \********************************/
@@ -68693,7 +68810,7 @@
 	//! author : Robin van der Vliet : https://github.com/robin0van0der0v
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68762,7 +68879,7 @@
 	}));
 
 /***/ },
-/* 458 */
+/* 459 */
 /*!********************************!*\
   !*** ../~/moment/locale/gd.js ***!
   \********************************/
@@ -68773,7 +68890,7 @@
 	//! author : Jon Ashdown : https://github.com/jonashdown
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68845,7 +68962,7 @@
 	}));
 
 /***/ },
-/* 459 */
+/* 460 */
 /*!********************************!*\
   !*** ../~/moment/locale/gl.js ***!
   \********************************/
@@ -68856,7 +68973,7 @@
 	//! author : Juan G. Hurtado : https://github.com/juanghurtado
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -68929,7 +69046,7 @@
 	}));
 
 /***/ },
-/* 460 */
+/* 461 */
 /*!********************************!*\
   !*** ../~/moment/locale/he.js ***!
   \********************************/
@@ -68942,7 +69059,7 @@
 	//! author : Tal Ater : https://github.com/TalAter
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69035,7 +69152,7 @@
 	}));
 
 /***/ },
-/* 461 */
+/* 462 */
 /*!********************************!*\
   !*** ../~/moment/locale/hi.js ***!
   \********************************/
@@ -69046,7 +69163,7 @@
 	//! author : Mayank Singhal : https://github.com/mayanksinghal
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69166,7 +69283,7 @@
 	}));
 
 /***/ },
-/* 462 */
+/* 463 */
 /*!********************************!*\
   !*** ../~/moment/locale/hr.js ***!
   \********************************/
@@ -69177,7 +69294,7 @@
 	//! author : Bojan Marković : https://github.com/bmarkovic
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69318,7 +69435,7 @@
 	}));
 
 /***/ },
-/* 463 */
+/* 464 */
 /*!********************************!*\
   !*** ../~/moment/locale/hu.js ***!
   \********************************/
@@ -69329,7 +69446,7 @@
 	//! author : Adam Brunner : https://github.com/adambrunner
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69434,7 +69551,7 @@
 	}));
 
 /***/ },
-/* 464 */
+/* 465 */
 /*!***********************************!*\
   !*** ../~/moment/locale/hy-am.js ***!
   \***********************************/
@@ -69445,7 +69562,7 @@
 	//! author : Armendarabyan : https://github.com/armendarabyan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69536,7 +69653,7 @@
 	}));
 
 /***/ },
-/* 465 */
+/* 466 */
 /*!********************************!*\
   !*** ../~/moment/locale/id.js ***!
   \********************************/
@@ -69548,7 +69665,7 @@
 	//! reference: http://id.wikisource.org/wiki/Pedoman_Umum_Ejaan_Bahasa_Indonesia_yang_Disempurnakan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69626,7 +69743,7 @@
 	}));
 
 /***/ },
-/* 466 */
+/* 467 */
 /*!********************************!*\
   !*** ../~/moment/locale/is.js ***!
   \********************************/
@@ -69637,7 +69754,7 @@
 	//! author : Hinrik Örn Sigurðsson : https://github.com/hinrik
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69760,7 +69877,7 @@
 	}));
 
 /***/ },
-/* 467 */
+/* 468 */
 /*!********************************!*\
   !*** ../~/moment/locale/it.js ***!
   \********************************/
@@ -69772,7 +69889,7 @@
 	//! author: Mattia Larentis: https://github.com/nostalgiaz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69837,7 +69954,7 @@
 	}));
 
 /***/ },
-/* 468 */
+/* 469 */
 /*!********************************!*\
   !*** ../~/moment/locale/ja.js ***!
   \********************************/
@@ -69848,7 +69965,7 @@
 	//! author : LI Long : https://github.com/baryon
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -69920,7 +70037,7 @@
 	}));
 
 /***/ },
-/* 469 */
+/* 470 */
 /*!********************************!*\
   !*** ../~/moment/locale/jv.js ***!
   \********************************/
@@ -69932,7 +70049,7 @@
 	//! reference: http://jv.wikipedia.org/wiki/Basa_Jawa
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70010,7 +70127,7 @@
 	}));
 
 /***/ },
-/* 470 */
+/* 471 */
 /*!********************************!*\
   !*** ../~/moment/locale/ka.js ***!
   \********************************/
@@ -70021,7 +70138,7 @@
 	//! author : Irakli Janiashvili : https://github.com/irakli-janiashvili
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70106,7 +70223,7 @@
 	}));
 
 /***/ },
-/* 471 */
+/* 472 */
 /*!********************************!*\
   !*** ../~/moment/locale/kk.js ***!
   \********************************/
@@ -70117,7 +70234,7 @@
 	//! authors : Nurlan Rakhimzhanov : https://github.com/nurlan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70200,7 +70317,7 @@
 	}));
 
 /***/ },
-/* 472 */
+/* 473 */
 /*!********************************!*\
   !*** ../~/moment/locale/km.js ***!
   \********************************/
@@ -70211,7 +70328,7 @@
 	//! author : Kruy Vanna : https://github.com/kruyvanna
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70265,7 +70382,7 @@
 	}));
 
 /***/ },
-/* 473 */
+/* 474 */
 /*!********************************!*\
   !*** ../~/moment/locale/ko.js ***!
   \********************************/
@@ -70277,7 +70394,7 @@
 	//! author : Jeeeyul Lee <jeeeyul@gmail.com>
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70337,7 +70454,7 @@
 	}));
 
 /***/ },
-/* 474 */
+/* 475 */
 /*!********************************!*\
   !*** ../~/moment/locale/ky.js ***!
   \********************************/
@@ -70348,7 +70465,7 @@
 	//! author : Chyngyz Arystan uulu : https://github.com/chyngyz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70432,7 +70549,7 @@
 	}));
 
 /***/ },
-/* 475 */
+/* 476 */
 /*!********************************!*\
   !*** ../~/moment/locale/lb.js ***!
   \********************************/
@@ -70444,7 +70561,7 @@
 	//! author : David Raison : https://github.com/kwisatz
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70576,7 +70693,7 @@
 	}));
 
 /***/ },
-/* 476 */
+/* 477 */
 /*!********************************!*\
   !*** ../~/moment/locale/lo.js ***!
   \********************************/
@@ -70587,7 +70704,7 @@
 	//! author : Ryan Hart : https://github.com/ryanhart2
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70653,7 +70770,7 @@
 	}));
 
 /***/ },
-/* 477 */
+/* 478 */
 /*!********************************!*\
   !*** ../~/moment/locale/lt.js ***!
   \********************************/
@@ -70664,7 +70781,7 @@
 	//! author : Mindaugas Mozūras : https://github.com/mmozuras
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70777,7 +70894,7 @@
 	}));
 
 /***/ },
-/* 478 */
+/* 479 */
 /*!********************************!*\
   !*** ../~/moment/locale/lv.js ***!
   \********************************/
@@ -70789,7 +70906,7 @@
 	//! author : Jānis Elmeris : https://github.com/JanisE
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70881,7 +70998,7 @@
 	}));
 
 /***/ },
-/* 479 */
+/* 480 */
 /*!********************************!*\
   !*** ../~/moment/locale/me.js ***!
   \********************************/
@@ -70892,7 +71009,7 @@
 	//! author : Miodrag Nikač <miodrag@restartit.me> : https://github.com/miodragnikac
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -70999,7 +71116,7 @@
 	}));
 
 /***/ },
-/* 480 */
+/* 481 */
 /*!********************************!*\
   !*** ../~/moment/locale/mi.js ***!
   \********************************/
@@ -71010,7 +71127,7 @@
 	//! author : John Corrigan <robbiecloset@gmail.com> : https://github.com/johnideal
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71070,7 +71187,7 @@
 	}));
 
 /***/ },
-/* 481 */
+/* 482 */
 /*!********************************!*\
   !*** ../~/moment/locale/mk.js ***!
   \********************************/
@@ -71081,7 +71198,7 @@
 	//! author : Borislav Mickov : https://github.com/B0k0
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71167,7 +71284,7 @@
 	}));
 
 /***/ },
-/* 482 */
+/* 483 */
 /*!********************************!*\
   !*** ../~/moment/locale/ml.js ***!
   \********************************/
@@ -71178,7 +71295,7 @@
 	//! author : Floyd Pink : https://github.com/floydpink
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71255,7 +71372,7 @@
 	}));
 
 /***/ },
-/* 483 */
+/* 484 */
 /*!********************************!*\
   !*** ../~/moment/locale/mr.js ***!
   \********************************/
@@ -71267,7 +71384,7 @@
 	//! author : Vivek Athalye : https://github.com/vnathalye
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71421,7 +71538,7 @@
 	}));
 
 /***/ },
-/* 484 */
+/* 485 */
 /*!********************************!*\
   !*** ../~/moment/locale/ms.js ***!
   \********************************/
@@ -71432,7 +71549,7 @@
 	//! author : Weldan Jamili : https://github.com/weldan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71510,7 +71627,7 @@
 	}));
 
 /***/ },
-/* 485 */
+/* 486 */
 /*!***********************************!*\
   !*** ../~/moment/locale/ms-my.js ***!
   \***********************************/
@@ -71522,7 +71639,7 @@
 	//! author : Weldan Jamili : https://github.com/weldan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71600,7 +71717,7 @@
 	}));
 
 /***/ },
-/* 486 */
+/* 487 */
 /*!********************************!*\
   !*** ../~/moment/locale/my.js ***!
   \********************************/
@@ -71613,7 +71730,7 @@
 	//! author : Tin Aung Lin : https://github.com/thanyawzinmin
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71702,7 +71819,7 @@
 	}));
 
 /***/ },
-/* 487 */
+/* 488 */
 /*!********************************!*\
   !*** ../~/moment/locale/nb.js ***!
   \********************************/
@@ -71714,7 +71831,7 @@
 	//!           Sigurd Gartmann : https://github.com/sigurdga
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71772,7 +71889,7 @@
 	}));
 
 /***/ },
-/* 488 */
+/* 489 */
 /*!********************************!*\
   !*** ../~/moment/locale/ne.js ***!
   \********************************/
@@ -71783,7 +71900,7 @@
 	//! author : suvash : https://github.com/suvash
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71902,7 +72019,7 @@
 	}));
 
 /***/ },
-/* 489 */
+/* 490 */
 /*!********************************!*\
   !*** ../~/moment/locale/nl.js ***!
   \********************************/
@@ -71914,7 +72031,7 @@
 	//! author : Jacob Middag : https://github.com/middagj
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -71995,7 +72112,7 @@
 	}));
 
 /***/ },
-/* 490 */
+/* 491 */
 /*!********************************!*\
   !*** ../~/moment/locale/nn.js ***!
   \********************************/
@@ -72006,7 +72123,7 @@
 	//! author : https://github.com/mechuwind
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72062,7 +72179,7 @@
 	}));
 
 /***/ },
-/* 491 */
+/* 492 */
 /*!***********************************!*\
   !*** ../~/moment/locale/pa-in.js ***!
   \***********************************/
@@ -72073,7 +72190,7 @@
 	//! author : Harpreet Singh : https://github.com/harpreetkhalsagtbit
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72193,7 +72310,7 @@
 	}));
 
 /***/ },
-/* 492 */
+/* 493 */
 /*!********************************!*\
   !*** ../~/moment/locale/pl.js ***!
   \********************************/
@@ -72204,7 +72321,7 @@
 	//! author : Rafal Hirsz : https://github.com/evoL
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72305,7 +72422,7 @@
 	}));
 
 /***/ },
-/* 493 */
+/* 494 */
 /*!********************************!*\
   !*** ../~/moment/locale/pt.js ***!
   \********************************/
@@ -72316,7 +72433,7 @@
 	//! author : Jefferson : https://github.com/jalex79
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72377,7 +72494,7 @@
 	}));
 
 /***/ },
-/* 494 */
+/* 495 */
 /*!***********************************!*\
   !*** ../~/moment/locale/pt-br.js ***!
   \***********************************/
@@ -72388,7 +72505,7 @@
 	//! author : Caio Ribeiro Pereira : https://github.com/caio-ribeiro-pereira
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72445,7 +72562,7 @@
 	}));
 
 /***/ },
-/* 495 */
+/* 496 */
 /*!********************************!*\
   !*** ../~/moment/locale/ro.js ***!
   \********************************/
@@ -72457,7 +72574,7 @@
 	//! author : Valentin Agachi : https://github.com/avaly
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72527,7 +72644,7 @@
 	}));
 
 /***/ },
-/* 496 */
+/* 497 */
 /*!********************************!*\
   !*** ../~/moment/locale/ru.js ***!
   \********************************/
@@ -72540,7 +72657,7 @@
 	//! author : Коренберг Марк : https://github.com/socketpair
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72717,7 +72834,7 @@
 	}));
 
 /***/ },
-/* 497 */
+/* 498 */
 /*!********************************!*\
   !*** ../~/moment/locale/se.js ***!
   \********************************/
@@ -72728,7 +72845,7 @@
 	//! authors : Bård Rolstad Henriksen : https://github.com/karamell
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72785,7 +72902,7 @@
 	}));
 
 /***/ },
-/* 498 */
+/* 499 */
 /*!********************************!*\
   !*** ../~/moment/locale/si.js ***!
   \********************************/
@@ -72796,7 +72913,7 @@
 	//! author : Sampath Sitinamaluwa : https://github.com/sampathsris
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -72863,7 +72980,7 @@
 	}));
 
 /***/ },
-/* 499 */
+/* 500 */
 /*!********************************!*\
   !*** ../~/moment/locale/sk.js ***!
   \********************************/
@@ -72875,7 +72992,7 @@
 	//! based on work of petrbela : https://github.com/petrbela
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73020,7 +73137,7 @@
 	}));
 
 /***/ },
-/* 500 */
+/* 501 */
 /*!********************************!*\
   !*** ../~/moment/locale/sl.js ***!
   \********************************/
@@ -73031,7 +73148,7 @@
 	//! author : Robert Sedovšek : https://github.com/sedovsek
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73189,7 +73306,7 @@
 	}));
 
 /***/ },
-/* 501 */
+/* 502 */
 /*!********************************!*\
   !*** ../~/moment/locale/sq.js ***!
   \********************************/
@@ -73202,7 +73319,7 @@
 	//! author : Oerd Cukalla : https://github.com/oerd
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73266,7 +73383,7 @@
 	}));
 
 /***/ },
-/* 502 */
+/* 503 */
 /*!********************************!*\
   !*** ../~/moment/locale/sr.js ***!
   \********************************/
@@ -73277,7 +73394,7 @@
 	//! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73383,7 +73500,7 @@
 	}));
 
 /***/ },
-/* 503 */
+/* 504 */
 /*!*************************************!*\
   !*** ../~/moment/locale/sr-cyrl.js ***!
   \*************************************/
@@ -73394,7 +73511,7 @@
 	//! author : Milan Janačković<milanjanackovic@gmail.com> : https://github.com/milan-j
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73500,7 +73617,7 @@
 	}));
 
 /***/ },
-/* 504 */
+/* 505 */
 /*!********************************!*\
   !*** ../~/moment/locale/ss.js ***!
   \********************************/
@@ -73511,7 +73628,7 @@
 	//! author : Nicolai Davies<mail@nicolai.io> : https://github.com/nicolaidavies
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73596,7 +73713,7 @@
 	}));
 
 /***/ },
-/* 505 */
+/* 506 */
 /*!********************************!*\
   !*** ../~/moment/locale/sv.js ***!
   \********************************/
@@ -73607,7 +73724,7 @@
 	//! author : Jens Alm : https://github.com/ulmus
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73672,7 +73789,7 @@
 	}));
 
 /***/ },
-/* 506 */
+/* 507 */
 /*!********************************!*\
   !*** ../~/moment/locale/sw.js ***!
   \********************************/
@@ -73683,7 +73800,7 @@
 	//! author : Fahad Kassim : https://github.com/fadsel
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73738,7 +73855,7 @@
 	}));
 
 /***/ },
-/* 507 */
+/* 508 */
 /*!********************************!*\
   !*** ../~/moment/locale/ta.js ***!
   \********************************/
@@ -73749,7 +73866,7 @@
 	//! author : Arjunkumar Krishnamoorthy : https://github.com/tk120404
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73874,7 +73991,7 @@
 	}));
 
 /***/ },
-/* 508 */
+/* 509 */
 /*!********************************!*\
   !*** ../~/moment/locale/te.js ***!
   \********************************/
@@ -73885,7 +74002,7 @@
 	//! author : Krishna Chaitanya Thota : https://github.com/kcthota
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -73970,7 +74087,7 @@
 	}));
 
 /***/ },
-/* 509 */
+/* 510 */
 /*!********************************!*\
   !*** ../~/moment/locale/th.js ***!
   \********************************/
@@ -73981,7 +74098,7 @@
 	//! author : Kridsada Thanabulpong : https://github.com/sirn
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74044,7 +74161,7 @@
 	}));
 
 /***/ },
-/* 510 */
+/* 511 */
 /*!***********************************!*\
   !*** ../~/moment/locale/tl-ph.js ***!
   \***********************************/
@@ -74055,7 +74172,7 @@
 	//! author : Dan Hagman : https://github.com/hagmandan
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74113,7 +74230,7 @@
 	}));
 
 /***/ },
-/* 511 */
+/* 512 */
 /*!*********************************!*\
   !*** ../~/moment/locale/tlh.js ***!
   \*********************************/
@@ -74124,7 +74241,7 @@
 	//! author : Dominika Kruk : https://github.com/amaranthrose
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74240,7 +74357,7 @@
 	}));
 
 /***/ },
-/* 512 */
+/* 513 */
 /*!********************************!*\
   !*** ../~/moment/locale/tr.js ***!
   \********************************/
@@ -74252,7 +74369,7 @@
 	//!           Burak Yiğit Kaya: https://github.com/BYK
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74337,7 +74454,7 @@
 	}));
 
 /***/ },
-/* 513 */
+/* 514 */
 /*!*********************************!*\
   !*** ../~/moment/locale/tzl.js ***!
   \*********************************/
@@ -74349,7 +74466,7 @@
 	//! author : Iustì Canun
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74435,7 +74552,7 @@
 	}));
 
 /***/ },
-/* 514 */
+/* 515 */
 /*!*********************************!*\
   !*** ../~/moment/locale/tzm.js ***!
   \*********************************/
@@ -74446,7 +74563,7 @@
 	//! author : Abdel Said : https://github.com/abdelsaid
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74500,7 +74617,7 @@
 	}));
 
 /***/ },
-/* 515 */
+/* 516 */
 /*!**************************************!*\
   !*** ../~/moment/locale/tzm-latn.js ***!
   \**************************************/
@@ -74511,7 +74628,7 @@
 	//! author : Abdel Said : https://github.com/abdelsaid
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74565,7 +74682,7 @@
 	}));
 
 /***/ },
-/* 516 */
+/* 517 */
 /*!********************************!*\
   !*** ../~/moment/locale/uk.js ***!
   \********************************/
@@ -74577,7 +74694,7 @@
 	//! Author : Menelion Elensúle : https://github.com/Oire
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74718,7 +74835,7 @@
 	}));
 
 /***/ },
-/* 517 */
+/* 518 */
 /*!********************************!*\
   !*** ../~/moment/locale/uz.js ***!
   \********************************/
@@ -74729,7 +74846,7 @@
 	//! author : Sardor Muminov : https://github.com/muminoff
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74783,7 +74900,7 @@
 	}));
 
 /***/ },
-/* 518 */
+/* 519 */
 /*!********************************!*\
   !*** ../~/moment/locale/vi.js ***!
   \********************************/
@@ -74794,7 +74911,7 @@
 	//! author : Bang Nguyen : https://github.com/bangnk
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74869,7 +74986,7 @@
 	}));
 
 /***/ },
-/* 519 */
+/* 520 */
 /*!**************************************!*\
   !*** ../~/moment/locale/x-pseudo.js ***!
   \**************************************/
@@ -74880,7 +74997,7 @@
 	//! author : Andrew Hood : https://github.com/andrewhood125
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -74944,7 +75061,7 @@
 	}));
 
 /***/ },
-/* 520 */
+/* 521 */
 /*!***********************************!*\
   !*** ../~/moment/locale/zh-cn.js ***!
   \***********************************/
@@ -74956,7 +75073,7 @@
 	//! author : Zeno Zeng : https://github.com/zenozeng
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -75078,7 +75195,7 @@
 	}));
 
 /***/ },
-/* 521 */
+/* 522 */
 /*!***********************************!*\
   !*** ../~/moment/locale/zh-hk.js ***!
   \***********************************/
@@ -75091,7 +75208,7 @@
 	//! author : Konstantin : https://github.com/skfd
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -75190,7 +75307,7 @@
 	}));
 
 /***/ },
-/* 522 */
+/* 523 */
 /*!***********************************!*\
   !*** ../~/moment/locale/zh-tw.js ***!
   \***********************************/
@@ -75202,7 +75319,7 @@
 	//! author : Chris Lam : https://github.com/hehachris
 	
 	;(function (global, factory) {
-	    true ? factory(__webpack_require__(/*! ../moment */ 417)) :
+	    true ? factory(__webpack_require__(/*! ../moment */ 418)) :
 	   typeof define === 'function' && define.amd ? define(['../moment'], factory) :
 	   factory(global.moment)
 	}(this, function (moment) { 'use strict';
@@ -75301,7 +75418,7 @@
 	}));
 
 /***/ },
-/* 523 */
+/* 524 */
 /*!**********************!*\
   !*** ./WidgetPie.js ***!
   \**********************/
@@ -75361,8 +75478,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetPie = function (_React$Component) {
 	  _inherits(WidgetPie, _React$Component);
@@ -75569,7 +75686,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 524 */
+/* 525 */
 /*!*************************************!*\
   !*** ../~/highcharts/highcharts.js ***!
   \*************************************/
@@ -75959,7 +76076,7 @@
 
 
 /***/ },
-/* 525 */
+/* 526 */
 /*!****************************!*\
   !*** ./WidgetHistogram.js ***!
   \****************************/
@@ -76029,8 +76146,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetHistogram = function (_React$Component) {
 	  _inherits(WidgetHistogram, _React$Component);
@@ -76207,7 +76324,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 526 */
+/* 527 */
 /*!**********************!*\
   !*** ./WidgetBar.js ***!
   \**********************/
@@ -76267,8 +76384,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetBar = function (_React$Component) {
 	  _inherits(WidgetBar, _React$Component);
@@ -76475,7 +76592,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 527 */
+/* 528 */
 /*!*************************!*\
   !*** ./WidgetColumn.js ***!
   \*************************/
@@ -76535,8 +76652,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetColumn = function (_React$Component) {
 	  _inherits(WidgetColumn, _React$Component);
@@ -76743,7 +76860,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 528 */
+/* 529 */
 /*!************************!*\
   !*** ./WidgetStats.js ***!
   \************************/
@@ -76795,8 +76912,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetStats = function (_React$Component) {
 	  _inherits(WidgetStats, _React$Component);
@@ -76952,7 +77069,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 529 */
+/* 530 */
 /*!**************************!*\
   !*** ./WidgetScatter.js ***!
   \**************************/
@@ -77012,8 +77129,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetScatter = function (_React$Component) {
 	  _inherits(WidgetScatter, _React$Component);
@@ -77188,7 +77305,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 530 */
+/* 531 */
 /*!***********************!*\
   !*** ./WidgetLine.js ***!
   \***********************/
@@ -77211,8 +77328,6 @@
 	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
 	  };
 	}();
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
@@ -77248,8 +77363,8 @@
 	
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 417);
-	var Highcharts = __webpack_require__(/*! highcharts */ 524);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
 	
 	var WidgetLine = function (_React$Component) {
 	  _inherits(WidgetLine, _React$Component);
@@ -77276,7 +77391,7 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.linetype !== oldData.linetype || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
 	        this.updateInternals();
 	      }
 	    }
@@ -77377,7 +77492,7 @@
 	          } else {
 	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
 	              chart: {
-	                type: 'line'
+	                type: data.linetype || 'line'
 	              },
 	              credits: {
 	                enabled: false
@@ -77462,7 +77577,154 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
-/* 531 */
+/* 532 */
+/*!**********************!*\
+  !*** ./SelectBar.js ***!
+  \**********************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	var SelectBar = function (_React$Component) {
+	  _inherits(SelectBar, _React$Component);
+	
+	  function SelectBar(props) {
+	    _classCallCheck(this, SelectBar);
+	
+	    //var data = props.widgets[props.widgetindex].data;
+	    var _this = _possibleConstructorReturn(this, (SelectBar.__proto__ || Object.getPrototypeOf(SelectBar)).call(this));
+	
+	    _this.state = {
+	      control: props.control,
+	      current: props.current,
+	      choices: props.choices
+	    };
+	    _this.selectChoiceUpdate = _this.selectChoiceUpdate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(SelectBar, [{
+	    key: 'selectChoiceUpdate',
+	    value: function selectChoiceUpdate(e) {
+	      this.setState({
+	        current: e
+	      });
+	      var v = {};
+	      v['configDisplay'] = 'none';
+	      v[this.props.control] = e;
+	      this.props.update_widget_plus_save(this.props.widgetindex, v);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var thisthis = this;
+	      return React.createElement('div', { style: { display: 'inline-block' } }, thisthis.state.choices.map(function (option, index) {
+	        if (index == 0) {
+	          return React.createElement('div', { className: option === thisthis.state.current ? 'widget-options-div-left-selected' : 'widget-options-div-left', onClick: thisthis.selectChoiceUpdate.bind(thisthis, option) }, option);
+	        } else if (index === thisthis.state.choices.length - 1) {
+	          return React.createElement('div', { className: option === thisthis.state.current ? 'widget-options-div-right-selected' : 'widget-options-div-right', onClick: thisthis.selectChoiceUpdate.bind(thisthis, option) }, option);
+	        } else {
+	          return React.createElement('div', { className: option === thisthis.state.current ? 'widget-options-div-selected' : 'widget-options-div', onClick: thisthis.selectChoiceUpdate.bind(thisthis, option) }, option);
+	        }
+	      }));
+	    }
+	  }]);
+	
+	  return SelectBar;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(SelectBar);
+
+/***/ },
+/* 533 */
 /*!*********************************************************!*\
   !*** ../~/react-bootstrap-daterangepicker/lib/index.js ***!
   \*********************************************************/
@@ -77478,8 +77740,8 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var $ = __webpack_require__(/*! jquery */ 56);
 	var objectAssign = __webpack_require__(/*! object-assign */ 6);
-	var DateRangePicker = __webpack_require__(/*! bootstrap-daterangepicker */ 532);
-	var getOptions = __webpack_require__(/*! ./get-options.js */ 533);
+	var DateRangePicker = __webpack_require__(/*! bootstrap-daterangepicker */ 534);
+	var getOptions = __webpack_require__(/*! ./get-options.js */ 535);
 	
 	/* this is our export React class */
 	module.exports = React.createClass({
@@ -77624,7 +77886,7 @@
 
 
 /***/ },
-/* 532 */
+/* 534 */
 /*!*********************************************************!*\
   !*** ../~/bootstrap-daterangepicker/daterangepicker.js ***!
   \*********************************************************/
@@ -77641,7 +77903,7 @@
 	(function (root, factory) {
 	    if (true) {
 	        // AMD. Make globaly available as well
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! moment */ 417), __webpack_require__(/*! jquery */ 56)], __WEBPACK_AMD_DEFINE_RESULT__ = function (moment, jquery) {
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! moment */ 418), __webpack_require__(/*! jquery */ 56)], __WEBPACK_AMD_DEFINE_RESULT__ = function (moment, jquery) {
 	            return (root.daterangepicker = factory(moment, jquery));
 	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof module === 'object' && module.exports) {
@@ -79251,7 +79513,7 @@
 
 
 /***/ },
-/* 533 */
+/* 535 */
 /*!***************************************************************!*\
   !*** ../~/react-bootstrap-daterangepicker/lib/get-options.js ***!
   \***************************************************************/
@@ -79295,7 +79557,7 @@
 	};
 
 /***/ },
-/* 534 */
+/* 536 */
 /*!*****************************!*\
   !*** ./daterangepicker.css ***!
   \*****************************/
@@ -79304,7 +79566,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../~/css-loader!./daterangepicker.css */ 535);
+	var content = __webpack_require__(/*! !./../~/css-loader!./daterangepicker.css */ 537);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 200)(content, {});
@@ -79324,7 +79586,7 @@
 	}
 
 /***/ },
-/* 535 */
+/* 537 */
 /*!*********************************************!*\
   !*** ../~/css-loader!./daterangepicker.css ***!
   \*********************************************/
@@ -79341,7 +79603,7 @@
 
 
 /***/ },
-/* 536 */
+/* 538 */
 /*!*********************!*\
   !*** ./leaflet.css ***!
   \*********************/
@@ -79350,7 +79612,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !./../~/css-loader!./leaflet.css */ 537);
+	var content = __webpack_require__(/*! !./../~/css-loader!./leaflet.css */ 539);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 200)(content, {});
@@ -79370,7 +79632,7 @@
 	}
 
 /***/ },
-/* 537 */
+/* 539 */
 /*!*************************************!*\
   !*** ../~/css-loader!./leaflet.css ***!
   \*************************************/
@@ -79381,13 +79643,13 @@
 	
 	
 	// module
-	exports.push([module.id, "/* required styles */\r\n\r\n.leaflet-pane,\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-tile-container,\r\n.leaflet-map-pane svg,\r\n.leaflet-map-pane canvas,\r\n.leaflet-zoom-box,\r\n.leaflet-image-layer,\r\n.leaflet-layer {\r\n\tposition: absolute;\r\n\tleft: 0;\r\n\ttop: 0;\r\n\t}\r\n.leaflet-container {\r\n\toverflow: hidden;\r\n\t}\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\t-webkit-user-select: none;\r\n\t   -moz-user-select: none;\r\n\t        user-select: none;\r\n\t  -webkit-user-drag: none;\r\n\t}\r\n/* Safari renders non-retina tile on retina better with this, but Chrome is worse */\r\n.leaflet-safari .leaflet-tile {\r\n\timage-rendering: -webkit-optimize-contrast;\r\n\t}\r\n/* hack that prevents hw layers \"stretching\" when loading new tiles */\r\n.leaflet-safari .leaflet-tile-container {\r\n\twidth: 1600px;\r\n\theight: 1600px;\r\n\t-webkit-transform-origin: 0 0;\r\n\t}\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\tdisplay: block;\r\n\t}\r\n/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */\r\n/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */\r\n.leaflet-container .leaflet-overlay-pane svg,\r\n.leaflet-container .leaflet-marker-pane img,\r\n.leaflet-container .leaflet-tile-pane img,\r\n.leaflet-container img.leaflet-image-layer {\r\n\tmax-width: none !important;\r\n\t}\r\n\r\n.leaflet-container.leaflet-touch-zoom {\r\n\t-ms-touch-action: pan-x pan-y;\r\n\ttouch-action: pan-x pan-y;\r\n\t}\r\n.leaflet-container.leaflet-touch-drag {\r\n\t-ms-touch-action: pinch-zoom;\r\n\t}\r\n.leaflet-container.leaflet-touch-drag.leaflet-touch-drag {\r\n\t-ms-touch-action: none;\r\n\ttouch-action: none;\r\n}\r\n.leaflet-tile {\r\n\tfilter: inherit;\r\n\tvisibility: hidden;\r\n\t}\r\n.leaflet-tile-loaded {\r\n\tvisibility: inherit;\r\n\t}\r\n.leaflet-zoom-box {\r\n\twidth: 0;\r\n\theight: 0;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\tz-index: 80;\r\n\t}\r\n/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */\r\n.leaflet-overlay-pane svg {\r\n\t-moz-user-select: none;\r\n\t}\r\n\r\n.leaflet-pane         { z-index: 40; }\r\n\r\n.leaflet-tile-pane    { z-index: 20; }\r\n.leaflet-overlay-pane { z-index: 40; }\r\n.leaflet-shadow-pane  { z-index: 50; }\r\n.leaflet-marker-pane  { z-index: 60; }\r\n.leaflet-tooltip-pane   { z-index: 65; }\r\n.leaflet-popup-pane   { z-index: 70; }\r\n\r\n.leaflet-map-pane canvas { z-index: 10; }\r\n.leaflet-map-pane svg    { z-index: 20; }\r\n\r\n.leaflet-vml-shape {\r\n\twidth: 1px;\r\n\theight: 1px;\r\n\t}\r\n.lvml {\r\n\tbehavior: url(#default#VML);\r\n\tdisplay: inline-block;\r\n\tposition: absolute;\r\n\t}\r\n\r\n\r\n/* control positioning */\r\n\r\n.leaflet-control {\r\n\tposition: relative;\r\n\tz-index: 80;\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-top,\r\n.leaflet-bottom {\r\n\tposition: absolute;\r\n\tz-index: 100;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-top {\r\n\ttop: 0;\r\n\t}\r\n.leaflet-right {\r\n\tright: 0;\r\n\t}\r\n.leaflet-bottom {\r\n\tbottom: 0;\r\n\t}\r\n.leaflet-left {\r\n\tleft: 0;\r\n\t}\r\n.leaflet-control {\r\n\tfloat: left;\r\n\tclear: both;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tfloat: right;\r\n\t}\r\n.leaflet-top .leaflet-control {\r\n\tmargin-top: 10px;\r\n\t}\r\n.leaflet-bottom .leaflet-control {\r\n\tmargin-bottom: 10px;\r\n\t}\r\n.leaflet-left .leaflet-control {\r\n\tmargin-left: 10px;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tmargin-right: 10px;\r\n\t}\r\n\r\n\r\n/* zoom and fade animations */\r\n\r\n.leaflet-fade-anim .leaflet-tile {\r\n\twill-change: opacity;\r\n\t}\r\n.leaflet-fade-anim .leaflet-popup {\r\n\topacity: 0;\r\n\t-webkit-transition: opacity 0.2s linear;\r\n\t   -moz-transition: opacity 0.2s linear;\r\n\t     -o-transition: opacity 0.2s linear;\r\n\t        transition: opacity 0.2s linear;\r\n\t}\r\n.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {\r\n\topacity: 1;\r\n\t}\r\n.leaflet-zoom-animated {\r\n\t-webkit-transform-origin: 0 0;\r\n\t    -ms-transform-origin: 0 0;\r\n\t        transform-origin: 0 0;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\twill-change: transform;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\t-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t}\r\n.leaflet-zoom-anim .leaflet-tile,\r\n.leaflet-pan-anim .leaflet-tile {\r\n\t-webkit-transition: none;\r\n\t   -moz-transition: none;\r\n\t     -o-transition: none;\r\n\t        transition: none;\r\n\t}\r\n\r\n.leaflet-zoom-anim .leaflet-zoom-hide {\r\n\tvisibility: hidden;\r\n\t}\r\n\r\n\r\n/* cursors */\r\n\r\n.leaflet-interactive {\r\n\tcursor: pointer;\r\n\t}\r\n.leaflet-grab {\r\n\tcursor: -webkit-grab;\r\n\tcursor:    -moz-grab;\r\n\t}\r\n.leaflet-crosshair,\r\n.leaflet-crosshair .leaflet-interactive {\r\n\tcursor: crosshair;\r\n\t}\r\n.leaflet-popup-pane,\r\n.leaflet-control {\r\n\tcursor: auto;\r\n\t}\r\n.leaflet-dragging .leaflet-grab,\r\n.leaflet-dragging .leaflet-grab .leaflet-interactive,\r\n.leaflet-dragging .leaflet-marker-draggable {\r\n\tcursor: move;\r\n\tcursor: -webkit-grabbing;\r\n\tcursor:    -moz-grabbing;\r\n\t}\r\n\r\n/* marker & overlays interactivity */\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-image-layer,\r\n.leaflet-pane > svg path,\r\n.leaflet-tile-container {\r\n\tpointer-events: none;\r\n\t}\r\n\r\n.leaflet-marker-icon.leaflet-interactive,\r\n.leaflet-image-layer.leaflet-interactive,\r\n.leaflet-pane > svg path.leaflet-interactive {\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n\r\n/* visual tweaks */\r\n\r\n.leaflet-container {\r\n\tbackground: #ddd;\r\n\toutline: 0;\r\n\t}\r\n.leaflet-container a {\r\n\tcolor: #0078A8;\r\n\t}\r\n.leaflet-container a.leaflet-active {\r\n\toutline: 2px solid orange;\r\n\t}\r\n.leaflet-zoom-box {\r\n\tborder: 2px dotted #38f;\r\n\tbackground: rgba(255,255,255,0.5);\r\n\t}\r\n\r\n\r\n/* general typography */\r\n.leaflet-container {\r\n\tfont: 12px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif;\r\n\t}\r\n\r\n\r\n/* general toolbar styles */\r\n\r\n.leaflet-bar {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.65);\r\n\tborder-radius: 4px;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #fff;\r\n\tborder-bottom: 1px solid #ccc;\r\n\twidth: 26px;\r\n\theight: 26px;\r\n\tline-height: 26px;\r\n\tdisplay: block;\r\n\ttext-align: center;\r\n\ttext-decoration: none;\r\n\tcolor: black;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-control-layers-toggle {\r\n\tbackground-position: 50% 50%;\r\n\tbackground-repeat: no-repeat;\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #f4f4f4;\r\n\t}\r\n.leaflet-bar a:first-child {\r\n\tborder-top-left-radius: 4px;\r\n\tborder-top-right-radius: 4px;\r\n\t}\r\n.leaflet-bar a:last-child {\r\n\tborder-bottom-left-radius: 4px;\r\n\tborder-bottom-right-radius: 4px;\r\n\tborder-bottom: none;\r\n\t}\r\n.leaflet-bar a.leaflet-disabled {\r\n\tcursor: default;\r\n\tbackground-color: #f4f4f4;\r\n\tcolor: #bbb;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-bar a {\r\n\twidth: 30px;\r\n\theight: 30px;\r\n\tline-height: 30px;\r\n\t}\r\n\r\n\r\n/* zoom control */\r\n\r\n.leaflet-control-zoom-in,\r\n.leaflet-control-zoom-out {\r\n\tfont: bold 18px 'Lucida Console', Monaco, monospace;\r\n\ttext-indent: 1px;\r\n\t}\r\n.leaflet-control-zoom-out {\r\n\tfont-size: 20px;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-zoom-in {\r\n\tfont-size: 22px;\r\n\t}\r\n.leaflet-touch .leaflet-control-zoom-out {\r\n\tfont-size: 24px;\r\n\t}\r\n\r\n\r\n/* layers control */\r\n\r\n.leaflet-control-layers {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.4);\r\n\tbackground: #fff;\r\n\tborder-radius: 5px;\r\n\t}\r\n.leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(/*! ./images/layers.png */ 538) + ");\r\n\twidth: 36px;\r\n\theight: 36px;\r\n\t}\r\n.leaflet-retina .leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(/*! ./images/layers-2x.png */ 539) + ");\r\n\tbackground-size: 26px 26px;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers-toggle {\r\n\twidth: 44px;\r\n\theight: 44px;\r\n\t}\r\n.leaflet-control-layers .leaflet-control-layers-list,\r\n.leaflet-control-layers-expanded .leaflet-control-layers-toggle {\r\n\tdisplay: none;\r\n\t}\r\n.leaflet-control-layers-expanded .leaflet-control-layers-list {\r\n\tdisplay: block;\r\n\tposition: relative;\r\n\t}\r\n.leaflet-control-layers-expanded {\r\n\tpadding: 6px 10px 6px 6px;\r\n\tcolor: #333;\r\n\tbackground: #fff;\r\n\t}\r\n.leaflet-control-layers-scrollbar {\r\n\toverflow-y: scroll;\r\n\tpadding-right: 5px;\r\n\t}\r\n.leaflet-control-layers-selector {\r\n\tmargin-top: 2px;\r\n\tposition: relative;\r\n\ttop: 1px;\r\n\t}\r\n.leaflet-control-layers label {\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-control-layers-separator {\r\n\theight: 0;\r\n\tborder-top: 1px solid #ddd;\r\n\tmargin: 5px -10px 5px -6px;\r\n\t}\r\n\r\n/* Default icon URLs */\r\n.leaflet-default-icon-path {\r\n\tbackground-image: url(" + __webpack_require__(/*! ./images/marker-icon.png */ 540) + ");\r\n\t}\r\n\r\n\r\n/* attribution and scale controls */\r\n\r\n.leaflet-container .leaflet-control-attribution {\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.7);\r\n\tmargin: 0;\r\n\t}\r\n.leaflet-control-attribution,\r\n.leaflet-control-scale-line {\r\n\tpadding: 0 5px;\r\n\tcolor: #333;\r\n\t}\r\n.leaflet-control-attribution a {\r\n\ttext-decoration: none;\r\n\t}\r\n.leaflet-control-attribution a:hover {\r\n\ttext-decoration: underline;\r\n\t}\r\n.leaflet-container .leaflet-control-attribution,\r\n.leaflet-container .leaflet-control-scale {\r\n\tfont-size: 11px;\r\n\t}\r\n.leaflet-left .leaflet-control-scale {\r\n\tmargin-left: 5px;\r\n\t}\r\n.leaflet-bottom .leaflet-control-scale {\r\n\tmargin-bottom: 5px;\r\n\t}\r\n.leaflet-control-scale-line {\r\n\tborder: 2px solid #777;\r\n\tborder-top: none;\r\n\tline-height: 1.1;\r\n\tpadding: 2px 5px 1px;\r\n\tfont-size: 11px;\r\n\twhite-space: nowrap;\r\n\toverflow: hidden;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.5);\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child) {\r\n\tborder-top: 2px solid #777;\r\n\tborder-bottom: none;\r\n\tmargin-top: -2px;\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child):not(:last-child) {\r\n\tborder-bottom: 2px solid #777;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-attribution,\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tbox-shadow: none;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tborder: 2px solid rgba(0,0,0,0.2);\r\n\tbackground-clip: padding-box;\r\n\t}\r\n\r\n\r\n/* popup */\r\n\r\n.leaflet-popup {\r\n\tposition: absolute;\r\n\ttext-align: center;\r\n\tmargin-bottom: 20px;\r\n\t}\r\n.leaflet-popup-content-wrapper {\r\n\tpadding: 1px;\r\n\ttext-align: left;\r\n\tborder-radius: 12px;\r\n\t}\r\n.leaflet-popup-content {\r\n\tmargin: 13px 19px;\r\n\tline-height: 1.4;\r\n\t}\r\n.leaflet-popup-content p {\r\n\tmargin: 18px 0;\r\n\t}\r\n.leaflet-popup-tip-container {\r\n\twidth: 40px;\r\n\theight: 20px;\r\n\tposition: absolute;\r\n\tleft: 50%;\r\n\tmargin-left: -20px;\r\n\toverflow: hidden;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-popup-tip {\r\n\twidth: 17px;\r\n\theight: 17px;\r\n\tpadding: 1px;\r\n\r\n\tmargin: -10px auto 0;\r\n\r\n\t-webkit-transform: rotate(45deg);\r\n\t   -moz-transform: rotate(45deg);\r\n\t    -ms-transform: rotate(45deg);\r\n\t     -o-transform: rotate(45deg);\r\n\t        transform: rotate(45deg);\r\n\t}\r\n.leaflet-popup-content-wrapper,\r\n.leaflet-popup-tip {\r\n\tbackground: white;\r\n\tcolor: #333;\r\n\tbox-shadow: 0 3px 14px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button {\r\n\tposition: absolute;\r\n\ttop: 0;\r\n\tright: 0;\r\n\tpadding: 4px 4px 0 0;\r\n\tborder: none;\r\n\ttext-align: center;\r\n\twidth: 18px;\r\n\theight: 14px;\r\n\tfont: 16px/14px Tahoma, Verdana, sans-serif;\r\n\tcolor: #c3c3c3;\r\n\ttext-decoration: none;\r\n\tfont-weight: bold;\r\n\tbackground: transparent;\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button:hover {\r\n\tcolor: #999;\r\n\t}\r\n.leaflet-popup-scrolled {\r\n\toverflow: auto;\r\n\tborder-bottom: 1px solid #ddd;\r\n\tborder-top: 1px solid #ddd;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-popup-content-wrapper {\r\n\tzoom: 1;\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\twidth: 24px;\r\n\tmargin: 0 auto;\r\n\r\n\t-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)\";\r\n\tfilter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip-container {\r\n\tmargin-top: -1px;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-control-zoom,\r\n.leaflet-oldie .leaflet-control-layers,\r\n.leaflet-oldie .leaflet-popup-content-wrapper,\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\tborder: 1px solid #999;\r\n\t}\r\n\r\n\r\n/* div icon */\r\n\r\n.leaflet-div-icon {\r\n\tbackground: #fff;\r\n\tborder: 1px solid #666;\r\n\t}\r\n\r\n\r\n/* Tooltip */\r\n/* Base styles for the element that has a tooltip */\r\n.leaflet-tooltip {\r\n\tposition: absolute;\r\n\tpadding: 6px;\r\n\tbackground-color: #fff;\r\n\tborder: 1px solid #fff;\r\n\tborder-radius: 3px;\r\n\tcolor: #222;\r\n\twhite-space: nowrap;\r\n\t-webkit-user-select: none;\r\n\t-moz-user-select: none;\r\n\t-ms-user-select: none;\r\n\tuser-select: none;\r\n\tpointer-events: none;\r\n\tbox-shadow: 0 1px 3px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-tooltip.leaflet-clickable {\r\n\tcursor: pointer;\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-tooltip-top:before,\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\tposition: absolute;\r\n\tpointer-events: none;\r\n\tborder: 6px solid transparent;\r\n\tbackground: transparent;\r\n\tcontent: \"\";\r\n\t}\r\n\r\n/* Directions */\r\n\r\n.leaflet-tooltip-bottom {\r\n\tmargin-top: 6px;\r\n}\r\n.leaflet-tooltip-top {\r\n\tmargin-top: -6px;\r\n}\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-top:before {\r\n\tleft: 50%;\r\n\tmargin-left: -6px;\r\n\t}\r\n.leaflet-tooltip-top:before {\r\n\tbottom: 0;\r\n\tmargin-bottom: -12px;\r\n\tborder-top-color: #fff;\r\n\t}\r\n.leaflet-tooltip-bottom:before {\r\n\ttop: 0;\r\n\tmargin-top: -12px;\r\n\tmargin-left: -6px;\r\n\tborder-bottom-color: #fff;\r\n\t}\r\n.leaflet-tooltip-left {\r\n\tmargin-left: -6px;\r\n}\r\n.leaflet-tooltip-right {\r\n\tmargin-left: 6px;\r\n}\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\ttop: 50%;\r\n\tmargin-top: -6px;\r\n\t}\r\n.leaflet-tooltip-left:before {\r\n\tright: 0;\r\n\tmargin-right: -12px;\r\n\tborder-left-color: #fff;\r\n\t}\r\n.leaflet-tooltip-right:before {\r\n\tleft: 0;\r\n\tmargin-left: -12px;\r\n\tborder-right-color: #fff;\r\n\t}\r\n", ""]);
+	exports.push([module.id, "/* required styles */\r\n\r\n.leaflet-pane,\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-tile-container,\r\n.leaflet-map-pane svg,\r\n.leaflet-map-pane canvas,\r\n.leaflet-zoom-box,\r\n.leaflet-image-layer,\r\n.leaflet-layer {\r\n\tposition: absolute;\r\n\tleft: 0;\r\n\ttop: 0;\r\n\t}\r\n.leaflet-container {\r\n\toverflow: hidden;\r\n\t}\r\n.leaflet-tile,\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\t-webkit-user-select: none;\r\n\t   -moz-user-select: none;\r\n\t        user-select: none;\r\n\t  -webkit-user-drag: none;\r\n\t}\r\n/* Safari renders non-retina tile on retina better with this, but Chrome is worse */\r\n.leaflet-safari .leaflet-tile {\r\n\timage-rendering: -webkit-optimize-contrast;\r\n\t}\r\n/* hack that prevents hw layers \"stretching\" when loading new tiles */\r\n.leaflet-safari .leaflet-tile-container {\r\n\twidth: 1600px;\r\n\theight: 1600px;\r\n\t-webkit-transform-origin: 0 0;\r\n\t}\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow {\r\n\tdisplay: block;\r\n\t}\r\n/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */\r\n/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */\r\n.leaflet-container .leaflet-overlay-pane svg,\r\n.leaflet-container .leaflet-marker-pane img,\r\n.leaflet-container .leaflet-tile-pane img,\r\n.leaflet-container img.leaflet-image-layer {\r\n\tmax-width: none !important;\r\n\t}\r\n\r\n.leaflet-container.leaflet-touch-zoom {\r\n\t-ms-touch-action: pan-x pan-y;\r\n\ttouch-action: pan-x pan-y;\r\n\t}\r\n.leaflet-container.leaflet-touch-drag {\r\n\t-ms-touch-action: pinch-zoom;\r\n\t}\r\n.leaflet-container.leaflet-touch-drag.leaflet-touch-drag {\r\n\t-ms-touch-action: none;\r\n\ttouch-action: none;\r\n}\r\n.leaflet-tile {\r\n\tfilter: inherit;\r\n\tvisibility: hidden;\r\n\t}\r\n.leaflet-tile-loaded {\r\n\tvisibility: inherit;\r\n\t}\r\n.leaflet-zoom-box {\r\n\twidth: 0;\r\n\theight: 0;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\tz-index: 80;\r\n\t}\r\n/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */\r\n.leaflet-overlay-pane svg {\r\n\t-moz-user-select: none;\r\n\t}\r\n\r\n.leaflet-pane         { z-index: 40; }\r\n\r\n.leaflet-tile-pane    { z-index: 20; }\r\n.leaflet-overlay-pane { z-index: 40; }\r\n.leaflet-shadow-pane  { z-index: 50; }\r\n.leaflet-marker-pane  { z-index: 60; }\r\n.leaflet-tooltip-pane   { z-index: 65; }\r\n.leaflet-popup-pane   { z-index: 70; }\r\n\r\n.leaflet-map-pane canvas { z-index: 10; }\r\n.leaflet-map-pane svg    { z-index: 20; }\r\n\r\n.leaflet-vml-shape {\r\n\twidth: 1px;\r\n\theight: 1px;\r\n\t}\r\n.lvml {\r\n\tbehavior: url(#default#VML);\r\n\tdisplay: inline-block;\r\n\tposition: absolute;\r\n\t}\r\n\r\n\r\n/* control positioning */\r\n\r\n.leaflet-control {\r\n\tposition: relative;\r\n\tz-index: 80;\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-top,\r\n.leaflet-bottom {\r\n\tposition: absolute;\r\n\tz-index: 100;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-top {\r\n\ttop: 0;\r\n\t}\r\n.leaflet-right {\r\n\tright: 0;\r\n\t}\r\n.leaflet-bottom {\r\n\tbottom: 0;\r\n\t}\r\n.leaflet-left {\r\n\tleft: 0;\r\n\t}\r\n.leaflet-control {\r\n\tfloat: left;\r\n\tclear: both;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tfloat: right;\r\n\t}\r\n.leaflet-top .leaflet-control {\r\n\tmargin-top: 10px;\r\n\t}\r\n.leaflet-bottom .leaflet-control {\r\n\tmargin-bottom: 10px;\r\n\t}\r\n.leaflet-left .leaflet-control {\r\n\tmargin-left: 10px;\r\n\t}\r\n.leaflet-right .leaflet-control {\r\n\tmargin-right: 10px;\r\n\t}\r\n\r\n\r\n/* zoom and fade animations */\r\n\r\n.leaflet-fade-anim .leaflet-tile {\r\n\twill-change: opacity;\r\n\t}\r\n.leaflet-fade-anim .leaflet-popup {\r\n\topacity: 0;\r\n\t-webkit-transition: opacity 0.2s linear;\r\n\t   -moz-transition: opacity 0.2s linear;\r\n\t     -o-transition: opacity 0.2s linear;\r\n\t        transition: opacity 0.2s linear;\r\n\t}\r\n.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {\r\n\topacity: 1;\r\n\t}\r\n.leaflet-zoom-animated {\r\n\t-webkit-transform-origin: 0 0;\r\n\t    -ms-transform-origin: 0 0;\r\n\t        transform-origin: 0 0;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\twill-change: transform;\r\n\t}\r\n.leaflet-zoom-anim .leaflet-zoom-animated {\r\n\t-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);\r\n\t}\r\n.leaflet-zoom-anim .leaflet-tile,\r\n.leaflet-pan-anim .leaflet-tile {\r\n\t-webkit-transition: none;\r\n\t   -moz-transition: none;\r\n\t     -o-transition: none;\r\n\t        transition: none;\r\n\t}\r\n\r\n.leaflet-zoom-anim .leaflet-zoom-hide {\r\n\tvisibility: hidden;\r\n\t}\r\n\r\n\r\n/* cursors */\r\n\r\n.leaflet-interactive {\r\n\tcursor: pointer;\r\n\t}\r\n.leaflet-grab {\r\n\tcursor: -webkit-grab;\r\n\tcursor:    -moz-grab;\r\n\t}\r\n.leaflet-crosshair,\r\n.leaflet-crosshair .leaflet-interactive {\r\n\tcursor: crosshair;\r\n\t}\r\n.leaflet-popup-pane,\r\n.leaflet-control {\r\n\tcursor: auto;\r\n\t}\r\n.leaflet-dragging .leaflet-grab,\r\n.leaflet-dragging .leaflet-grab .leaflet-interactive,\r\n.leaflet-dragging .leaflet-marker-draggable {\r\n\tcursor: move;\r\n\tcursor: -webkit-grabbing;\r\n\tcursor:    -moz-grabbing;\r\n\t}\r\n\r\n/* marker & overlays interactivity */\r\n.leaflet-marker-icon,\r\n.leaflet-marker-shadow,\r\n.leaflet-image-layer,\r\n.leaflet-pane > svg path,\r\n.leaflet-tile-container {\r\n\tpointer-events: none;\r\n\t}\r\n\r\n.leaflet-marker-icon.leaflet-interactive,\r\n.leaflet-image-layer.leaflet-interactive,\r\n.leaflet-pane > svg path.leaflet-interactive {\r\n\tpointer-events: visiblePainted; /* IE 9-10 doesn't have auto */\r\n\tpointer-events: auto;\r\n\t}\r\n\r\n/* visual tweaks */\r\n\r\n.leaflet-container {\r\n\tbackground: #ddd;\r\n\toutline: 0;\r\n\t}\r\n.leaflet-container a {\r\n\tcolor: #0078A8;\r\n\t}\r\n.leaflet-container a.leaflet-active {\r\n\toutline: 2px solid orange;\r\n\t}\r\n.leaflet-zoom-box {\r\n\tborder: 2px dotted #38f;\r\n\tbackground: rgba(255,255,255,0.5);\r\n\t}\r\n\r\n\r\n/* general typography */\r\n.leaflet-container {\r\n\tfont: 12px/1.5 \"Helvetica Neue\", Arial, Helvetica, sans-serif;\r\n\t}\r\n\r\n\r\n/* general toolbar styles */\r\n\r\n.leaflet-bar {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.65);\r\n\tborder-radius: 4px;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #fff;\r\n\tborder-bottom: 1px solid #ccc;\r\n\twidth: 26px;\r\n\theight: 26px;\r\n\tline-height: 26px;\r\n\tdisplay: block;\r\n\ttext-align: center;\r\n\ttext-decoration: none;\r\n\tcolor: black;\r\n\t}\r\n.leaflet-bar a,\r\n.leaflet-control-layers-toggle {\r\n\tbackground-position: 50% 50%;\r\n\tbackground-repeat: no-repeat;\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-bar a:hover {\r\n\tbackground-color: #f4f4f4;\r\n\t}\r\n.leaflet-bar a:first-child {\r\n\tborder-top-left-radius: 4px;\r\n\tborder-top-right-radius: 4px;\r\n\t}\r\n.leaflet-bar a:last-child {\r\n\tborder-bottom-left-radius: 4px;\r\n\tborder-bottom-right-radius: 4px;\r\n\tborder-bottom: none;\r\n\t}\r\n.leaflet-bar a.leaflet-disabled {\r\n\tcursor: default;\r\n\tbackground-color: #f4f4f4;\r\n\tcolor: #bbb;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-bar a {\r\n\twidth: 30px;\r\n\theight: 30px;\r\n\tline-height: 30px;\r\n\t}\r\n\r\n\r\n/* zoom control */\r\n\r\n.leaflet-control-zoom-in,\r\n.leaflet-control-zoom-out {\r\n\tfont: bold 18px 'Lucida Console', Monaco, monospace;\r\n\ttext-indent: 1px;\r\n\t}\r\n.leaflet-control-zoom-out {\r\n\tfont-size: 20px;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-zoom-in {\r\n\tfont-size: 22px;\r\n\t}\r\n.leaflet-touch .leaflet-control-zoom-out {\r\n\tfont-size: 24px;\r\n\t}\r\n\r\n\r\n/* layers control */\r\n\r\n.leaflet-control-layers {\r\n\tbox-shadow: 0 1px 5px rgba(0,0,0,0.4);\r\n\tbackground: #fff;\r\n\tborder-radius: 5px;\r\n\t}\r\n.leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(/*! ./images/layers.png */ 540) + ");\r\n\twidth: 36px;\r\n\theight: 36px;\r\n\t}\r\n.leaflet-retina .leaflet-control-layers-toggle {\r\n\tbackground-image: url(" + __webpack_require__(/*! ./images/layers-2x.png */ 541) + ");\r\n\tbackground-size: 26px 26px;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers-toggle {\r\n\twidth: 44px;\r\n\theight: 44px;\r\n\t}\r\n.leaflet-control-layers .leaflet-control-layers-list,\r\n.leaflet-control-layers-expanded .leaflet-control-layers-toggle {\r\n\tdisplay: none;\r\n\t}\r\n.leaflet-control-layers-expanded .leaflet-control-layers-list {\r\n\tdisplay: block;\r\n\tposition: relative;\r\n\t}\r\n.leaflet-control-layers-expanded {\r\n\tpadding: 6px 10px 6px 6px;\r\n\tcolor: #333;\r\n\tbackground: #fff;\r\n\t}\r\n.leaflet-control-layers-scrollbar {\r\n\toverflow-y: scroll;\r\n\tpadding-right: 5px;\r\n\t}\r\n.leaflet-control-layers-selector {\r\n\tmargin-top: 2px;\r\n\tposition: relative;\r\n\ttop: 1px;\r\n\t}\r\n.leaflet-control-layers label {\r\n\tdisplay: block;\r\n\t}\r\n.leaflet-control-layers-separator {\r\n\theight: 0;\r\n\tborder-top: 1px solid #ddd;\r\n\tmargin: 5px -10px 5px -6px;\r\n\t}\r\n\r\n/* Default icon URLs */\r\n.leaflet-default-icon-path {\r\n\tbackground-image: url(" + __webpack_require__(/*! ./images/marker-icon.png */ 542) + ");\r\n\t}\r\n\r\n\r\n/* attribution and scale controls */\r\n\r\n.leaflet-container .leaflet-control-attribution {\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.7);\r\n\tmargin: 0;\r\n\t}\r\n.leaflet-control-attribution,\r\n.leaflet-control-scale-line {\r\n\tpadding: 0 5px;\r\n\tcolor: #333;\r\n\t}\r\n.leaflet-control-attribution a {\r\n\ttext-decoration: none;\r\n\t}\r\n.leaflet-control-attribution a:hover {\r\n\ttext-decoration: underline;\r\n\t}\r\n.leaflet-container .leaflet-control-attribution,\r\n.leaflet-container .leaflet-control-scale {\r\n\tfont-size: 11px;\r\n\t}\r\n.leaflet-left .leaflet-control-scale {\r\n\tmargin-left: 5px;\r\n\t}\r\n.leaflet-bottom .leaflet-control-scale {\r\n\tmargin-bottom: 5px;\r\n\t}\r\n.leaflet-control-scale-line {\r\n\tborder: 2px solid #777;\r\n\tborder-top: none;\r\n\tline-height: 1.1;\r\n\tpadding: 2px 5px 1px;\r\n\tfont-size: 11px;\r\n\twhite-space: nowrap;\r\n\toverflow: hidden;\r\n\t-moz-box-sizing: border-box;\r\n\t     box-sizing: border-box;\r\n\r\n\tbackground: #fff;\r\n\tbackground: rgba(255, 255, 255, 0.5);\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child) {\r\n\tborder-top: 2px solid #777;\r\n\tborder-bottom: none;\r\n\tmargin-top: -2px;\r\n\t}\r\n.leaflet-control-scale-line:not(:first-child):not(:last-child) {\r\n\tborder-bottom: 2px solid #777;\r\n\t}\r\n\r\n.leaflet-touch .leaflet-control-attribution,\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tbox-shadow: none;\r\n\t}\r\n.leaflet-touch .leaflet-control-layers,\r\n.leaflet-touch .leaflet-bar {\r\n\tborder: 2px solid rgba(0,0,0,0.2);\r\n\tbackground-clip: padding-box;\r\n\t}\r\n\r\n\r\n/* popup */\r\n\r\n.leaflet-popup {\r\n\tposition: absolute;\r\n\ttext-align: center;\r\n\tmargin-bottom: 20px;\r\n\t}\r\n.leaflet-popup-content-wrapper {\r\n\tpadding: 1px;\r\n\ttext-align: left;\r\n\tborder-radius: 12px;\r\n\t}\r\n.leaflet-popup-content {\r\n\tmargin: 13px 19px;\r\n\tline-height: 1.4;\r\n\t}\r\n.leaflet-popup-content p {\r\n\tmargin: 18px 0;\r\n\t}\r\n.leaflet-popup-tip-container {\r\n\twidth: 40px;\r\n\theight: 20px;\r\n\tposition: absolute;\r\n\tleft: 50%;\r\n\tmargin-left: -20px;\r\n\toverflow: hidden;\r\n\tpointer-events: none;\r\n\t}\r\n.leaflet-popup-tip {\r\n\twidth: 17px;\r\n\theight: 17px;\r\n\tpadding: 1px;\r\n\r\n\tmargin: -10px auto 0;\r\n\r\n\t-webkit-transform: rotate(45deg);\r\n\t   -moz-transform: rotate(45deg);\r\n\t    -ms-transform: rotate(45deg);\r\n\t     -o-transform: rotate(45deg);\r\n\t        transform: rotate(45deg);\r\n\t}\r\n.leaflet-popup-content-wrapper,\r\n.leaflet-popup-tip {\r\n\tbackground: white;\r\n\tcolor: #333;\r\n\tbox-shadow: 0 3px 14px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button {\r\n\tposition: absolute;\r\n\ttop: 0;\r\n\tright: 0;\r\n\tpadding: 4px 4px 0 0;\r\n\tborder: none;\r\n\ttext-align: center;\r\n\twidth: 18px;\r\n\theight: 14px;\r\n\tfont: 16px/14px Tahoma, Verdana, sans-serif;\r\n\tcolor: #c3c3c3;\r\n\ttext-decoration: none;\r\n\tfont-weight: bold;\r\n\tbackground: transparent;\r\n\t}\r\n.leaflet-container a.leaflet-popup-close-button:hover {\r\n\tcolor: #999;\r\n\t}\r\n.leaflet-popup-scrolled {\r\n\toverflow: auto;\r\n\tborder-bottom: 1px solid #ddd;\r\n\tborder-top: 1px solid #ddd;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-popup-content-wrapper {\r\n\tzoom: 1;\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\twidth: 24px;\r\n\tmargin: 0 auto;\r\n\r\n\t-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)\";\r\n\tfilter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);\r\n\t}\r\n.leaflet-oldie .leaflet-popup-tip-container {\r\n\tmargin-top: -1px;\r\n\t}\r\n\r\n.leaflet-oldie .leaflet-control-zoom,\r\n.leaflet-oldie .leaflet-control-layers,\r\n.leaflet-oldie .leaflet-popup-content-wrapper,\r\n.leaflet-oldie .leaflet-popup-tip {\r\n\tborder: 1px solid #999;\r\n\t}\r\n\r\n\r\n/* div icon */\r\n\r\n.leaflet-div-icon {\r\n\tbackground: #fff;\r\n\tborder: 1px solid #666;\r\n\t}\r\n\r\n\r\n/* Tooltip */\r\n/* Base styles for the element that has a tooltip */\r\n.leaflet-tooltip {\r\n\tposition: absolute;\r\n\tpadding: 6px;\r\n\tbackground-color: #fff;\r\n\tborder: 1px solid #fff;\r\n\tborder-radius: 3px;\r\n\tcolor: #222;\r\n\twhite-space: nowrap;\r\n\t-webkit-user-select: none;\r\n\t-moz-user-select: none;\r\n\t-ms-user-select: none;\r\n\tuser-select: none;\r\n\tpointer-events: none;\r\n\tbox-shadow: 0 1px 3px rgba(0,0,0,0.4);\r\n\t}\r\n.leaflet-tooltip.leaflet-clickable {\r\n\tcursor: pointer;\r\n\tpointer-events: auto;\r\n\t}\r\n.leaflet-tooltip-top:before,\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\tposition: absolute;\r\n\tpointer-events: none;\r\n\tborder: 6px solid transparent;\r\n\tbackground: transparent;\r\n\tcontent: \"\";\r\n\t}\r\n\r\n/* Directions */\r\n\r\n.leaflet-tooltip-bottom {\r\n\tmargin-top: 6px;\r\n}\r\n.leaflet-tooltip-top {\r\n\tmargin-top: -6px;\r\n}\r\n.leaflet-tooltip-bottom:before,\r\n.leaflet-tooltip-top:before {\r\n\tleft: 50%;\r\n\tmargin-left: -6px;\r\n\t}\r\n.leaflet-tooltip-top:before {\r\n\tbottom: 0;\r\n\tmargin-bottom: -12px;\r\n\tborder-top-color: #fff;\r\n\t}\r\n.leaflet-tooltip-bottom:before {\r\n\ttop: 0;\r\n\tmargin-top: -12px;\r\n\tmargin-left: -6px;\r\n\tborder-bottom-color: #fff;\r\n\t}\r\n.leaflet-tooltip-left {\r\n\tmargin-left: -6px;\r\n}\r\n.leaflet-tooltip-right {\r\n\tmargin-left: 6px;\r\n}\r\n.leaflet-tooltip-left:before,\r\n.leaflet-tooltip-right:before {\r\n\ttop: 50%;\r\n\tmargin-top: -6px;\r\n\t}\r\n.leaflet-tooltip-left:before {\r\n\tright: 0;\r\n\tmargin-right: -12px;\r\n\tborder-left-color: #fff;\r\n\t}\r\n.leaflet-tooltip-right:before {\r\n\tleft: 0;\r\n\tmargin-left: -12px;\r\n\tborder-right-color: #fff;\r\n\t}\r\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 538 */
+/* 540 */
 /*!***************************!*\
   !*** ./images/layers.png ***!
   \***************************/
@@ -79396,7 +79658,7 @@
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAQAAAADQ4RFAAACf0lEQVR4AY1UM3gkARTePdvdoTxXKc+qTl3aU5U6b2Kbkz3Gtq3Zw6ziLGNPzrYx7946Tr6/ee/XeCQ4D3ykPtL5tHno4n0d/h3+xfuWHGLX81cn7r0iTNzjr7LrlxCqPtkbTQEHeqOrTy4Yyt3VCi/IOB0v7rVC7q45Q3Gr5K6jt+3Gl5nCoDD4MtO+j96Wu8atmhGqcNGHObuf8OM/x3AMx38+4Z2sPqzCxRFK2aF2e5Jol56XTLyggAMTL56XOMoS1W4pOyjUcGGQdZxU6qRh7B9Zp+PfpOFlqt0zyDZckPi1ttmIp03jX8gyJ8a/PG2yutpS/Vol7peZIbZcKBAEEheEIAgFbDkz5H6Zrkm2hVWGiXKiF4Ycw0RWKdtC16Q7qe3X4iOMxruonzegJzWaXFrU9utOSsLUmrc0YjeWYjCW4PDMADElpJSSQ0vQvA1Tm6/JlKnqFs1EGyZiFCqnRZTEJJJiKRYzVYzJck2Rm6P4iH+cmSY0YzimYa8l0EtTODFWhcMIMVqdsI2uiTvKmTisIDHJ3od5GILVhBCarCfVRmo4uTjkhrhzkiBV7SsaqS+TzrzM1qpGGUFt28pIySQHR6h7F6KSwGWm97ay+Z+ZqMcEjEWebE7wxCSQwpkhJqoZA5ivCdZDjJepuJ9IQjGGUmuXJdBFUygxVqVsxFsLMbDe8ZbDYVCGKxs+W080max1hFCarCfV+C1KATwcnvE9gRRuMP2prdbWGowm1KB1y+zwMMENkM755cJ2yPDtqhTI6ED1M/82yIDtC/4j4BijjeObflpO9I9MwXTCsSX8jWAFeHr05WoLTJ5G8IQVS/7vwR6ohirYM7f6HzYpogfS3R2OAAAAAElFTkSuQmCC"
 
 /***/ },
-/* 539 */
+/* 541 */
 /*!******************************!*\
   !*** ./images/layers-2x.png ***!
   \******************************/
@@ -79405,7 +79667,7 @@
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAQAAABvcdNgAAAEsklEQVR4AWL4TydIhpZK1kpWOlg0w3ZXP6D2soBtG42jeI6ZmQTHzAxiTbSJsYLjO9HhP+WOmcuhciVnmHVQcJnp7DFvScowZorad/+V/fVzMdMT2g9Cv9guXGv/7pYOrXh2U+RRR3dSd9JRx6bIFc/ekqHI29JC6pJ5ZEh1yWkhkbcFeSjxgx3L2m1cb1C7bceyxA+CNjT/Ifff+/kDk2u/w/33/IeCMOSaWZ4glosqT3DNnNZQ7Cs58/3Ce5HL78iZH/vKVIaYlqzfdLu8Vi7dnvUbEza5Idt36tquZFldl6N5Z/POLof0XLK61mZCmJSWjVF9tEjUluu74IUXvgttuVIHE7YxSkaYhJZam7yiM9Pv82JYfl9nptxZaxMJE4YSPty+vF0+Y2up9d3wwijfjZbabqm/3bZ9ecKHsiGmRflnn1MW4pjHf9oLufyn2z3y1D6n8g8TZhxyzipLNPnAUpsOiuWimg52psrTZYnOWYNDTMuWBWa0tJb4rgq1UvmutpaYEbZlwU3CLJm/ayYjHW5/h7xWLn9Hh1vepDkyf7dE7MtT5LR4e7yYpHrkhOUpEfssBLq2pPhAqoSWKUkk7EDqkmK6RrCEzqDjhNDWNE+XSMvkJRDWlZTmCW0l0PHQGRZY5t1L83kT0Y3l2SItk5JAWHl2dCOBm+fPu3fo5/3v61RMCO9Jx2EEYYhb0rmNQMX/vm7gqOEJLcXTGw3CAuRNeyaPWwjR8PRqKQ1PDA/dpv+on9Shox52WFnx0KY8onHayrJzm87i5h9xGw/tfkev0jGsQizqezUKjk12hBMKJ4kbCqGPVNXudyyrShovGw5CgxsRICxF6aRmSjlBnHRzg7Gx8fKqEubI2rahQYdR1YgDIRQO7JvQyD52hoIQx0mxa0ODtW2Iozn1le2iIRdzwWewedyZzewidueOGqlsn1MvcnQpuVwLGG3/IR1hIKxCjelIDZ8ldqWz25jWAsnldEnK0Zxro19TGVb2ffIZEsIO89EIEDvKMPrzmBOQcKQ+rroye6NgRRxqR4U8EAkz0CL6uSGOm6KQCdWjvjRiSP1BPalCRS5iQYiEIvxuBMJEWgzSoHADcVMuN7IuqqTeyUPq22qFimFtxDyBBJEwNyt6TM88blFHao/6tWWhuuOM4SAK4EI4QmFHA+SEyWlp4EQoJ13cYGzMu7yszEIBOm2rVmHUNqwAIQabISNMRstmdhNWcFLsSm+0tjJH1MdRxO5Nx0WDMhCtgD6OKgZeljJqJKc9po8juskR9XN0Y1lZ3mWjLR9JCO1jRDMd0fpYC2VnvjBSEFg7wBENc0R9HFlb0xvF1+TBEpF68d+DHR6IOWVv2BECtxo46hOFUBd/APU57WIoEwJhIi2CdpyZX0m93BZicktMj1AS9dClteUFAUNUIEygRZCtik5zSxI9MubTBH1GOiHsiLJ3OCoSZkILa9PxiN0EbvhsAo8tdAf9Seepd36lGWHmtNANTv5Jd0z4QYyeo/UEJqxKRpg5LZx6btLPsOaEmdMyxYdlc8LMaJnikDlhclqmPiQnTEpLUIZEwkRagjYkEibQErwhkTAKCLQEbUgkzJQWc/0PstHHcfEdQ+UAAAAASUVORK5CYII="
 
 /***/ },
-/* 540 */
+/* 542 */
 /*!********************************!*\
   !*** ./images/marker-icon.png ***!
   \********************************/
@@ -79414,7 +79676,7 @@
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAApCAYAAADAk4LOAAAFgUlEQVR4Aa1XA5BjWRTN2oW17d3YaZtr2962HUzbDNpjszW24mRt28p47v7zq/bXZtrp/lWnXr337j3nPCe85NcypgSFdugCpW5YoDAMRaIMqRi6aKq5E3YqDQO3qAwjVWrD8Ncq/RBpykd8oZUb/kaJutow8r1aP9II0WmLKLIsJyv1w/kqw9Ch2MYdB++12Onxee/QMwvf4/Dk/Lfp/i4nxTXtOoQ4pW5Aj7wpici1A9erdAN2OH64x8OSP9j3Ft3b7aWkTg/Fm91siTra0f9on5sQr9INejH6CUUUpavjFNq1B+Oadhxmnfa8RfEmN8VNAsQhPqF55xHkMzz3jSmChWU6f7/XZKNH+9+hBLOHYozuKQPxyMPUKkrX/K0uWnfFaJGS1QPRtZsOPtr3NsW0uyh6NNCOkU3Yz+bXbT3I8G3xE5EXLXtCXbbqwCO9zPQYPRTZ5vIDXD7U+w7rFDEoUUf7ibHIR4y6bLVPXrz8JVZEql13trxwue/uDivd3fkWRbS6/IA2bID4uk0UpF1N8qLlbBlXs4Ee7HLTfV1j54APvODnSfOWBqtKVvjgLKzF5YdEk5ewRkGlK0i33Eofffc7HT56jD7/6U+qH3Cx7SBLNntH5YIPvODnyfIXZYRVDPqgHtLs5ABHD3YzLuespb7t79FY34DjMwrVrcTuwlT55YMPvOBnRrJ4VXTdNnYug5ucHLBjEpt30701A3Ts+HEa73u6dT3FNWwflY86eMHPk+Yu+i6pzUpRrW7SNDg5JHR4KapmM5Wv2E8Tfcb1HoqqHMHU+uWDD7zg54mz5/2BSnizi9T1Dg4QQXLToGNCkb6tb1NU+QAlGr1++eADrzhn/u8Q2YZhQVlZ5+CAOtqfbhmaUCS1ezNFVm2imDbPmPng5wmz+gwh+oHDce0eUtQ6OGDIyR0uUhUsoO3vfDmmgOezH0mZN59x7MBi++WDL1g/eEiU3avlidO671bkLfwbw5XV2P8Pzo0ydy4t2/0eu33xYSOMOD8hTf4CrBtGMSoXfPLchX+J0ruSePw3LZeK0juPJbYzrhkH0io7B3k164hiGvawhOKMLkrQLyVpZg8rHFW7E2uHOL888IBPlNZ1FPzstSJM694fWr6RwpvcJK60+0HCILTBzZLFNdtAzJaohze60T8qBzyh5ZuOg5e7uwQppofEmf2++DYvmySqGBuKaicF1blQjhuHdvCIMvp8whTTfZzI7RldpwtSzL+F1+wkdZ2TBOW2gIF88PBTzD/gpeREAMEbxnJcaJHNHrpzji0gQCS6hdkEeYt9DF/2qPcEC8RM28Hwmr3sdNyht00byAut2k3gufWNtgtOEOFGUwcXWNDbdNbpgBGxEvKkOQsxivJx33iow0Vw5S6SVTrpVq11ysA2Rp7gTfPfktc6zhtXBBC+adRLshf6sG2RfHPZ5EAc4sVZ83yCN00Fk/4kggu40ZTvIEm5g24qtU4KjBrx/BTTH8ifVASAG7gKrnWxJDcU7x8X6Ecczhm3o6YicvsLXWfh3Ch1W0k8x0nXF+0fFxgt4phz8QvypiwCCFKMqXCnqXExjq10beH+UUA7+nG6mdG/Pu0f3LgFcGrl2s0kNNjpmoJ9o4B29CMO8dMT4Q5ox8uitF6fqsrJOr8qnwNbRzv6hSnG5wP+64C7h9lp30hKNtKdWjtdkbuPA19nJ7Tz3zR/ibgARbhb4AlhavcBebmTHcFl2fvYEnW0ox9xMxKBS8btJ+KiEbq9zA4RthQXDhPa0T9TEe69gWupwc6uBUphquXgf+/FrIjweHQS4/pduMe5ERUMHUd9xv8ZR98CxkS4F2n3EUrUZ10EYNw7BWm9x1GiPssi3GgiGRDKWRYZfXlON+dfNbM+GgIwYdwAAAAASUVORK5CYII="
 
 /***/ },
-/* 541 */
+/* 543 */
 /*!*******************************!*\
   !*** ./ConfigureAddWidget.js ***!
   \*******************************/
@@ -79471,7 +79733,7 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var moment = __webpack_require__(/*! moment */ 417);
+	var moment = __webpack_require__(/*! moment */ 418);
 	
 	var ConfigureAddWidget = function (_React$Component) {
 	  _inherits(ConfigureAddWidget, _React$Component);
@@ -79663,7 +79925,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ConfigureAddWidget);
 
 /***/ },
-/* 542 */
+/* 544 */
 /*!****************************!*\
   !*** ./ConfigureAddTab.js ***!
   \****************************/
@@ -79720,7 +79982,7 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var moment = __webpack_require__(/*! moment */ 417);
+	var moment = __webpack_require__(/*! moment */ 418);
 	
 	var ConfigureAddTab = function (_React$Component) {
 	  _inherits(ConfigureAddTab, _React$Component);
@@ -79802,7 +80064,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ConfigureAddTab);
 
 /***/ },
-/* 543 */
+/* 545 */
 /*!*****************************!*\
   !*** ./ConfigureEditTab.js ***!
   \*****************************/
@@ -79859,7 +80121,7 @@
 	var React = __webpack_require__(/*! react */ 4);
 	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
 	
-	var moment = __webpack_require__(/*! moment */ 417);
+	var moment = __webpack_require__(/*! moment */ 418);
 	
 	var ConfigureEditTab = function (_React$Component) {
 	  _inherits(ConfigureEditTab, _React$Component);
@@ -79946,7 +80208,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ConfigureEditTab);
 
 /***/ },
-/* 544 */
+/* 546 */
 /*!***************************!*\
   !*** ./ConfigureLogin.js ***!
   \***************************/
@@ -80039,112 +80301,6 @@
 	////////////////////////////////////////////////////////////////////////////////
 	
 	exports.default = ConfigureLogin;
-
-/***/ },
-/* 545 */
-/*!*********************************!*\
-  !*** ./WidgetGeospatialInfo.js ***!
-  \*********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
-	}();
-	
-	var _react = __webpack_require__(/*! react */ 4);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(/*! react-dom */ 64);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _leaflet = __webpack_require__(/*! leaflet */ 210);
-	
-	var _leaflet2 = _interopRequireDefault(_leaflet);
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { default: obj };
-	}
-	
-	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-	
-	function _possibleConstructorReturn(self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-	}
-	
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-	}
-	
-	var CenterControl = function (_MapControl) {
-	  _inherits(CenterControl, _MapControl);
-	
-	  function CenterControl(props) {
-	    _classCallCheck(this, CenterControl);
-	
-	    console.log('connnnstructor!');
-	
-	    var _this = _possibleConstructorReturn(this, (CenterControl.__proto__ || Object.getPrototypeOf(CenterControl)).call(this));
-	
-	    _this.state = {
-	      myLabel: props.myLabel,
-	      centerControl: _leaflet2.default.control({ position: 'bottomright' })
-	    };
-	    return _this;
-	  }
-	
-	  _createClass(CenterControl, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      var jsx = _react2.default.createElement('div', { className: 'myinfobox' }, this.state.myLabel);
-	      this.state.centerControl.onAdd = function (map) {
-	        var div = _leaflet2.default.DomUtil.create('div', '');
-	        _reactDom2.default.render(jsx, div);
-	        return div;
-	      };
-	      this.state.centerControl.onRemove = function (map) {
-	        console.log('bonk');
-	      };
-	      this.leafletElement = this.state.centerControl;
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var jsx = "<div class='myinfobox'>" + nextProps.myLabel + "</div>";
-	      this.state.centerControl.getContainer().innerHTML = jsx;
-	      this.setState({ myLabel: nextProps.myLabel });
-	    }
-	  }]);
-	
-	  return CenterControl;
-	}(_reactLeaflet.MapControl);
-	
-	exports.default = CenterControl;
 
 /***/ }
 /******/ ]);
