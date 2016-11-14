@@ -80,7 +80,7 @@ class Widget extends React.Component {
         <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>        
         {(() => {
           switch (widgetdata.type) {
-          case 'line': return(<SelectBar widgetindex={this.props.widgetindex} control={'linetype'} current={widgetdata.linetype} choices={['line','spline','area']}/>);
+          case 'line': return(<SelectBar widgetindex={this.props.widgetindex} control={'linetype'} current={widgetdata.linetype || 'line'} choices={['line','spline','area']}/>);
           default: return(<div style={{display:'inline-block'}}/>);
           }
         })()}      

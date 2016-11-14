@@ -59,7 +59,8 @@ class ConfigureAddWidget extends React.Component {
        configDisplay:    'none',
        fob:              'front',
        title:            'Line Graph',
-       description:      'Horizontal line graph for viewing progressive numerical data.'
+       description:      'Horizontal line graph for viewing progressive numerical data.',
+       linetype:         'line'
       },
       {type:             'column',
        width:            'half',

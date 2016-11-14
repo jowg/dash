@@ -680,7 +680,7 @@ svg {
 /* Fancy Select Button */
 .widget-options-div-selected {
   display: inline-block;
-  border: 1px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
   font-family: var(--global-font);  
@@ -688,7 +688,7 @@ svg {
 }
 .widget-options-div {
   display: inline-block;
-  border: 1px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
   font-family: var(--global-font);  
@@ -701,7 +701,7 @@ svg {
 /*--------*/
 .widget-options-div-left-selected {
   display: inline-block;
-  border: 1px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
   font-family: var(--global-font);  
@@ -711,7 +711,7 @@ svg {
 }
 .widget-options-div-left {
   display: inline-block;
-  border: 1px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
   font-family: var(--global-font);  
@@ -726,7 +726,7 @@ svg {
 /*--------*/
 .widget-options-div-right-selected {
   display: inline-block;
-  border: 1px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
   font-family: var(--global-font);  
@@ -737,7 +737,7 @@ svg {
 .widget-options-div-right {
   
   display: inline-block;
-  border: 1px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
   font-family: var(--global-font);  
