@@ -141,6 +141,9 @@ class WidgetPie extends React.Component {
                 enabled: false
               },
               title: {
+                text: data.mytitle
+              },
+              subtitle: {
                 text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
               },
               plotOptions: {

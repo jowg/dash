@@ -38428,15 +38428,19 @@
 	    key: 'featureClicked',
 	    value: function featureClicked(e) {
 	      var p = e.target.feature.properties.precinct;
-	      this.props.update_widget_plus_save(0, {
+	      this.props.update_widget(0, {
 	        mytitle: 'Precinct: ' + p,
 	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
 	      });
-	      this.props.update_widget_plus_save(1, {
+	      this.props.update_widget(1, {
 	        mytitle: 'Precinct: ' + p,
 	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
 	      });
-	      this.props.update_widget_plus_save(3, {
+	      this.props.update_widget(3, {
+	        mytitle: 'Precinct: ' + p,
+	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	      });
+	      this.props.update_widget_plus_save(4, {
 	        mytitle: 'Precinct: ' + p,
 	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
 	      });
@@ -38585,6 +38589,9 @@
 	  return {
 	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
 	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
 	    }
 	  };
 	};
@@ -75638,6 +75645,9 @@
 	                enabled: false
 	              },
 	              title: {
+	                text: data.mytitle
+	              },
+	              subtitle: {
 	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
 	              },
 	              plotOptions: {

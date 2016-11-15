@@ -45,15 +45,19 @@ class WidgetGeospatial extends React.Component {
 
   featureClicked(e) {
     var p = e.target.feature.properties.precinct;
-    this.props.update_widget_plus_save(0,{
+    this.props.update_widget(0,{
       mytitle: 'Precinct: '+p,
       filters: [{"metric":"precinct","comp":"==","value":p}]
     });
-    this.props.update_widget_plus_save(1,{
+    this.props.update_widget(1,{
       mytitle: 'Precinct: '+p,
       filters: [{"metric":"precinct","comp":"==","value":p}]
     });
-    this.props.update_widget_plus_save(3,{
+    this.props.update_widget(3,{
+      mytitle: 'Precinct: '+p,
+      filters: [{"metric":"precinct","comp":"==","value":p}]
+    });
+    this.props.update_widget_plus_save(4,{
       mytitle: 'Precinct: '+p,
       filters: [{"metric":"precinct","comp":"==","value":p}]
     });
@@ -220,6 +224,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   update_widget_plus_save: (widgetindex,changes) => dispatch({type: 'UPDATE_WIDGET_PLUS_SAVE',widgetindex:widgetindex,changes:changes}),
+  update_widget:           (widgetindex,changes) => dispatch({type: 'UPDATE_WIDGET',widgetindex:widgetindex,changes:changes})
 })
 
 ////////////////////////////////////////////////////////////////////////////////
