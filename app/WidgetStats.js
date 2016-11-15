@@ -98,7 +98,8 @@ class WidgetStats extends React.Component {
             var max = metricNumData[length-1];
             var min = metricNumData[0];
             var r = '<div class="stats">';
-            r += '<div class="stats-title">'+data.metrics[0]+'</div><br/>';
+            r += '<div class="stats-title">'+data.mytitle+'</div>';
+            r += '<div class="stats-subtitle">'+data.metrics[0]+'</div><br/>';
             r += '<div class="stats-left">Minimum</div><div class="stats-right">'+min+'</div>';
             r += '<div class="stats-left">Maximum</div><div class="stats-right">'+max+'</div>';
             r += '<div class="stats-left">Mean</div><div class="stats-right">'+mean+'</div>';

@@ -155,6 +155,7 @@ class Dashboard extends React.Component {
   render() {
     var thisthis = this;
     var props = this.props;
+    var configurable = props.fullstate.configurable;
     var currentDash = this.props.dashLayout[this.props.currentTab];
     var ranges = {
       'Today':        [moment(), moment()],
@@ -190,6 +191,7 @@ class Dashboard extends React.Component {
             </div>
           );
         })}
+      {configurable ? 
         <div className="dropdown">
         <div className='dropbtn'>Tools</div>
         <div className="dropdown-content">
@@ -199,7 +201,8 @@ class Dashboard extends React.Component {
         {((currentDash.layout.length === 0) && (this.props.dashLayout.length > 1)) ? <div className='addstuffbutton' onClick={thisthis.deleteCurrentTab}>Delete Tab</div> : ''}
         <div className='addstuffbutton' onClick={thisthis.toggleTabHideDate}>{currentDash.tabHideDate ? 'Show Tab Date' : 'Hide Tab Date'}</div>
         </div>
-        </div>
+       </div> : <div/>
+      }
         </div>
         {props.dashLayout.map(function(tab,tabindex) {
           return(

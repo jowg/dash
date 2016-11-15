@@ -22,18 +22,40 @@ class WidgetGeospatial extends React.Component {
     this.updateInternals = this.updateInternals.bind(this);
     this.style = this.style.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
+    this.featureClicked = this.featureClicked.bind(this);
   }
 
   onEachFeature(feature,layer) {
     var thisthis = this;
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
     const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.metrics[0]+': '+feature.properties[widgetdata.metrics[0]];
-    layer.bindPopup(datum);
-    layer.on('mouseover', function (e) {
-      thisthis.setState({currentLabel: datum});      
+    //layer.bindPopup(datum);
+    //layer.on('mouseover', function (e) {
+    //  thisthis.setState({currentLabel: datum});      
+    //});
+    //layer.on('mouseout', function (e) {
+    //  thisthis.setState({currentLabel: 'Hover for Data'});      
+    //});
+    // New Stuff.
+    // Figure out which precinct we're on and set the widget with index 0 to have that filter.
+    layer.on({
+      click: thisthis.featureClicked
     });
-    layer.on('mouseout', function (e) {
-      thisthis.setState({currentLabel: 'Hover for Data'});      
+  }
+
+  featureClicked(e) {
+    var p = e.target.feature.properties.precinct;
+    this.props.update_widget_plus_save(0,{
+      mytitle: 'Precinct: '+p,
+      filters: [{"metric":"precinct","comp":"==","value":p}]
+    });
+    this.props.update_widget_plus_save(1,{
+      mytitle: 'Precinct: '+p,
+      filters: [{"metric":"precinct","comp":"==","value":p}]
+    });
+    this.props.update_widget_plus_save(3,{
+      mytitle: 'Precinct: '+p,
+      filters: [{"metric":"precinct","comp":"==","value":p}]
     });
   }
   
@@ -86,9 +108,15 @@ class WidgetGeospatial extends React.Component {
         dataRestPoint(),
         completeParams({
           source: data.source,
-          metrics: data.metrics[0]+','+data.metrics[1]+',geojsonfeature'
+          metrics: data.metrics[1]+','+data.metrics[0],
+          aggmetric: data.metrics[1],
+          nonaggmetric: data.metrics[0],
+          aggmethod: 'mean',
+          addgeo: 'precinct'
         }),
         function(rawData) {
+          // Join the geo data onto the data data.
+          //console.log(rawData);
           var chartData = {
             metrics:[rawData.metrics[1],rawData.metrics[0]],
             data:[]
@@ -104,7 +132,9 @@ class WidgetGeospatial extends React.Component {
           var min = max;
           var g = [];
           _.each(rawData.data,function(datum) {
-            datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
+            //console.log(datum[data.metrics[1]]);
+            datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
+            //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
             var v = datum[data.metrics[0]];
             if (v < min) {min = v;}
             if (v > max) {max = v;}
@@ -182,13 +212,14 @@ const mapStateToProps = (state) => ({
   widgets: state.widgets,
   dashLayout: state.dashLayout,
   currentTab: state.currentTab,
-  fullstate: state
+  fullstate: state,
 })
 
 // I think:
 // This maps the dispatch tools, or some of them, to our props.
 
 const mapDispatchToProps = (dispatch) => ({
+  update_widget_plus_save: (widgetindex,changes) => dispatch({type: 'UPDATE_WIDGET_PLUS_SAVE',widgetindex:widgetindex,changes:changes}),
 })
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -212,7 +212,14 @@ html,body {
   text-align:  center;
   font-family: var(--global-font);
   font-size:   var(--global-font-size-medium);
-  color:       #0000ff;
+  color:       #000000;
+}
+.stats-subtitle {
+  width:       100%;
+  text-align:  center;
+  font-family: var(--global-font);
+  font-size:   var(--global-font-size-75);
+  color:       #000000;
 }
 .stats-left {
   width:       55%;
@@ -220,7 +227,7 @@ html,body {
   float:       left;
   font-family: var(--global-font);
   font-size:   var(--global-font-size-small);
-  color:       #0000ff;
+  color:       #000000;
 }
 .stats-right {
   width:       45%;
@@ -228,7 +235,7 @@ html,body {
   float:       right;
   font-family: var(--global-font);
   font-size:   var(--global-font-size-small);
-  color:       #0000ff;
+  color:       #000000;
 }
 
 .widget-config-window {
@@ -740,8 +747,7 @@ svg {
   border-top-right-radius:  5px;
   border-bottom-right-radius:  5px;
 }
-.widget-options-div-right {
-  
+.widget-options-div-right {  
   display: inline-block;
   border: 2px solid #aaaaaa;
   background-color: #ffffff;
@@ -756,3 +762,9 @@ svg {
   background-color: #eeeeee;
   cursor: pointer;
 }
+/*-----*/
+.widget-top-bar {
+  width: 100%;
+  height: 24px;
+}
+  

@@ -99,6 +99,9 @@ class WidgetScatter extends React.Component {
                 enabled: false
               },
               title: {
+                text: data.mytitle
+              },
+              subtitle: {
                 text: data.metrics[1]+' vs '+data.metrics[0]
               },
               xAxis: {
