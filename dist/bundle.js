@@ -75479,8 +75479,6 @@
 	  };
 	}();
 	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
-	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
 	var _redux = __webpack_require__(/*! redux */ 38);
@@ -76141,8 +76139,6 @@
 	  };
 	}();
 	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
-	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
 	var _redux = __webpack_require__(/*! redux */ 38);
@@ -76393,8 +76389,6 @@
 	  };
 	}();
 	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
-	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
 	var _redux = __webpack_require__(/*! redux */ 38);
@@ -76559,6 +76553,9 @@
 	                enabled: false
 	              },
 	              title: {
+	                text: data.mytitle
+	              },
+	              subtitle: {
 	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
 	              },
 	              plotOptions: {
@@ -76661,8 +76658,6 @@
 	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
 	  };
 	}();
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
@@ -76828,6 +76823,9 @@
 	                enabled: false
 	              },
 	              title: {
+	                text: data.mytitle
+	              },
+	              subtitle: {
 	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
 	              },
 	              plotOptions: {
@@ -76930,8 +76928,6 @@
 	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
 	  };
 	}();
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
@@ -77141,8 +77137,6 @@
 	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
 	  };
 	}();
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 209);
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
@@ -77552,6 +77546,9 @@
 	                enabled: false
 	              },
 	              title: {
+	                text: data.mytitle
+	              },
+	              subtitle: {
 	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
 	              },
 	              plotOptions: {

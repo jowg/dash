@@ -3,11 +3,9 @@ var ReactDOM = require('react-dom');
 var moment = require('moment');
 var Highcharts = require('highcharts');
 
-import { Map ,TileLayer,GeoJson } from 'react-leaflet';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
-
 
 class WidgetBar extends React.Component {
   constructor(props) {
@@ -135,6 +133,9 @@ class WidgetBar extends React.Component {
                 enabled: false
               },
               title: {
+                text: data.mytitle
+              },
+              subtitle: {
                 text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
               },
               plotOptions: {

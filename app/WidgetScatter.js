@@ -3,11 +3,9 @@ var ReactDOM = require('react-dom');
 var moment = require('moment');
 var Highcharts = require('highcharts');
 
-import { Map ,TileLayer,GeoJson } from 'react-leaflet';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
-
 
 class WidgetScatter extends React.Component {
   constructor(props) {
