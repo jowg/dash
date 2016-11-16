@@ -17,7 +17,7 @@ class SelectSize extends React.Component {
     var canBeFull = true;
      _.each(layout,function(row,i) {
       if ((row.length === 2) && ((row[0] === props.widgetindex) || (row[1] === props.widgetindex))) {
-        canBeFull = false;
+        //canBeFull = false;
       }
     });
     return(

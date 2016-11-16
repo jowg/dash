@@ -27,6 +27,7 @@ class WidgetHistogram extends React.Component {
         (newData.buckets                 !== oldData.buckets) ||
         (newData.width                   !== oldData.width) ||
         (newData.height                  !== oldData.height) ||
+        (newData.specialColumnValue      !== oldData.specialColumnValue) ||
         ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
                                            (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
       this.updateInternals();
@@ -83,14 +84,21 @@ class WidgetHistogram extends React.Component {
           var cats = [];
           var vals = [];
           var min = Math.min(...metricNumData);
-          var max = 1+Math.max(...metricNumData);
+          var max = Math.max(...metricNumData);
+          max = max + 0.01*(max-min);
           for (var i=0;i<data.buckets;i++) {
-            vals.push(0);
-            cats.push((min+i*(max-min)/data.buckets)+"-"+(min+(i+1)*(max-min)/data.buckets));
+            var left = min+i*(max-min)/data.buckets;
+            var right = min+(i+1)*(max-min)/data.buckets;
+            cats.push(left+"-"+right);
+            if ((data.specialColumnValue >= left) && (data.specialColumnValue <= right)) {
+              vals.push({y:0,color:'#ff0000'});
+            } else {
+              vals.push({y:0});
+            }
           }
           _.each(metricNumData,function(datum) {
             var c = Math.floor((datum-min)/((max-min)/data.buckets));
-            vals[c]++;
+            vals[c].y++;
           });
           // Construct the chart.
           if (metricNumData.length == 0) {

@@ -39,11 +39,20 @@ export function getMetricsForSource(source) {
   if (source == 'source03') {
     return ['precinct','numberofcrimes','policesatisfaction'];
   }
+  if (source == 'REST_source01') {
+    return ['precinct','number_of_crimes','police_satisfaction','outreach_metric','squad'];
+  }
+  if (source == 'REST_source02') {
+    return ['index','sector','age.bin','race','gender','quotas'];
+  }
+  if (source == 'REST_source03') {
+    return ['index','sector','precinct','preds'];
+  }
   return [];
 }
 
 export function getSources() {
-  return ['(undefined)','source01','source02','source03'];
+  return ['(undefined)','source01','source02','source03','REST_source01','REST_source02','REST_source03'];
 }
 
 export function getAggMethods() {
@@ -75,10 +84,10 @@ export function getMoveOptions(index,tabCurrent,tabLayout,widgets) {
   // Moving to the end of another row.
   _.each(layout,function(row,k) {
     if ((widgets[row[0]].data.width === 'half') && (widgets[index].data.width === 'half')) {
-      if (((row.length == 1) && (index != row[0])) || ((row.length == 2) && (index == row[0]))) {
+      //if (((row.length == 1) && (index != row[0])) || ((row.length == 2) && (index == row[0]))) {
         moves.push(k);
         movesText.push('Move to End of Row '+(k+1));
-      }
+      //}
     }
   });
   _.each(tabLayout,function(tab,ti) {

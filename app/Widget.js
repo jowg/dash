@@ -80,7 +80,7 @@ class Widget extends React.Component {
         <div className={outersizecss}>
       
         {configurable ? 
-         <div className='widget-top-bar'>
+         <div className='widget-top-bar'>{/*{this.props.widgetindex}*/}
          <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>
          
          {/* Any widget-specific selects at the top. */}

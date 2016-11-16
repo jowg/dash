@@ -15,7 +15,6 @@ require('./dash.css');
 
 // How does the dash get access to the store?
 
-
 class Dashboard extends React.Component {
   constructor(props) {
     super();

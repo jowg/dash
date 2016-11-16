@@ -106,7 +106,10 @@ class ConfigureAddWidget extends React.Component {
        fob:              'front',
        map:              '',
        title:            'Geospatial',
-       description:      'Provides a basic geospatial view.'
+       description:      'Provides a basic geospatial view.',
+       latitude:         40.7831,
+       longitude:        -73.9712,
+       zoom:             10
       },
       {type:             'scatter',
        width:            'half',

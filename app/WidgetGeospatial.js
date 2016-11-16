@@ -28,13 +28,13 @@ class WidgetGeospatial extends React.Component {
   onEachFeature(feature,layer) {
     var thisthis = this;
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
-    const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.metrics[0]+': '+feature.properties[widgetdata.metrics[0]];
-    //layer.bindPopup(datum);
+    const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.aggMethod+'('+widgetdata.metrics[0]+'): '+feature.properties[widgetdata.metrics[0]];
+    layer.bindPopup(datum);
     //layer.on('mouseover', function (e) {
-    //  thisthis.setState({currentLabel: datum});      
+    //  thisthis.setState({currentLabel: datum});
     //});
     //layer.on('mouseout', function (e) {
-    //  thisthis.setState({currentLabel: 'Hover for Data'});      
+    //  thisthis.setState({currentLabel: 'Hover for Data'});
     //});
     // New Stuff.
     // Figure out which precinct we're on and set the widget with index 0 to have that filter.
@@ -44,25 +44,37 @@ class WidgetGeospatial extends React.Component {
   }
 
   featureClicked(e) {
-    var p = e.target.feature.properties.precinct;
-    this.props.update_widget(0,{
-      mytitle: 'Precinct: '+p,
-      filters: [{"metric":"precinct","comp":"==","value":p}]
-    });
-    this.props.update_widget(1,{
-      mytitle: 'Precinct: '+p,
-      filters: [{"metric":"precinct","comp":"==","value":p}]
-    });
-    this.props.update_widget(3,{
-      mytitle: 'Precinct: '+p,
-      filters: [{"metric":"precinct","comp":"==","value":p}]
-    });
-    this.props.update_widget_plus_save(4,{
-      mytitle: 'Precinct: '+p,
-      filters: [{"metric":"precinct","comp":"==","value":p}]
-    });
+    // 2 controls 0,1,3,4
+    if (this.props.widgetindex === 2) {
+      var p = e.target.feature.properties.precinct;
+      this.props.update_widget(0,{
+        mytitle: 'Precinct: '+p,
+        filters: [{"metric":"precinct","comp":"==","value":p}]
+      });
+      this.props.update_widget(1,{
+        mytitle: 'Precinct: '+p,
+        filters: [{"metric":"precinct","comp":"==","value":p}]
+      });
+      this.props.update_widget(3,{
+        mytitle: 'Precinct: '+p,
+        filters: [{"metric":"precinct","comp":"==","value":p}]
+      });
+      this.props.update_widget(4,{
+        mytitle: 'Precinct: '+p,
+        filters: [{"metric":"precinct","comp":"==","value":p}]
+      });
+    }
+    // 5 controls 6
+    if (this.props.widgetindex === 5) {
+      var s = e.target.feature.properties.sector;
+      var p = e.target.feature.properties.preds;
+      this.props.update_widget(6,{
+        mytitle: 'Sector: '+s,
+        specialColumnValue: p
+      });
+    }
   }
-  
+
   componentDidUpdate(prevProps,prevState) {
     var newData = this.props.widgets[this.props.widgetindex].data;
     var oldData = prevProps.widgets[prevProps.widgetindex].data;
@@ -71,6 +83,7 @@ class WidgetGeospatial extends React.Component {
     if ((newData.source                  !== oldData.source) ||
         (newData.metrics[0]              !== oldData.metrics[0]) ||
         (newData.metrics[1]              !== oldData.metrics[1]) ||
+        (newData.aggMethod               !== oldData.aggMethod) ||
         (JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters)) ||
         (newData.timeframe               !== oldData.timeframe) ||
         (newData.myStartDateISO          !== oldData.myStartDateISO) ||
@@ -108,6 +121,7 @@ class WidgetGeospatial extends React.Component {
     } else {
       //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
       this.setState({data:undefined});
+      //console.log(data.metrics[1]);
       $.post(
         dataRestPoint(),
         completeParams({
@@ -115,10 +129,11 @@ class WidgetGeospatial extends React.Component {
           metrics: data.metrics[1]+','+data.metrics[0],
           aggmetric: data.metrics[1],
           nonaggmetric: data.metrics[0],
-          aggmethod: 'mean',
-          addgeo: 'precinct'
+          aggmethod: data.aggMethod,
+          addgeo: data.metrics[1]
         }),
         function(rawData) {
+          //console.log(rawData);
           // Join the geo data onto the data data.
           //console.log(rawData);
           var chartData = {
@@ -135,6 +150,7 @@ class WidgetGeospatial extends React.Component {
           var max = rawData.data[0][data.metrics[0]];
           var min = max;
           var g = [];
+          var id = 0;
           _.each(rawData.data,function(datum) {
             //console.log(datum[data.metrics[1]]);
             datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
@@ -144,8 +160,13 @@ class WidgetGeospatial extends React.Component {
             if (v > max) {max = v;}
             datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
             datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
+            if (datum.geojsonfeature.id === undefined) {
+              datum.geojsonfeature.id = id;
+              id++;
+            }
             g.push(datum.geojsonfeature);
           });
+
           // The data property is not dynamic, meaning that changing it
           // does not trigger an update of the component.  So we save
           // a key which alternates back and forth and makes sure to
@@ -176,7 +197,6 @@ class WidgetGeospatial extends React.Component {
       weight: 1,
       opacity: 1,
       color: '#555555',
-      //dashArray: '3',
       fillOpacity: 0.7
     };
   }
@@ -196,7 +216,7 @@ class WidgetGeospatial extends React.Component {
          <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
          <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}>
          {/*<WidgetGeospatialInfo key={this.state.key} myLabel={this.state.currentLabel}/>*/}
-         </GeoJson> 
+         </GeoJson>
          </Map>
          </div>
          : <div className={innerchartcss}>Retrieving Data</div>}

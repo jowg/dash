@@ -19,6 +19,7 @@ class WidgetConfigGeospatial extends React.Component {
     this.state = {
       source:      data.source,
       metrics:     data.metrics,
+      aggMethod:   data.aggMethod,
       filters:     data.filters,
       timeframe:   data.timeframe,
       width:       data.width,
@@ -34,6 +35,7 @@ class WidgetConfigGeospatial extends React.Component {
     this.cancelConfig            = this.cancelConfig.bind(this);
     this.selectFilterUpdate      = this.selectFilterUpdate.bind(this);
     this.selectMoveValueUpdate   = this.selectMoveValueUpdate.bind(this);
+    this.selectAggMethodUpdate   = this.selectAggMethodUpdate.bind(this);
     this.updateLayout            = this.updateLayout.bind(this);
     this.deleteWidget            = this.deleteWidget.bind(this);
     this.selectTimeframeUpdate   = this.selectTimeframeUpdate.bind(this);
@@ -46,6 +48,7 @@ class WidgetConfigGeospatial extends React.Component {
     this.setState({
       source:  e.target.value,
       metrics: ['(undefined)'],
+      aggMethod:   ['(undefined)'],      
       filters: []
     });
   }
@@ -54,6 +57,9 @@ class WidgetConfigGeospatial extends React.Component {
     metrics[i] = e.target.value;
     this.setState({metrics:metrics});
   }
+  selectAggMethodUpdate(e) {
+    this.setState({aggMethod:e.target.value});
+  }  
   selectFilterUpdate(value) {
     this.setState({filters:value});
   }
@@ -74,6 +80,7 @@ class WidgetConfigGeospatial extends React.Component {
       configDisplay: 'none',
       source:        this.state.source,
       metrics:       this.state.metrics,
+      aggMethod:     this.state.aggMethod,
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
       width:         this.state.width,
@@ -89,6 +96,7 @@ class WidgetConfigGeospatial extends React.Component {
     this.setState({
       source:        oldState.source,
       metrics:       oldState.metrics,
+      aggMethod:     oldState.aggMethod,
       timeframe:     oldState.timeframe,
       filters:       oldState.filters,
       width:         oldState.width,
@@ -122,6 +130,7 @@ class WidgetConfigGeospatial extends React.Component {
     var sources          = getSources();
     var metrics          = getMetricsForSource(this.state.source);
     var timeframeOptions = getTimeframeOptions();
+    var aggMethods       = getAggMethods();
     metrics.unshift('(undefined)');
     return (
         <div style={{display: data.configDisplay}}>
@@ -136,14 +145,19 @@ class WidgetConfigGeospatial extends React.Component {
       </select>
         </div>
         <div className='simpleborder'>
-        Numerical Choropleth Metric
-        <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
+        Geospatial Aggregation Metric
+        <select onChange={this.selectMetricUpdate.bind(this,1)} value={this.state.metrics[1]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
+        <br/>
+        Aggregate Method
+        <select onChange={this.selectAggMethodUpdate} value={this.state.aggMethod}>
+        {aggMethods.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
+      </select>        
         </div>
         <div className='simpleborder'>
-        Labeling Metric
-        <select onChange={this.selectMetricUpdate.bind(this,1)} value={this.state.metrics[1]}>
+        Numerical Choropleth Metric
+        <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         </div>

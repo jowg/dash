@@ -6965,11 +6965,20 @@
 	  if (source == 'source03') {
 	    return ['precinct', 'numberofcrimes', 'policesatisfaction'];
 	  }
+	  if (source == 'REST_source01') {
+	    return ['precinct', 'number_of_crimes', 'police_satisfaction', 'outreach_metric', 'squad'];
+	  }
+	  if (source == 'REST_source02') {
+	    return ['index', 'sector', 'age.bin', 'race', 'gender', 'quotas'];
+	  }
+	  if (source == 'REST_source03') {
+	    return ['index', 'sector', 'precinct', 'preds'];
+	  }
 	  return [];
 	}
 	
 	function getSources() {
-	  return ['(undefined)', 'source01', 'source02', 'source03'];
+	  return ['(undefined)', 'source01', 'source02', 'source03', 'REST_source01', 'REST_source02', 'REST_source03'];
 	}
 	
 	function getAggMethods() {
@@ -7001,10 +7010,10 @@
 	  // Moving to the end of another row.
 	  _.each(layout, function (row, k) {
 	    if (widgets[row[0]].data.width === 'half' && widgets[index].data.width === 'half') {
-	      if (row.length == 1 && index != row[0] || row.length == 2 && index == row[0]) {
-	        moves.push(k);
-	        movesText.push('Move to End of Row ' + (k + 1));
-	      }
+	      //if (((row.length == 1) && (index != row[0])) || ((row.length == 2) && (index == row[0]))) {
+	      moves.push(k);
+	      movesText.push('Move to End of Row ' + (k + 1));
+	      //}
 	    }
 	  });
 	  _.each(tabLayout, function (tab, ti) {
@@ -17422,7 +17431,6 @@
 	
 	// How does the dash get access to the store?
 	
-	
 	var Dashboard = function (_React$Component) {
 	  _inherits(Dashboard, _React$Component);
 	
@@ -18512,7 +18520,7 @@
 	      var canBeFull = true;
 	      _.each(layout, function (row, i) {
 	        if (row.length === 2 && (row[0] === props.widgetindex || row[1] === props.widgetindex)) {
-	          canBeFull = false;
+	          //canBeFull = false;
 	        }
 	      });
 	      return _react2.default.createElement('div', null, _react2.default.createElement('div', { style: { width: '50%', float: 'left' } }, _react2.default.createElement('label', null, _react2.default.createElement('input', { type: 'checkbox', name: 'width', value: 'half', checked: this.props.width === 'half', onChange: this.selectSizeUpdate.bind(this, 'width') }), 'Half Width'), _react2.default.createElement('br', null), _react2.default.createElement('label', { className: canBeFull ? '' : 'disabled' }, _react2.default.createElement('input', { type: 'checkbox', name: 'width', value: 'full', checked: this.props.width === 'full', disabled: canBeFull ? false : 'disabled', onChange: this.selectSizeUpdate.bind(this, 'width') }), 'Full Width')), _react2.default.createElement('div', { style: { width: '50%', float: 'left' } }, _react2.default.createElement('label', null, _react2.default.createElement('input', { type: 'checkbox', name: 'height', value: 'half', checked: this.props.height === 'half', onChange: this.selectSizeUpdate.bind(this, 'height') }), 'Half Height'), _react2.default.createElement('br', null), _react2.default.createElement('label', null, _react2.default.createElement('input', { type: 'checkbox', name: 'height', value: 'full', checked: this.props.height === 'full', onChange: this.selectSizeUpdate.bind(this, 'height') }), 'Full Height')));
@@ -38130,6 +38138,7 @@
 	    _this.state = {
 	      source: data.source,
 	      metrics: data.metrics,
+	      aggMethod: data.aggMethod,
 	      filters: data.filters,
 	      timeframe: data.timeframe,
 	      width: data.width,
@@ -38145,6 +38154,7 @@
 	    _this.cancelConfig = _this.cancelConfig.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
 	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
@@ -38161,6 +38171,7 @@
 	      this.setState({
 	        source: e.target.value,
 	        metrics: ['(undefined)'],
+	        aggMethod: ['(undefined)'],
 	        filters: []
 	      });
 	    }
@@ -38170,6 +38181,11 @@
 	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
 	      metrics[i] = e.target.value;
 	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
 	    }
 	  }, {
 	    key: 'selectFilterUpdate',
@@ -38201,6 +38217,7 @@
 	        configDisplay: 'none',
 	        source: this.state.source,
 	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
 	        width: this.state.width,
@@ -38218,6 +38235,7 @@
 	      this.setState({
 	        source: oldState.source,
 	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
 	        timeframe: oldState.timeframe,
 	        filters: oldState.filters,
 	        width: oldState.width,
@@ -38267,12 +38285,15 @@
 	      var sources = (0, _support.getSources)();
 	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
 	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      var aggMethods = (0, _support.getAggMethods)();
 	      metrics.unshift('(undefined)');
 	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Geospatial Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Numerical Choropleth Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Geospatial Aggregation Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Labeling Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Numerical Choropleth Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
@@ -38410,13 +38431,13 @@
 	    value: function onEachFeature(feature, layer) {
 	      var thisthis = this;
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
-	      var datum = widgetdata.metrics[1] + ': ' + feature.properties[widgetdata.metrics[1]] + '<br>' + widgetdata.metrics[0] + ': ' + feature.properties[widgetdata.metrics[0]];
-	      //layer.bindPopup(datum);
+	      var datum = widgetdata.metrics[1] + ': ' + feature.properties[widgetdata.metrics[1]] + '<br>' + widgetdata.aggMethod + '(' + widgetdata.metrics[0] + '): ' + feature.properties[widgetdata.metrics[0]];
+	      layer.bindPopup(datum);
 	      //layer.on('mouseover', function (e) {
-	      //  thisthis.setState({currentLabel: datum});      
+	      //  thisthis.setState({currentLabel: datum});
 	      //});
 	      //layer.on('mouseout', function (e) {
-	      //  thisthis.setState({currentLabel: 'Hover for Data'});      
+	      //  thisthis.setState({currentLabel: 'Hover for Data'});
 	      //});
 	      // New Stuff.
 	      // Figure out which precinct we're on and set the widget with index 0 to have that filter.
@@ -38427,23 +38448,35 @@
 	  }, {
 	    key: 'featureClicked',
 	    value: function featureClicked(e) {
-	      var p = e.target.feature.properties.precinct;
-	      this.props.update_widget(0, {
-	        mytitle: 'Precinct: ' + p,
-	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	      });
-	      this.props.update_widget(1, {
-	        mytitle: 'Precinct: ' + p,
-	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	      });
-	      this.props.update_widget(3, {
-	        mytitle: 'Precinct: ' + p,
-	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	      });
-	      this.props.update_widget_plus_save(4, {
-	        mytitle: 'Precinct: ' + p,
-	        filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	      });
+	      // 2 controls 0,1,3,4
+	      if (this.props.widgetindex === 2) {
+	        var p = e.target.feature.properties.precinct;
+	        this.props.update_widget(0, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	        this.props.update_widget(1, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	        this.props.update_widget(3, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	        this.props.update_widget(4, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	      }
+	      // 5 controls 6
+	      if (this.props.widgetindex === 5) {
+	        var s = e.target.feature.properties.sector;
+	        var p = e.target.feature.properties.preds;
+	        this.props.update_widget(6, {
+	          mytitle: 'Sector: ' + s,
+	          specialColumnValue: p
+	        });
+	      }
 	    }
 	  }, {
 	    key: 'componentDidUpdate',
@@ -38452,7 +38485,7 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggMethod !== oldData.aggMethod || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
 	        this.updateInternals();
 	      }
 	    }
@@ -38479,14 +38512,16 @@
 	      } else {
 	        //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
 	        this.setState({ data: undefined });
+	        //console.log(data.metrics[1]);
 	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
 	          source: data.source,
 	          metrics: data.metrics[1] + ',' + data.metrics[0],
 	          aggmetric: data.metrics[1],
 	          nonaggmetric: data.metrics[0],
-	          aggmethod: 'mean',
-	          addgeo: 'precinct'
+	          aggmethod: data.aggMethod,
+	          addgeo: data.metrics[1]
 	        }), function (rawData) {
+	          //console.log(rawData);
 	          // Join the geo data onto the data data.
 	          //console.log(rawData);
 	          var chartData = {
@@ -38503,6 +38538,7 @@
 	          var max = rawData.data[0][data.metrics[0]];
 	          var min = max;
 	          var g = [];
+	          var id = 0;
 	          _.each(rawData.data, function (datum) {
 	            //console.log(datum[data.metrics[1]]);
 	            datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
@@ -38516,8 +38552,13 @@
 	            }
 	            datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
 	            datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
+	            if (datum.geojsonfeature.id === undefined) {
+	              datum.geojsonfeature.id = id;
+	              id++;
+	            }
 	            g.push(datum.geojsonfeature);
 	          });
+	
 	          // The data property is not dynamic, meaning that changing it
 	          // does not trigger an update of the component.  So we save
 	          // a key which alternates back and forth and makes sure to
@@ -38550,7 +38591,6 @@
 	        weight: 1,
 	        opacity: 1,
 	        color: '#555555',
-	        //dashArray: '3',
 	        fillOpacity: 0.7
 	      };
 	    }
@@ -76205,7 +76245,7 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.buckets !== oldData.buckets || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.buckets !== oldData.buckets || newData.width !== oldData.width || newData.height !== oldData.height || newData.specialColumnValue !== oldData.specialColumnValue || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
 	        this.updateInternals();
 	      }
 	    }
@@ -76262,14 +76302,21 @@
 	          var cats = [];
 	          var vals = [];
 	          var min = Math.min.apply(Math, _toConsumableArray(metricNumData));
-	          var max = 1 + Math.max.apply(Math, _toConsumableArray(metricNumData));
+	          var max = Math.max.apply(Math, _toConsumableArray(metricNumData));
+	          max = max + 0.01 * (max - min);
 	          for (var i = 0; i < data.buckets; i++) {
-	            vals.push(0);
-	            cats.push(min + i * (max - min) / data.buckets + "-" + (min + (i + 1) * (max - min) / data.buckets));
+	            var left = min + i * (max - min) / data.buckets;
+	            var right = min + (i + 1) * (max - min) / data.buckets;
+	            cats.push(left + "-" + right);
+	            if (data.specialColumnValue >= left && data.specialColumnValue <= right) {
+	              vals.push({ y: 0, color: '#ff0000' });
+	            } else {
+	              vals.push({ y: 0 });
+	            }
 	          }
 	          _.each(metricNumData, function (datum) {
 	            var c = Math.floor((datum - min) / ((max - min) / data.buckets));
-	            vals[c]++;
+	            vals[c].y++;
 	          });
 	          // Construct the chart.
 	          if (metricNumData.length == 0) {
@@ -79907,7 +79954,10 @@
 	      fob: 'front',
 	      map: '',
 	      title: 'Geospatial',
-	      description: 'Provides a basic geospatial view.'
+	      description: 'Provides a basic geospatial view.',
+	      latitude: 40.7831,
+	      longitude: -73.9712,
+	      zoom: 10
 	    }, { type: 'scatter',
 	      width: 'half',
 	      height: 'half',
