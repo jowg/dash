@@ -21,6 +21,7 @@ class WidgetConfigPie extends React.Component {
       aggNumeric:  data.aggNumeric,
       aggMethod:   data.aggMethod,
       filters:     data.filters,
+      postfilters: data.postfilters,
       timeframe:   data.timeframe,
       width:       data.width,
       height:      data.height,
@@ -35,6 +36,7 @@ class WidgetConfigPie extends React.Component {
     this.toggleAggNumericUpdate  = this.toggleAggNumericUpdate.bind(this);
     this.toggleAggDatetimeUpdate = this.toggleAggDatetimeUpdate.bind(this);
     this.selectFilterUpdate      = this.selectFilterUpdate.bind(this);
+    this.selectPostFilterUpdate  = this.selectPostFilterUpdate.bind(this);
     this.selectMoveValueUpdate   = this.selectMoveValueUpdate.bind(this);
     this.updateLayout            = this.updateLayout.bind(this);
     this.deleteWidget            = this.deleteWidget.bind(this);
@@ -49,7 +51,8 @@ class WidgetConfigPie extends React.Component {
       aggMethod:   ['(undefined)'],
       aggNumeric:  false,
       aggDatetime: false,
-      filters:     []
+      filters:     [],
+      postfilters: []
     });
   }
   selectMetricUpdate(i,e) {
@@ -68,6 +71,9 @@ class WidgetConfigPie extends React.Component {
   }
   selectFilterUpdate(value) {
     this.setState({filters:value});
+  }
+  selectPostFilterUpdate(value) {
+    this.setState({postfilters:value});
   }
   selectMoveValueUpdate(value) {
     this.setState({moveValue:value});
@@ -98,6 +104,7 @@ class WidgetConfigPie extends React.Component {
       aggDatetime:   this.state.aggDatetime,
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
+      postfilters:   this.state.postfilters,
       width:         this.state.width,
       height:        this.state.height,
       label:         this.state.label
@@ -113,6 +120,7 @@ class WidgetConfigPie extends React.Component {
       aggNumeric:    oldState.aggNumeric,
       aggDatetime:   oldState.aggDatetime,
       filters:       oldState.filters,
+      postfilters:   oldState.postfilters,
       width:         oldState.width,
       height:        oldState.height,
       label:         oldState.label
@@ -145,7 +153,7 @@ class WidgetConfigPie extends React.Component {
       </select>
         <br/>
         </div>
-        
+
         <div className='simpleborder'>
         Aggregate Metric
         <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
@@ -163,19 +171,23 @@ class WidgetConfigPie extends React.Component {
         Aggregate Metric is UNIX Timestamp
         <input type="checkbox" checked={this.state.aggDatetime} onChange={this.toggleAggDatetimeUpdate}/>
         </div>
-        
+
         <div className='simpleborder'>
         Numerical Metric
         <select onChange={this.selectMetricUpdate.bind(this,1)} value={this.state.metrics[1]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         </div>
-        
+
         <div className='simpleborder'>
         Filters
         <SelectFilter selectFilterUpdate={this.selectFilterUpdate} options={metrics} filters={this.state.filters} />
         </div>
-        
+        <div className='simpleborder'>
+        Post-Filters
+        <SelectFilter selectFilterUpdate={this.selectPostFilterUpdate} options={metrics} filters={this.state.postfilters || []} />
+        </div>
+
         <div className='simpleborder'>
         Time Frame
         <select onChange={this.selectTimeframeUpdate} value={this.state.timeframe}>
@@ -189,7 +201,7 @@ class WidgetConfigPie extends React.Component {
         {labelOptions.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
       </select>
         </div>
-      
+
         <div className='simpleborder'>
         <SelectSize selectSizeUpdate={this.selectSizeUpdate} width={this.state.width} height={this.state.height} layout={props.dashLayout[props.currentTab].layout} widgetindex={props.widgetindex}/>
         </div>

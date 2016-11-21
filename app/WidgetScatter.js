@@ -5,12 +5,14 @@ var Highcharts = require('highcharts');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
+import {postFilter,niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
 
 class WidgetScatter extends React.Component {
   constructor(props) {
     super();
-    this.updateInternals = this.updateInternals.bind(this);
+    this.state = {rawData: undefined}
+    this.reloadData = this.reloadData.bind(this);
+    this.plot = this.plot.bind(this);
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -27,13 +29,15 @@ class WidgetScatter extends React.Component {
         (newData.myEndDateISO            !== oldData.myEndDateISO) ||
         (newData.width                   !== oldData.width) ||
         (newData.height                  !== oldData.height) ||
-        ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
-                                           (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
-      this.updateInternals();
+        ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) || (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
+      this.reloadData();
+    }
+    if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+      this.plot(this.state.rawData);
     }
   }
 
-  updateInternals() {
+  reloadData() {
     var thisthis = this;
     var chart = this.refs.chart;
     var props = this.props;
@@ -67,81 +71,93 @@ class WidgetScatter extends React.Component {
           filters: fs
         }),
         function(rawData) {
-          if (rawData.data.length === 0) {
-            $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Has No Data!');
-            return false;
-          }
-          // Load the raw data into the raw data table.
-          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
-          // Then set up the plot.
-          var plotdata = rawData.data;
-          var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
-          var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
-          if (metricNumData0.some(isNaN) || metricNumData1.some(isNaN)) {
-            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
-            return false;
-          }
-          var final = [];
-          _.each(metricNumData0,function(datum,i) {
-            final.push([datum,metricNumData1[i]]);
-          });
-          // Construct the chart.
-          if (final.length == 0) {
-            $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
-          } else {
-	          Highcharts.chart(ReactDOM.findDOMNode(chart),{
-              chart: {
-                type: 'scatter'
-              },
-              credits: {
-                enabled: false
-              },
-              title: {
-                text: data.mytitle
-              },
-              subtitle: {
-                text: data.metrics[1]+' vs '+data.metrics[0]
-              },
-              xAxis: {
-                title: {
-                  text: data.metrics[0]
-                }
-              },
-              yAxis: {
-                title: {
-                  text: data.metrics[1]
-                }
-              },
-              legend: {
-                enabled: false
-              },
-              plotOptions: {
-                column: {
-                  pointPadding: 0,
-                  borderWidth:  1,
-                  groupPadding: 0,
-                  shadow:       false
-                }
-              },
-              series: [{
-                color:        '#0000ff',
-                name:         'f',
-                showInLegend: false,
-                data:         final,
-                showInLegend: true,
-                dataLabels: {
-                  enabled: false
-                }
-              }]
-            });
-          }
+          thisthis.setState({rawData:rawData});
+          thisthis.plot(rawData);
         }
       );
     }
   }
 
+  plot(rawData) {
+    var thisthis = this;
+    var chart = this.refs.chart;
+    var props = this.props;
+    var data = props.widgets[props.widgetindex].data;
+    // First we post-filter the rawData.
+    rawData = postFilter(rawData,data.postfilters);
+    // Then proceed.
+    if (rawData.data.length === 0) {
+      $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Has No Data!');
+      return false;
+    }
+    // Load the raw data into the raw data table.
+    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+    // Then set up the plot.
+    var plotdata = rawData.data;
+    var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
+    var metricNumData1 = _.pluck(plotdata,data.metrics[1]);
+    if (metricNumData0.some(isNaN) || metricNumData1.some(isNaN)) {
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
+      return false;
+    }
+    var final = [];
+    _.each(metricNumData0,function(datum,i) {
+      final.push([datum,metricNumData1[i]]);
+    });
+    // Construct the chart.
+    if (final.length == 0) {
+      $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
+    } else {
+	    Highcharts.chart(ReactDOM.findDOMNode(chart),{
+        chart: {
+          type: 'scatter'
+        },
+        credits: {
+          enabled: false
+        },
+        title: {
+          text: data.mytitle
+        },
+        subtitle: {
+          text: data.metrics[1]+' vs '+data.metrics[0]
+        },
+        xAxis: {
+          title: {
+            text: data.metrics[0]
+          }
+        },
+        yAxis: {
+          title: {
+            text: data.metrics[1]
+          }
+        },
+        legend: {
+          enabled: false
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0,
+            borderWidth:  1,
+            groupPadding: 0,
+            shadow:       false
+          }
+        },
+        series: [{
+          color:        '#0000ff',
+          name:         'f',
+          showInLegend: false,
+          data:         final,
+          showInLegend: true,
+          dataLabels: {
+            enabled: false
+          }
+        }]
+      });
+    }
+  }
+
   componentDidMount() {
-    this.updateInternals();
+    this.reloadData();
   }
 
   render() {

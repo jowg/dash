@@ -10,6 +10,30 @@
 // These are located where?
 // /Library/WebServer/CGI-Executables/rest/
 
+export function postFilter(rawData,postfilters) {
+  var newRawData = {
+    error:   rawData.error,
+    geo:     rawData.geo,
+    metrics: rawData.metrics,
+  };
+  var newData = [];
+  _.each(rawData.data,function(datum) {
+    var valid = true;
+    _.each(postfilters,function(f) {
+      if (_.contains(rawData.metrics,f.metric)) {
+        if ((f.comp === '==') && (f.value !== datum[f.metric])) {
+          valid = false;
+        }
+      }
+    });
+    if (valid) {
+      newData.push(datum);
+    }
+  });
+  newRawData.data = newData;
+  return newRawData;
+}
+
 export function tableFromRawData(rawData) {
   var k = rawData.metrics;
   var t = "<div class='div-table'>";
@@ -48,15 +72,18 @@ export function getMetricsForSource(source) {
   if (source == 'REST_source03') {
     return ['index','sector','precinct','preds'];
   }
+  if (source == 'REST_source_complaints') {
+    return ['u1','date','time','u2','complaint','u3','latitude','longitude','sector','u4'];
+  }
   return [];
 }
 
 export function getSources() {
-  return ['(undefined)','source01','source02','source03','REST_source01','REST_source02','REST_source03'];
+  return ['(undefined)','source01','source02','source03','REST_source01','REST_source02','REST_source03','REST_source_complaints'];
 }
 
 export function getAggMethods() {
-  return ['(undefined)','mean','sum','count'];
+  return ['(undefined)','mean','sum','count','only'];
 }
 
 export function getTimeframeOptions() {

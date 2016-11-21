@@ -21,6 +21,7 @@ class WidgetConfigHistogram extends React.Component {
       metrics:     data.metrics,
       buckets:     data.buckets,
       filters:     data.filters,
+      postfilters: data.postfilters,
       timeframe:   data.timeframe,
       width:       data.width,
       height:      data.height,
@@ -31,6 +32,7 @@ class WidgetConfigHistogram extends React.Component {
     this.updateWidget            = this.updateWidget.bind(this);
     this.cancelConfig            = this.cancelConfig.bind(this);
     this.selectFilterUpdate      = this.selectFilterUpdate.bind(this);
+    this.selectPostFilterUpdate  = this.selectPostFilterUpdate.bind(this);
     this.selectMoveValueUpdate   = this.selectMoveValueUpdate.bind(this);
     this.selectBucketsUpdate     = this.selectBucketsUpdate.bind(this);
     this.updateLayout            = this.updateLayout.bind(this);
@@ -40,10 +42,11 @@ class WidgetConfigHistogram extends React.Component {
   }
   selectSourceUpdate(e) {
     this.setState({
-      source:e.target.value,
-      metrics: ['(undefined)'],
-      buckets: '(undefined)',
-      filters: []
+      source:      e.target.value,
+      metrics:     ['(undefined)'],
+      buckets:     '(undefined)',
+      filters:     [],
+      postfilters: []
     });
   }
   selectMetricUpdate(i,e) {
@@ -53,6 +56,9 @@ class WidgetConfigHistogram extends React.Component {
   }
   selectFilterUpdate(value) {
     this.setState({filters:value});
+  }
+  selectPostFilterUpdate(value) {
+    this.setState({postfilters:value});
   }
   selectMoveValueUpdate(value) {
     this.setState({moveValue:value});
@@ -76,6 +82,7 @@ class WidgetConfigHistogram extends React.Component {
       metrics:       this.state.metrics,
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
+      postfilters:   this.state.postfilters,
       buckets:       this.state.buckets,
       width:         this.state.width,
       height:        this.state.height      
@@ -88,6 +95,7 @@ class WidgetConfigHistogram extends React.Component {
       source:        oldState.source,
       metrics:       oldState.metrics,
       filters:       oldState.filters,
+      postfilters:   oldState.postfilters,
       width:         oldState.width,
       height:        oldState.height
     });
@@ -135,6 +143,10 @@ class WidgetConfigHistogram extends React.Component {
         <div className='simpleborder'>
         Filters
         <SelectFilter selectFilterUpdate={this.selectFilterUpdate} options={metrics} filters={this.state.filters} />
+        </div>
+        <div className='simpleborder'>
+        Post-Filters
+        <SelectFilter selectFilterUpdate={this.selectPostFilterUpdate} options={metrics} filters={this.state.postfilters || []} />
         </div>
         <div className='simpleborder'>
         Time Frame

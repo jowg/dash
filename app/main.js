@@ -23,6 +23,7 @@ var userReducer = function(state, action) {
       widgets: [],
       dashLayout: [{tabName:         'Default',
                     layout:          [],
+                    superlayout:     [],
                     tabHideDate:     true,
                     tabStartDateISO: moment().toISOString(),
                     tabEndDateISO:   moment().toISOString()}

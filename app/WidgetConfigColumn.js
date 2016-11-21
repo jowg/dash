@@ -21,6 +21,7 @@ class WidgetConfigColumn extends React.Component {
       aggNumeric:  data.aggNumeric,
       aggMethod:   data.aggMethod,
       filters:     data.filters,
+      postfilters: data.postfilters,
       timeframe:   data.timeframe,
       width:       data.width,
       height:      data.height,
@@ -34,6 +35,7 @@ class WidgetConfigColumn extends React.Component {
     this.toggleAggNumericUpdate  = this.toggleAggNumericUpdate.bind(this);
     this.toggleAggDatetimeUpdate = this.toggleAggDatetimeUpdate.bind(this);
     this.selectFilterUpdate      = this.selectFilterUpdate.bind(this);
+    this.selectPostFilterUpdate  = this.selectPostFilterUpdate.bind(this);
     this.selectMoveValueUpdate   = this.selectMoveValueUpdate.bind(this);
     this.updateLayout            = this.updateLayout.bind(this);
     this.deleteWidget            = this.deleteWidget.bind(this);
@@ -47,7 +49,8 @@ class WidgetConfigColumn extends React.Component {
       aggMethod:   ['(undefined)'],
       aggNumeric:  false,
       aggDatetime: false,
-      filters:     []
+      filters:     [],
+      postfilters: []
     });
   }
   selectMetricUpdate(i,e) {
@@ -66,6 +69,9 @@ class WidgetConfigColumn extends React.Component {
   }
   selectFilterUpdate(value) {
     this.setState({filters:value});
+  }
+  selectPostFilterUpdate(value) {
+    this.setState({postfilters:value});
   }
   selectMoveValueUpdate(value) {
     this.setState({moveValue:value});
@@ -93,6 +99,7 @@ class WidgetConfigColumn extends React.Component {
       aggDatetime:   this.state.aggDatetime,
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
+      postfilters:   this.state.postfilters,
       width:         this.state.width,
       height:        this.state.height
     });
@@ -107,6 +114,7 @@ class WidgetConfigColumn extends React.Component {
       aggNumeric:    oldState.aggNumeric,
       aggDatetime:   oldState.aggDatetime,
       filters:       oldState.filters,
+      postfilters:   oldState.postfilters,
       width:         oldState.width,
       height:        oldState.height
     });
@@ -160,10 +168,16 @@ class WidgetConfigColumn extends React.Component {
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         </div>
+
         <div className='simpleborder'>
         Filters
         <SelectFilter selectFilterUpdate={this.selectFilterUpdate} options={metrics} filters={this.state.filters} />
         </div>
+        <div className='simpleborder'>
+        Post-Filters
+        <SelectFilter selectFilterUpdate={this.selectPostFilterUpdate} options={metrics} filters={this.state.postfilters || []} />
+        </div>
+
         <div className='simpleborder'>
         Time Frame
         <select onChange={this.selectTimeframeUpdate} value={this.state.timeframe}>

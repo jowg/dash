@@ -82,6 +82,7 @@
 	      widgets: [],
 	      dashLayout: [{ tabName: 'Default',
 	        layout: [],
+	        superlayout: [],
 	        tabHideDate: true,
 	        tabStartDateISO: moment().toISOString(),
 	        tabEndDateISO: moment().toISOString() }],
@@ -6907,6 +6908,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.postFilter = postFilter;
 	exports.tableFromRawData = tableFromRawData;
 	exports.getMetricsForSource = getMetricsForSource;
 	exports.getSources = getSources;
@@ -6935,6 +6937,30 @@
 	//
 	// These are located where?
 	// /Library/WebServer/CGI-Executables/rest/
+	
+	function postFilter(rawData, postfilters) {
+	  var newRawData = {
+	    error: rawData.error,
+	    geo: rawData.geo,
+	    metrics: rawData.metrics
+	  };
+	  var newData = [];
+	  _.each(rawData.data, function (datum) {
+	    var valid = true;
+	    _.each(postfilters, function (f) {
+	      if (_.contains(rawData.metrics, f.metric)) {
+	        if (f.comp === '==' && f.value !== datum[f.metric]) {
+	          valid = false;
+	        }
+	      }
+	    });
+	    if (valid) {
+	      newData.push(datum);
+	    }
+	  });
+	  newRawData.data = newData;
+	  return newRawData;
+	}
 	
 	function tableFromRawData(rawData) {
 	  var k = rawData.metrics;
@@ -6974,15 +7000,18 @@
 	  if (source == 'REST_source03') {
 	    return ['index', 'sector', 'precinct', 'preds'];
 	  }
+	  if (source == 'REST_source_complaints') {
+	    return ['u1', 'date', 'time', 'u2', 'complaint', 'u3', 'latitude', 'longitude', 'sector', 'u4'];
+	  }
 	  return [];
 	}
 	
 	function getSources() {
-	  return ['(undefined)', 'source01', 'source02', 'source03', 'REST_source01', 'REST_source02', 'REST_source03'];
+	  return ['(undefined)', 'source01', 'source02', 'source03', 'REST_source01', 'REST_source02', 'REST_source03', 'REST_source_complaints'];
 	}
 	
 	function getAggMethods() {
-	  return ['(undefined)', 'mean', 'sum', 'count'];
+	  return ['(undefined)', 'mean', 'sum', 'count', 'only'];
 	}
 	
 	function getTimeframeOptions() {
@@ -17609,7 +17638,7 @@
 	      }
 	      // Otherwise do the full thing.
 	      return React.createElement('div', null, React.createElement('div', { style: { display: this.props.configAddWidgetDisplay } }, React.createElement(_ConfigureAddWidget2.default, null)), React.createElement('div', { style: { display: this.props.configAddTabDisplay } }, React.createElement(_ConfigureAddTab2.default, null)), React.createElement('div', { style: { display: this.props.configEditTabDisplay } }, React.createElement(_ConfigureEditTab2.default, null)), React.createElement('div', { className: 'topbar' }, React.createElement('div', { className: 'dashboardidholder' }, 'Dashboard ID: ', this.props.did), currentDash.tabHideDate ? React.createElement('div', null) : React.createElement('div', { className: 'daterangepickerholder-dash' }, React.createElement(DateRangePicker, { onApply: this.datepickerUpdate, startDate: moment(currentDash.tabStartDateISO), endDate: moment(currentDash.tabEndDateISO), ranges: ranges, alwaysShowCalendars: false }, React.createElement('div', null, moment(currentDash.tabStartDateISO).format('MM/DD/YYYY'), '-', moment(currentDash.tabEndDateISO).format('MM/DD/YYYY'))))), React.createElement('div', { className: 'tabholder-left' }, props.dashLayout.map(function (tab, tabindex) {
-	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tab-selected' : 'tab-unselected', key: tabindex, onClick: thisthis.changeCurrentTab.bind(this, tabindex) }, tab.tabName.length > 10 ? tab.tabName.substring(0, 10) + '...' : tab.tabName);
+	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tab-selected' : 'tab-unselected', key: tabindex, onClick: thisthis.changeCurrentTab.bind(this, tabindex) }, tab.tabName.length > 20 ? tab.tabName.substring(0, 20) + '...' : tab.tabName);
 	      }), configurable ? React.createElement('div', { className: 'dropdown' }, React.createElement('div', { className: 'dropbtn' }, 'Tools'), React.createElement('div', { className: 'dropdown-content' }, React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddWidgetWindow }, 'Add Widget'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openEditTabWindow }, 'Rename Tab'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddTabWindow }, 'Add Tab'), currentDash.layout.length === 0 && this.props.dashLayout.length > 1 ? React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.deleteCurrentTab }, 'Delete Tab') : '', React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.toggleTabHideDate }, currentDash.tabHideDate ? 'Show Tab Date' : 'Hide Tab Date'))) : React.createElement('div', null)), props.dashLayout.map(function (tab, tabindex) {
 	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tabsheet-visible' : 'tabsheet-invisible', key: tabindex }, _.flatten(tab.layout.map(function (row, rowindex) {
 	          return row.map(function (widgetindex, columnindex) {
@@ -17731,6 +17760,10 @@
 	
 	var _WidgetConfigGeospatial2 = _interopRequireDefault(_WidgetConfigGeospatial);
 	
+	var _WidgetConfigSingleValue = __webpack_require__(/*! ./WidgetConfigSingleValue.js */ 547);
+	
+	var _WidgetConfigSingleValue2 = _interopRequireDefault(_WidgetConfigSingleValue);
+	
 	var _WidgetGeospatial = __webpack_require__(/*! ./WidgetGeospatial.js */ 208);
 	
 	var _WidgetGeospatial2 = _interopRequireDefault(_WidgetGeospatial);
@@ -17762,6 +17795,10 @@
 	var _WidgetLine = __webpack_require__(/*! ./WidgetLine.js */ 531);
 	
 	var _WidgetLine2 = _interopRequireDefault(_WidgetLine);
+	
+	var _WidgetSingleValue = __webpack_require__(/*! ./WidgetSingleValue.js */ 548);
+	
+	var _WidgetSingleValue2 = _interopRequireDefault(_WidgetSingleValue);
 	
 	var _SelectBar = __webpack_require__(/*! ./SelectBar.js */ 532);
 	
@@ -17883,6 +17920,8 @@
 	            return React.createElement(_WidgetColumn2.default, { widgetindex: _this2.props.widgetindex });
 	          case 'stats':
 	            return React.createElement(_WidgetStats2.default, { widgetindex: _this2.props.widgetindex });
+	          case 'singlevalue':
+	            return React.createElement(_WidgetSingleValue2.default, { widgetindex: _this2.props.widgetindex });
 	          case 'scatter':
 	            return React.createElement(_WidgetScatter2.default, { widgetindex: _this2.props.widgetindex });
 	          case 'line':
@@ -17904,6 +17943,8 @@
 	            return React.createElement(_WidgetConfigHistogram2.default, { widgetindex: props.widgetindex });
 	          case 'stats':
 	            return React.createElement(_WidgetConfigStats2.default, { widgetindex: props.widgetindex });
+	          case 'singlevalue':
+	            return React.createElement(_WidgetConfigSingleValue2.default, { widgetindex: props.widgetindex });
 	          case 'scatter':
 	            return React.createElement(_WidgetConfigScatter2.default, { widgetindex: props.widgetindex });
 	          case 'geospatial':
@@ -18040,6 +18081,7 @@
 	      aggNumeric: data.aggNumeric,
 	      aggMethod: data.aggMethod,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -18054,6 +18096,7 @@
 	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
 	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
@@ -18072,7 +18115,8 @@
 	        aggMethod: ['(undefined)'],
 	        aggNumeric: false,
 	        aggDatetime: false,
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -18101,6 +18145,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -18147,6 +18196,7 @@
 	        aggDatetime: this.state.aggDatetime,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        width: this.state.width,
 	        height: this.state.height,
 	        label: this.state.label
@@ -18164,6 +18214,7 @@
 	        aggNumeric: oldState.aggNumeric,
 	        aggDatetime: oldState.aggDatetime,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height,
 	        label: oldState.label
@@ -18195,7 +18246,7 @@
 	        return React.createElement('option', { key: i, value: option }, option);
 	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Label Display', React.createElement('select', { onChange: this.selectLabelUpdate, value: this.state.label }, labelOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
@@ -36136,7 +36187,7 @@
 	
 	
 	// module
-	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 300px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 300px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 650px;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 650px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 650px;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 650px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #000000;\n}\n.stats-subtitle {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-75);\n  color:       #000000;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-bar-holder {\n  display: inline-block;  \n}\n.widget-options-div-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);  \n}\n.widget-options-div {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right {  \n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*-----*/\n.widget-top-bar {\n  width: 100%;\n  height: 24px;\n}\n  ", ""]);
+	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --global-font-size-100:               100%;\n  --global-font-size-400:               400%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 280px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 280px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 650px;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 630px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           700px;\n  float:            left;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 650px;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 630px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.single-value-contents {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-400);\n  color:       #000000;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #000000;\n}\n.stats-subtitle {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-75);\n  color:       #000000;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-bar-holder {\n  display: inline-block;  \n}\n.widget-options-div-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);  \n}\n.widget-options-div {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right {  \n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*-----*/\n.widget-top-bar {\n  width: 100%;\n  height: 24px;\n}\n\n.widget-geospatial-title {\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-100);\n  padding-bottom: 5px;\n}", ""]);
 	
 	// exports
 
@@ -36545,6 +36596,7 @@
 	      aggNumeric: data.aggNumeric,
 	      aggMethod: data.aggMethod,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -36558,6 +36610,7 @@
 	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
 	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
@@ -36575,7 +36628,8 @@
 	        aggMethod: ['(undefined)'],
 	        aggNumeric: false,
 	        aggDatetime: false,
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -36604,6 +36658,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -36645,6 +36704,7 @@
 	        aggDatetime: this.state.aggDatetime,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        width: this.state.width,
 	        height: this.state.height
 	      });
@@ -36661,6 +36721,7 @@
 	        aggNumeric: oldState.aggNumeric,
 	        aggDatetime: oldState.aggDatetime,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height
 	      });
@@ -36690,7 +36751,7 @@
 	        return React.createElement('option', { key: i, value: option }, option);
 	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -36825,6 +36886,7 @@
 	      aggNumeric: data.aggNumeric,
 	      aggMethod: data.aggMethod,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -36838,6 +36900,7 @@
 	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
 	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
@@ -36855,7 +36918,8 @@
 	        aggMethod: ['(undefined)'],
 	        aggNumeric: false,
 	        aggDatetime: false,
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -36884,6 +36948,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -36925,6 +36994,7 @@
 	        aggDatetime: this.state.aggDatetime,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        width: this.state.width,
 	        height: this.state.height
 	      });
@@ -36941,6 +37011,7 @@
 	        aggNumeric: oldState.aggNumeric,
 	        aggDatetime: oldState.aggDatetime,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height
 	      });
@@ -36970,7 +37041,7 @@
 	        return React.createElement('option', { key: i, value: option }, option);
 	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -37105,6 +37176,7 @@
 	      aggNumeric: data.aggNumeric,
 	      aggMethod: data.aggMethod,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -37118,6 +37190,7 @@
 	    _this.toggleAggNumericUpdate = _this.toggleAggNumericUpdate.bind(_this);
 	    _this.toggleAggDatetimeUpdate = _this.toggleAggDatetimeUpdate.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
@@ -37135,7 +37208,8 @@
 	        aggMethod: ['(undefined)'],
 	        aggNumeric: false,
 	        aggDatetime: false,
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -37164,6 +37238,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -37205,6 +37284,7 @@
 	        aggDatetime: this.state.aggDatetime,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        width: this.state.width,
 	        height: this.state.height
 	      });
@@ -37221,6 +37301,7 @@
 	        aggNumeric: oldState.aggNumeric,
 	        aggDatetime: oldState.aggDatetime,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height
 	      });
@@ -37250,7 +37331,7 @@
 	        return React.createElement('option', { key: i, value: option }, option);
 	      })), React.createElement('br', null), 'Aggregate Metric is Numerical so Sort', React.createElement('input', { type: 'checkbox', checked: this.state.aggNumeric, onChange: this.toggleAggNumericUpdate }), React.createElement('br', null), 'Aggregate Metric is UNIX Timestamp', React.createElement('input', { type: 'checkbox', checked: this.state.aggDatetime, onChange: this.toggleAggDatetimeUpdate })), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -37385,6 +37466,7 @@
 	      metrics: data.metrics,
 	      buckets: data.buckets,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -37395,6 +37477,7 @@
 	    _this.updateWidget = _this.updateWidget.bind(_this);
 	    _this.cancelConfig = _this.cancelConfig.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.selectBucketsUpdate = _this.selectBucketsUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
@@ -37411,7 +37494,8 @@
 	        source: e.target.value,
 	        metrics: ['(undefined)'],
 	        buckets: '(undefined)',
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -37425,6 +37509,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -37458,6 +37547,7 @@
 	        metrics: this.state.metrics,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        buckets: this.state.buckets,
 	        width: this.state.width,
 	        height: this.state.height
@@ -37472,6 +37562,7 @@
 	        source: oldState.source,
 	        metrics: oldState.metrics,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height
 	      });
@@ -37509,7 +37600,7 @@
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      })), React.createElement('br', null), 'Number of Buckets', React.createElement('select', { onChange: this.selectBucketsUpdate, value: this.state.buckets }, bucketOptions.map(function (b, i) {
 	        return React.createElement('option', { key: i, value: b }, b);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -37643,6 +37734,7 @@
 	      source: data.source,
 	      metrics: data.metrics,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -37653,6 +37745,7 @@
 	    _this.updateWidget = _this.updateWidget.bind(_this);
 	    _this.cancelConfig = _this.cancelConfig.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
@@ -37667,7 +37760,8 @@
 	      this.setState({
 	        source: e.target.value,
 	        metrics: ['(undefined)'],
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -37681,6 +37775,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -37709,6 +37808,7 @@
 	        metrics: this.state.metrics,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        width: this.state.width,
 	        height: this.state.height
 	      });
@@ -37722,6 +37822,7 @@
 	        source: oldState.source,
 	        metrics: oldState.metrics,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height
 	      });
@@ -37756,7 +37857,7 @@
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -37890,6 +37991,7 @@
 	      source: data.source,
 	      metrics: data.metrics,
 	      filters: data.filters,
+	      postfilters: data.postfilters,
 	      timeframe: data.timeframe,
 	      width: data.width,
 	      height: data.height,
@@ -37900,6 +38002,7 @@
 	    _this.updateWidget = _this.updateWidget.bind(_this);
 	    _this.cancelConfig = _this.cancelConfig.bind(_this);
 	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
 	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
 	    _this.updateLayout = _this.updateLayout.bind(_this);
 	    _this.deleteWidget = _this.deleteWidget.bind(_this);
@@ -37914,7 +38017,8 @@
 	      this.setState({
 	        source: e.target.value,
 	        metrics: ['(undefined)', '(undefined)'],
-	        filters: []
+	        filters: [],
+	        postfilters: []
 	      });
 	    }
 	  }, {
@@ -37928,6 +38032,11 @@
 	    key: 'selectFilterUpdate',
 	    value: function selectFilterUpdate(value) {
 	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
 	    }
 	  }, {
 	    key: 'selectMoveValueUpdate',
@@ -37956,6 +38065,7 @@
 	        metrics: this.state.metrics,
 	        timeframe: this.state.timeframe,
 	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
 	        width: this.state.width,
 	        height: this.state.height
 	      });
@@ -37969,6 +38079,7 @@
 	        source: oldState.source,
 	        metrics: oldState.metrics,
 	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
 	        width: oldState.width,
 	        height: oldState.height
 	      });
@@ -38005,7 +38116,7 @@
 	        return React.createElement('option', { key: i, value: metric }, metric);
 	      }))), React.createElement('div', { className: 'simpleborder' }, 'y-Axis Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
 	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
 	        return React.createElement('option', { key: i, value: option }, option);
 	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
 	    }
@@ -38423,6 +38534,8 @@
 	    _this.style = _this.style.bind(_this);
 	    _this.onEachFeature = _this.onEachFeature.bind(_this);
 	    _this.featureClicked = _this.featureClicked.bind(_this);
+	    _this.featureEnter = _this.featureEnter.bind(_this);
+	    _this.featureExit = _this.featureExit.bind(_this);
 	    return _this;
 	  }
 	
@@ -38432,18 +38545,30 @@
 	      var thisthis = this;
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var datum = widgetdata.metrics[1] + ': ' + feature.properties[widgetdata.metrics[1]] + '<br>' + widgetdata.aggMethod + '(' + widgetdata.metrics[0] + '): ' + feature.properties[widgetdata.metrics[0]];
-	      layer.bindPopup(datum);
-	      //layer.on('mouseover', function (e) {
-	      //  thisthis.setState({currentLabel: datum});
-	      //});
-	      //layer.on('mouseout', function (e) {
-	      //  thisthis.setState({currentLabel: 'Hover for Data'});
-	      //});
+	      //layer.bindPopup(datum);
+	      layer.on('mouseover', function (e) {
+	        thisthis.setState({ currentLabel: datum });
+	      });
+	      layer.on('mouseout', function (e) {
+	        thisthis.setState({ currentLabel: 'Hover for Data' });
+	      });
 	      // New Stuff.
 	      // Figure out which precinct we're on and set the widget with index 0 to have that filter.
 	      layer.on({
-	        click: thisthis.featureClicked
+	        click: thisthis.featureClicked,
+	        mouseover: thisthis.featureEnter,
+	        mouseout: thisthis.featureExit
 	      });
+	    }
+	  }, {
+	    key: 'featureEnter',
+	    value: function featureEnter(e) {
+	      e.target.setStyle({ weight: 3 });
+	    }
+	  }, {
+	    key: 'featureExit',
+	    value: function featureExit(e) {
+	      e.target.setStyle({ weight: 1 });
 	    }
 	  }, {
 	    key: 'featureClicked',
@@ -38468,13 +38593,27 @@
 	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
 	        });
 	      }
-	      // 5 controls 6
+	      // 5 controls 6,7
 	      if (this.props.widgetindex === 5) {
 	        var s = e.target.feature.properties.sector;
 	        var p = e.target.feature.properties.preds;
 	        this.props.update_widget(6, {
-	          mytitle: 'Sector: ' + s,
+	          mytitle: 'Preds for all Sectors',
 	          specialColumnValue: p
+	        });
+	        this.props.update_widget(7, {
+	          mytitle: 'Sector: ' + s,
+	          //filters: [{"metric":"sector","comp":"==","value":s}]
+	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }]
+	        });
+	      }
+	      // 9 controls 8
+	      if (this.props.widgetindex === 9) {
+	        var s = e.target.feature.properties.sector;
+	        this.props.update_widget(8, {
+	          mytitle: 'Sector: ' + s,
+	          filters: [{ "metric": "sector", "comp": "==", "value": s }]
+	          //postfilters: [{"metric":"sector","comp":"==","value":s}]
 	        });
 	      }
 	    }
@@ -38521,9 +38660,7 @@
 	          aggmethod: data.aggMethod,
 	          addgeo: data.metrics[1]
 	        }), function (rawData) {
-	          //console.log(rawData);
-	          // Join the geo data onto the data data.
-	          //console.log(rawData);
+	          // Construct the chart data and fill in the chart.
 	          var chartData = {
 	            metrics: [rawData.metrics[1], rawData.metrics[0]],
 	            data: []
@@ -38535,30 +38672,32 @@
 	            chartData.data.push(v);
 	          });
 	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(chartData));
+	          // Construct the geospatial data.
 	          var max = rawData.data[0][data.metrics[0]];
 	          var min = max;
 	          var g = [];
 	          var id = 0;
 	          _.each(rawData.data, function (datum) {
 	            //console.log(datum[data.metrics[1]]);
-	            datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
-	            //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
-	            var v = datum[data.metrics[0]];
-	            if (v < min) {
-	              min = v;
+	            if (rawData.geo[datum[data.metrics[1]]] !== undefined) {
+	              datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
+	              //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
+	              var v = datum[data.metrics[0]];
+	              if (v < min) {
+	                min = v;
+	              }
+	              if (v > max) {
+	                max = v;
+	              }
+	              datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
+	              datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
+	              if (datum.geojsonfeature.id === undefined) {
+	                datum.geojsonfeature.id = id;
+	                id++;
+	              }
+	              g.push(datum.geojsonfeature);
 	            }
-	            if (v > max) {
-	              max = v;
-	            }
-	            datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
-	            datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
-	            if (datum.geojsonfeature.id === undefined) {
-	              datum.geojsonfeature.id = id;
-	              id++;
-	            }
-	            g.push(datum.geojsonfeature);
 	          });
-	
 	          // The data property is not dynamic, meaning that changing it
 	          // does not trigger an update of the component.  So we save
 	          // a key which alternates back and forth and makes sure to
@@ -38602,7 +38741,7 @@
 	      var innersubcss = 'widget-sub-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }, this.state.data !== undefined ? React.createElement('div', null, React.createElement(_reactLeaflet.Map, { key: this.state.key, center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }), React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, onEachFeature: this.onEachFeature, style: this.style, data: this.state.data }))) : React.createElement('div', { className: innerchartcss }, 'Retrieving Data')), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }, this.state.data !== undefined ? React.createElement('div', null, React.createElement('div', { className: 'widget-geospatial-title' }, widgetdata.aggMethod + '(' + widgetdata.metrics[0] + ') by ' + widgetdata.metrics[1]), React.createElement(_reactLeaflet.Map, { key: this.state.key, center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }), React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, onEachFeature: this.onEachFeature, style: this.style, data: this.state.data }))) : React.createElement('div', { className: innerchartcss }, 'Retrieving Data')), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -60746,7 +60885,7 @@
 	
 	    _this.state = {
 	      myLabel: props.myLabel,
-	      centerControl: _leaflet2.default.control({ position: 'bottomright' })
+	      centerControl: _leaflet2.default.control({ position: 'bottomleft' })
 	    };
 	    return _this;
 	  }
@@ -75564,7 +75703,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetPie.__proto__ || Object.getPrototypeOf(WidgetPie)).call(this));
 	
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -75575,13 +75716,16 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.label !== oldData.label || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (newData.label !== oldData.label || JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -75611,6 +75755,8 @@
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+	        //console.log(data);
+	        //console.log(fs);
 	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
 	          source: data.source,
 	          metrics: data.metrics[0] + ',' + data.metrics[1],
@@ -75619,110 +75765,123 @@
 	          aggmethod: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
-	            return false;
-	          }
-	          if (rawData.error === 1) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Data Error</div>');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table and make it nice if necessary.
-	          var tableData = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            tableData.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          if (data.aggDatetime === true) {
-	            _.each(tableData, function (datum, i) {
-	              tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
-	            });
-	          }
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
-	          // Then set up the plot.
-	          var plotdata = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggDatetime == true) {
-	            var newplotdata = [];
-	            _.each(plotdata, function (a) {
-	              var h = {};
-	              h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
-	              h[data.metrics[1]] = a[data.metrics[1]] * 1000;
-	              newplotdata.push(h);
-	            });
-	            plotdata = JSON.parse(JSON.stringify(newplotdata));
-	          }
-	          // If it's to be sorted.
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            plotdata.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
-	          var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
-	          var final = [];
-	          _.each(metricNumData0, function (datum, i) {
-	            var z = datum;
-	            if (data.aggDatetime === true) {
-	              z = (0, _support.niceDate)(z);
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
+	        return false;
+	      }
+	      if (rawData.error === 1) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Data Error</div>');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table and make it nice if necessary.
+	      var tableData = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        tableData.sort(function (a, b) {
+	          return a[data.metrics[0]] - b[data.metrics[0]];
+	        });
+	      }
+	      if (data.aggDatetime === true) {
+	        _.each(tableData, function (datum, i) {
+	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
+	        });
+	      }
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      // Then set up the plot.
+	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggDatetime == true) {
+	        var newplotdata = [];
+	        _.each(plotdata, function (a) {
+	          var h = {};
+	          h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	          h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	          newplotdata.push(h);
+	        });
+	        plotdata = JSON.parse(JSON.stringify(newplotdata));
+	      }
+	      // If it's to be sorted.
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        plotdata.sort(function (a, b) {
+	          return a[data.metrics[0]] - b[data.metrics[0]];
+	        });
+	      }
+	      var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	      var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	      var final = [];
+	      _.each(metricNumData0, function (datum, i) {
+	        var z = datum;
+	        if (data.aggDatetime === true) {
+	          z = (0, _support.niceDate)(z);
+	        }
+	        if (data.aggDatetime === true) {
+	          final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	        } else {
+	          final.push({ y: metricNumData1[i], z: z, name: datum });
+	        }
+	      });
+	      if (final.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
+	      } else {
+	        Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	          chart: {
+	            type: 'pie'
+	          },
+	          credits: {
+	            enabled: false
+	          },
+	          title: {
+	            text: data.mytitle
+	          },
+	          subtitle: {
+	            text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	          },
+	          plotOptions: {
+	            pie: {
+	              dataLabels: {
+	                enabled: data.label !== 'hide' ? true : false,
+	                format: '<b>{point.z}</b><br>{point.y:.2f} ' //,
+	              }
 	            }
-	            if (data.aggDatetime === true) {
-	              final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
-	            } else {
-	              final.push({ y: metricNumData1[i], z: z, name: datum });
+	          },
+	          tooltip: {
+	            formatter: function formatter() {
+	              return '<b>' + this.point.z + '</b><br>' + this.point.y;
 	            }
-	          });
-	          if (final.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
-	          } else {
-	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
-	              chart: {
-	                type: 'pie'
-	              },
-	              credits: {
-	                enabled: false
-	              },
-	              title: {
-	                text: data.mytitle
-	              },
-	              subtitle: {
-	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
-	              },
-	              plotOptions: {
-	                pie: {
-	                  dataLabels: {
-	                    enabled: data.label !== 'hide' ? true : false,
-	                    format: '<b>{point.z}</b><br>{point.y:.2f} ' //,
-	                  }
-	                }
-	              },
-	              tooltip: {
-	                formatter: function formatter() {
-	                  return '<b>' + this.point.z + '</b><br>' + this.point.y;
-	                }
-	              },
-	              xAxis: {
-	                type: data.aggDatetime == true ? 'datetime' : 'category'
-	              },
-	              legend: {
-	                enabled: false
-	              },
-	              series: [_defineProperty({
-	                name: '',
-	                showInLegend: false,
-	                data: final,
-	                size: null,
-	                innerSize: '0%'
-	              }, 'showInLegend', true)]
-	            });
-	          }
+	          },
+	          xAxis: {
+	            type: data.aggDatetime == true ? 'datetime' : 'category'
+	          },
+	          legend: {
+	            enabled: false
+	          },
+	          series: [_defineProperty({
+	            name: '',
+	            showInLegend: false,
+	            data: final,
+	            size: null,
+	            innerSize: '0%'
+	          }, 'showInLegend', true)]
 	        });
 	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -76234,7 +76393,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetHistogram.__proto__ || Object.getPrototypeOf(WidgetHistogram)).call(this));
 	
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -76245,13 +76406,16 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.buckets !== oldData.buckets || newData.width !== oldData.width || newData.height !== oldData.height || newData.specialColumnValue !== oldData.specialColumnValue || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (newData.specialColumnValue !== oldData.specialColumnValue || newData.buckets !== oldData.buckets || JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -76286,90 +76450,98 @@
 	          metrics: data.metrics[0],
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Has No Data!');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table.
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
-	          // Then set up the plot.
-	          var plotdata = rawData.data;
-	          var metricNumData = _.pluck(plotdata, data.metrics[0]);
-	          if (metricNumData.some(isNaN)) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Histogram Widget Data Error</div>');
-	            return false;
-	          }
-	          var cats = [];
-	          var vals = [];
-	          var min = Math.min.apply(Math, _toConsumableArray(metricNumData));
-	          var max = Math.max.apply(Math, _toConsumableArray(metricNumData));
-	          max = max + 0.01 * (max - min);
-	          for (var i = 0; i < data.buckets; i++) {
-	            var left = min + i * (max - min) / data.buckets;
-	            var right = min + (i + 1) * (max - min) / data.buckets;
-	            cats.push(left + "-" + right);
-	            if (data.specialColumnValue >= left && data.specialColumnValue <= right) {
-	              vals.push({ y: 0, color: '#ff0000' });
-	            } else {
-	              vals.push({ y: 0 });
-	            }
-	          }
-	          _.each(metricNumData, function (datum) {
-	            var c = Math.floor((datum - min) / ((max - min) / data.buckets));
-	            vals[c].y++;
-	          });
-	          // Construct the chart.
-	          if (metricNumData.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Has No Data!');
-	          } else {
-	            var _ref;
-	
-	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
-	              chart: {
-	                type: 'column'
-	              },
-	              credits: {
-	                enabled: false
-	              },
-	              title: {
-	                text: data.mytitle
-	              },
-	              subtitle: {
-	                text: data.metrics[0] + " in " + data.buckets + " Buckets"
-	              },
-	              xAxis: {
-	                categories: cats
-	              },
-	              plotOptions: {
-	                column: {
-	                  pointPadding: 0,
-	                  borderWidth: 1,
-	                  groupPadding: 0,
-	                  shadow: false
-	                }
-	              },
-	              legend: {
-	                enabled: false
-	              },
-	              series: [(_ref = {
-	                color: '#0000ff',
-	                name: '',
-	                showInLegend: false,
-	                data: vals,
-	                size: '100%',
-	                innerSize: '85%'
-	              }, _defineProperty(_ref, 'showInLegend', true), _defineProperty(_ref, 'dataLabels', {
-	                enabled: true
-	              }), _ref)]
-	            });
-	          }
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
 	        });
 	      }
 	    }
 	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var _ref;
+	
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var data = this.props.widgets[this.props.widgetindex].data;
+	      var cats = [];
+	      var vals = [];
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Has No Data!');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table.
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      // Then set up the plot.
+	      var plotdata = rawData.data;
+	      var metricNumData = _.pluck(plotdata, data.metrics[0]);
+	      if (metricNumData.some(isNaN)) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Histogram Widget Data Error</div>');
+	        return false;
+	      }
+	      var min = Math.min.apply(Math, _toConsumableArray(metricNumData));
+	      var max = Math.max.apply(Math, _toConsumableArray(metricNumData));
+	      max = max + 0.01 * (max - min);
+	      for (var i = 0; i < data.buckets; i++) {
+	        var left = Math.round(100 * (min + i * (max - min) / data.buckets)) / 100;
+	        var right = Math.round(100 * (min + (i + 1) * (max - min) / data.buckets)) / 100;
+	        cats.push(left + "-" + right);
+	        //data.specialColumnValue = Math.round(100*data.specialColumnValue)/100;
+	        if (data.specialColumnValue >= left && data.specialColumnValue < right) {
+	          vals.push({ y: 0, color: '#ff0000' });
+	        } else {
+	          vals.push({ y: 0 });
+	        }
+	      }
+	      _.each(metricNumData, function (datum) {
+	        var c = Math.floor((datum - min) / ((max - min) / data.buckets));
+	        vals[c].y++;
+	      });
+	      Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	        chart: {
+	          type: 'column'
+	        },
+	        credits: {
+	          enabled: false
+	        },
+	        title: {
+	          text: data.mytitle
+	        },
+	        subtitle: {
+	          text: data.metrics[0] + " in " + data.buckets + " Buckets"
+	        },
+	        xAxis: {
+	          categories: cats
+	        },
+	        plotOptions: {
+	          column: {
+	            pointPadding: 0,
+	            borderWidth: 1,
+	            groupPadding: 0,
+	            shadow: false
+	          }
+	        },
+	        legend: {
+	          enabled: false
+	        },
+	        series: [(_ref = {
+	          color: '#0000ff',
+	          name: '',
+	          showInLegend: false,
+	          data: vals,
+	          size: '100%',
+	          innerSize: '85%'
+	        }, _defineProperty(_ref, 'showInLegend', true), _defineProperty(_ref, 'dataLabels', {
+	          enabled: true
+	        }), _ref)]
+	      });
+	    }
+	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -76481,7 +76653,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetBar.__proto__ || Object.getPrototypeOf(WidgetBar)).call(this));
 	
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -76493,12 +76667,12 @@
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
 	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	        this.reloadData();
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -76536,110 +76710,123 @@
 	          aggmethod: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
-	            return false;
-	          }
-	          if (rawData.error === 1) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Data Error</div>');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table and make it nice if necessary.
-	          var tableData = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            tableData.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          if (data.aggDatetime === true) {
-	            _.each(tableData, function (datum, i) {
-	              tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
-	            });
-	          }
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
-	          // Then set up the plot.
-	          var plotdata = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggDatetime == true) {
-	            var newplotdata = [];
-	            _.each(plotdata, function (a) {
-	              var h = {};
-	              h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
-	              h[data.metrics[1]] = a[data.metrics[1]] * 1000;
-	              newplotdata.push(h);
-	            });
-	            plotdata = JSON.parse(JSON.stringify(newplotdata));
-	          }
-	          // If it's to be sorted.
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            plotdata.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
-	          var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
-	          var final = [];
-	          _.each(metricNumData0, function (datum, i) {
-	            var z = datum;
-	            if (data.aggDatetime == true) {
-	              z = (0, _support.niceDate)(z);
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
+	        return false;
+	      }
+	      if (rawData.error === 1) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Data Error</div>');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table and make it nice if necessary.
+	      var tableData = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        tableData.sort(function (a, b) {
+	          return a[data.metrics[0]] - b[data.metrics[0]];
+	        });
+	      }
+	      if (data.aggDatetime === true) {
+	        _.each(tableData, function (datum, i) {
+	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
+	        });
+	      }
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      // Then set up the plot.
+	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggDatetime == true) {
+	        var newplotdata = [];
+	        _.each(plotdata, function (a) {
+	          var h = {};
+	          h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	          h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	          newplotdata.push(h);
+	        });
+	        plotdata = JSON.parse(JSON.stringify(newplotdata));
+	      }
+	      // If it's to be sorted.
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        plotdata.sort(function (a, b) {
+	          return a[data.metrics[0]] - b[data.metrics[0]];
+	        });
+	      }
+	      var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	      var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	      var final = [];
+	      _.each(metricNumData0, function (datum, i) {
+	        var z = datum;
+	        if (data.aggDatetime == true) {
+	          z = (0, _support.niceDate)(z);
+	        }
+	        if (data.aggDatetime == true) {
+	          final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	        } else {
+	          final.push({ y: metricNumData1[i], z: z, name: datum });
+	        }
+	      });
+	      if (final.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
+	      } else {
+	        Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	          chart: {
+	            type: 'bar'
+	          },
+	          credits: {
+	            enabled: false
+	          },
+	          title: {
+	            text: data.mytitle
+	          },
+	          subtitle: {
+	            text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	          },
+	          plotOptions: {
+	            bar: {
+	              dataLabels: {
+	                enabled: false,
+	                format: '<b>{point.z}</b>: {point.y:.2f} ' //,
+	              }
 	            }
-	            if (data.aggDatetime == true) {
-	              final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
-	            } else {
-	              final.push({ y: metricNumData1[i], z: z, name: datum });
+	          },
+	          tooltip: {
+	            formatter: function formatter() {
+	              return '<b>' + this.point.z + '</b><br>' + this.point.y;
 	            }
-	          });
-	          if (final.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
-	          } else {
-	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
-	              chart: {
-	                type: 'bar'
-	              },
-	              credits: {
-	                enabled: false
-	              },
-	              title: {
-	                text: data.mytitle
-	              },
-	              subtitle: {
-	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
-	              },
-	              plotOptions: {
-	                bar: {
-	                  dataLabels: {
-	                    enabled: false,
-	                    format: '<b>{point.z}</b>: {point.y:.2f} ' //,
-	                  }
-	                }
-	              },
-	              tooltip: {
-	                formatter: function formatter() {
-	                  return '<b>' + this.point.z + '</b><br>' + this.point.y;
-	                }
-	              },
-	              xAxis: {
-	                type: data.aggDatetime == true ? 'datetime' : 'category'
-	              },
-	              legend: {
-	                enabled: false
-	              },
-	              series: [_defineProperty({
-	                name: '',
-	                showInLegend: false,
-	                data: final,
-	                size: null,
-	                innerSize: '0%'
-	              }, 'showInLegend', true)]
-	            });
-	          }
+	          },
+	          xAxis: {
+	            type: data.aggDatetime == true ? 'datetime' : 'category'
+	          },
+	          legend: {
+	            enabled: false
+	          },
+	          series: [_defineProperty({
+	            name: '',
+	            showInLegend: false,
+	            data: final,
+	            size: null,
+	            innerSize: '0%'
+	          }, 'showInLegend', true)]
 	        });
 	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -76751,7 +76938,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetColumn.__proto__ || Object.getPrototypeOf(WidgetColumn)).call(this));
 	
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -76763,12 +76952,15 @@
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
 	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	        this.reloadData();
+	      }
+	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -76806,110 +76998,123 @@
 	          aggmethod: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
-	            return false;
-	          }
-	          if (rawData.error === 1) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Data Error</div>');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table and make it nice if necessary.
-	          var tableData = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            tableData.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          if (data.aggDatetime === true) {
-	            _.each(tableData, function (datum, i) {
-	              tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
-	            });
-	          }
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
-	          // Then set up the plot.
-	          var plotdata = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggDatetime == true) {
-	            var newplotdata = [];
-	            _.each(plotdata, function (a) {
-	              var h = {};
-	              h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
-	              h[data.metrics[1]] = a[data.metrics[1]] * 1000;
-	              newplotdata.push(h);
-	            });
-	            plotdata = JSON.parse(JSON.stringify(newplotdata));
-	          }
-	          // If it's to be sorted.
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            plotdata.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
-	          var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
-	          var final = [];
-	          _.each(metricNumData0, function (datum, i) {
-	            var z = datum;
-	            if (data.aggDatetime == true) {
-	              z = (0, _support.niceDate)(z);
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+	        return false;
+	      }
+	      if (rawData.error === 1) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Data Error</div>');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table and make it nice if necessary.
+	      var tableData = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        tableData.sort(function (a, b) {
+	          return a[data.metrics[0]] - b[data.metrics[0]];
+	        });
+	      }
+	      if (data.aggDatetime === true) {
+	        _.each(tableData, function (datum, i) {
+	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
+	        });
+	      }
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      // Then set up the plot.
+	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggDatetime == true) {
+	        var newplotdata = [];
+	        _.each(plotdata, function (a) {
+	          var h = {};
+	          h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	          h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	          newplotdata.push(h);
+	        });
+	        plotdata = JSON.parse(JSON.stringify(newplotdata));
+	      }
+	      // If it's to be sorted.
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        plotdata.sort(function (a, b) {
+	          return a[data.metrics[0]] - b[data.metrics[0]];
+	        });
+	      }
+	      var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	      var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	      var final = [];
+	      _.each(metricNumData0, function (datum, i) {
+	        var z = datum;
+	        if (data.aggDatetime == true) {
+	          z = (0, _support.niceDate)(z);
+	        }
+	        if (data.aggDatetime == true) {
+	          final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	        } else {
+	          final.push({ y: metricNumData1[i], z: z, name: datum });
+	        }
+	      });
+	      if (final.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
+	      } else {
+	        Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	          chart: {
+	            type: 'column'
+	          },
+	          credits: {
+	            enabled: false
+	          },
+	          title: {
+	            text: data.mytitle
+	          },
+	          subtitle: {
+	            text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	          },
+	          plotOptions: {
+	            column: {
+	              dataLabels: {
+	                enabled: false,
+	                format: '<b>{point.z}</b>: {point.y:.2f} ' //,
+	              }
 	            }
-	            if (data.aggDatetime == true) {
-	              final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
-	            } else {
-	              final.push({ y: metricNumData1[i], z: z, name: datum });
+	          },
+	          tooltip: {
+	            formatter: function formatter() {
+	              return '<b>' + this.point.z + '</b><br>' + this.point.y;
 	            }
-	          });
-	          if (final.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
-	          } else {
-	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
-	              chart: {
-	                type: 'column'
-	              },
-	              credits: {
-	                enabled: false
-	              },
-	              title: {
-	                text: data.mytitle
-	              },
-	              subtitle: {
-	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
-	              },
-	              plotOptions: {
-	                column: {
-	                  dataLabels: {
-	                    enabled: false,
-	                    format: '<b>{point.z}</b>: {point.y:.2f} ' //,
-	                  }
-	                }
-	              },
-	              tooltip: {
-	                formatter: function formatter() {
-	                  return '<b>' + this.point.z + '</b><br>' + this.point.y;
-	                }
-	              },
-	              xAxis: {
-	                type: data.aggDatetime == true ? 'datetime' : 'category'
-	              },
-	              legend: {
-	                enabled: false
-	              },
-	              series: [_defineProperty({
-	                name: '',
-	                showInLegend: false,
-	                data: final,
-	                size: null,
-	                innerSize: '0%'
-	              }, 'showInLegend', true)]
-	            });
-	          }
+	          },
+	          xAxis: {
+	            type: data.aggDatetime == true ? 'datetime' : 'category'
+	          },
+	          legend: {
+	            enabled: false
+	          },
+	          series: [_defineProperty({
+	            name: '',
+	            showInLegend: false,
+	            data: final,
+	            size: null,
+	            innerSize: '0%'
+	          }, 'showInLegend', true)]
 	        });
 	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -77013,7 +77218,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetStats.__proto__ || Object.getPrototypeOf(WidgetStats)).call(this));
 	
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -77025,12 +77232,15 @@
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
 	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	        this.reloadData();
+	      }
+	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -77065,60 +77275,73 @@
 	          metrics: data.metrics[0],
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('Stats Widget Has No Data!');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table.
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
-	          // Then set up the plot.
-	          var plotdata = rawData.data;
-	          var metricNumData = _.pluck(plotdata, data.metrics[0]);
-	          if (metricNumData.some(isNaN)) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
-	            return false;
-	          }
-	          if (metricNumData.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
-	          } else {
-	            metricNumData.sort(function (a, b) {
-	              return a - b;
-	            });
-	            var length = metricNumData.length;
-	            var sum = _.reduce(metricNumData, function (memo, num) {
-	              return memo + num;
-	            }, 0);
-	            var mean = Math.floor(100 * sum / length) / 100;
-	            var median = Math.floor(length / 2) == length / 2 ? (metricNumData[length / 2] + metricNumData[length / 2 + 1]) / 2 : metricNumData[(length - 1) / 2];
-	            var variance = 0;
-	            _.each(metricNumData, function (d) {
-	              variance += (mean - d) * (mean - d);
-	            });
-	            variance = variance / length;
-	            var stdev = Math.sqrt(variance);
-	            variance = Math.floor(100 * variance) / 100;
-	            stdev = Math.floor(100 * stdev) / 100;
-	            var max = metricNumData[length - 1];
-	            var min = metricNumData[0];
-	            var r = '<div class="stats">';
-	            r += '<div class="stats-title">' + data.mytitle + '</div>';
-	            r += '<div class="stats-subtitle">' + data.metrics[0] + '</div><br/>';
-	            r += '<div class="stats-left">Minimum</div><div class="stats-right">' + min + '</div>';
-	            r += '<div class="stats-left">Maximum</div><div class="stats-right">' + max + '</div>';
-	            r += '<div class="stats-left">Mean</div><div class="stats-right">' + mean + '</div>';
-	            r += '<div class="stats-left">Median</div><div class="stats-right">' + median + '</div>';
-	            r += '<div class="stats-left">Variance</div><div class="stats-right">' + variance + '</div>';
-	            r += '<div class="stats-left">Standard Deviation</div><div class="stats-right">' + stdev + '</div>';
-	            r += '</div>';
-	            $(ReactDOM.findDOMNode(chart)).html(r);
-	          }
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
 	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Stats Widget Has No Data!');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table.
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      // Then set up the plot.
+	      var plotdata = rawData.data;
+	      var metricNumData = _.pluck(plotdata, data.metrics[0]);
+	      if (metricNumData.some(isNaN)) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
+	        return false;
+	      }
+	      if (metricNumData.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
+	      } else {
+	        metricNumData.sort(function (a, b) {
+	          return a - b;
+	        });
+	        var length = metricNumData.length;
+	        var sum = _.reduce(metricNumData, function (memo, num) {
+	          return memo + num;
+	        }, 0);
+	        var mean = Math.floor(100 * sum / length) / 100;
+	        var median = Math.floor(length / 2) == length / 2 ? (metricNumData[length / 2] + metricNumData[length / 2 + 1]) / 2 : metricNumData[(length - 1) / 2];
+	        var variance = 0;
+	        _.each(metricNumData, function (d) {
+	          variance += (mean - d) * (mean - d);
+	        });
+	        variance = variance / length;
+	        var stdev = Math.sqrt(variance);
+	        variance = Math.floor(100 * variance) / 100;
+	        stdev = Math.floor(100 * stdev) / 100;
+	        var max = metricNumData[length - 1];
+	        var min = metricNumData[0];
+	        var r = '<div class="stats">';
+	        r += '<div class="stats-title">' + data.mytitle + '</div>';
+	        r += '<div class="stats-subtitle">' + data.metrics[0] + '</div><br/>';
+	        r += '<div class="stats-left">Minimum</div><div class="stats-right">' + min + '</div>';
+	        r += '<div class="stats-left">Maximum</div><div class="stats-right">' + max + '</div>';
+	        r += '<div class="stats-left">Mean</div><div class="stats-right">' + mean + '</div>';
+	        r += '<div class="stats-left">Median</div><div class="stats-right">' + median + '</div>';
+	        r += '<div class="stats-left">Variance</div><div class="stats-right">' + variance + '</div>';
+	        r += '<div class="stats-left">Standard Deviation</div><div class="stats-right">' + stdev + '</div>';
+	        r += '</div>';
+	        $(ReactDOM.findDOMNode(chart)).html(r);
 	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -77230,7 +77453,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetScatter.__proto__ || Object.getPrototypeOf(WidgetScatter)).call(this));
 	
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -77242,12 +77467,15 @@
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
 	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	        this.reloadData();
+	      }
+	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -77282,81 +77510,94 @@
 	          metrics: data.metrics[0] + ',' + data.metrics[1],
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Has No Data!');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table.
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
-	          // Then set up the plot.
-	          var plotdata = rawData.data;
-	          var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
-	          var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
-	          if (metricNumData0.some(isNaN) || metricNumData1.some(isNaN)) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
-	            return false;
-	          }
-	          var final = [];
-	          _.each(metricNumData0, function (datum, i) {
-	            final.push([datum, metricNumData1[i]]);
-	          });
-	          // Construct the chart.
-	          if (final.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
-	          } else {
-	            var _ref;
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Has No Data!');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table.
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      // Then set up the plot.
+	      var plotdata = rawData.data;
+	      var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	      var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	      if (metricNumData0.some(isNaN) || metricNumData1.some(isNaN)) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
+	        return false;
+	      }
+	      var final = [];
+	      _.each(metricNumData0, function (datum, i) {
+	        final.push([datum, metricNumData1[i]]);
+	      });
+	      // Construct the chart.
+	      if (final.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Scatter widget has no data!');
+	      } else {
+	        var _ref;
 	
-	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
-	              chart: {
-	                type: 'scatter'
-	              },
-	              credits: {
-	                enabled: false
-	              },
-	              title: {
-	                text: data.mytitle
-	              },
-	              subtitle: {
-	                text: data.metrics[1] + ' vs ' + data.metrics[0]
-	              },
-	              xAxis: {
-	                title: {
-	                  text: data.metrics[0]
-	                }
-	              },
-	              yAxis: {
-	                title: {
-	                  text: data.metrics[1]
-	                }
-	              },
-	              legend: {
-	                enabled: false
-	              },
-	              plotOptions: {
-	                column: {
-	                  pointPadding: 0,
-	                  borderWidth: 1,
-	                  groupPadding: 0,
-	                  shadow: false
-	                }
-	              },
-	              series: [(_ref = {
-	                color: '#0000ff',
-	                name: 'f',
-	                showInLegend: false,
-	                data: final
-	              }, _defineProperty(_ref, 'showInLegend', true), _defineProperty(_ref, 'dataLabels', {
-	                enabled: false
-	              }), _ref)]
-	            });
-	          }
+	        Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	          chart: {
+	            type: 'scatter'
+	          },
+	          credits: {
+	            enabled: false
+	          },
+	          title: {
+	            text: data.mytitle
+	          },
+	          subtitle: {
+	            text: data.metrics[1] + ' vs ' + data.metrics[0]
+	          },
+	          xAxis: {
+	            title: {
+	              text: data.metrics[0]
+	            }
+	          },
+	          yAxis: {
+	            title: {
+	              text: data.metrics[1]
+	            }
+	          },
+	          legend: {
+	            enabled: false
+	          },
+	          plotOptions: {
+	            column: {
+	              pointPadding: 0,
+	              borderWidth: 1,
+	              groupPadding: 0,
+	              shadow: false
+	            }
+	          },
+	          series: [(_ref = {
+	            color: '#0000ff',
+	            name: 'f',
+	            showInLegend: false,
+	            data: final
+	          }, _defineProperty(_ref, 'showInLegend', true), _defineProperty(_ref, 'dataLabels', {
+	            enabled: false
+	          }), _ref)]
 	        });
 	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -77468,13 +77709,9 @@
 	
 	    var _this = _possibleConstructorReturn(this, (WidgetLine.__proto__ || Object.getPrototypeOf(WidgetLine)).call(this));
 	
-	    _this.state = {
-	      data: undefined,
-	      lat: 40.7831,
-	      lng: -73.9712,
-	      zoom: 9
-	    };
-	    _this.updateInternals = _this.updateInternals.bind(_this);
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -77485,13 +77722,19 @@
 	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
 	      var newTabData = this.props.dashLayout[this.props.currentTab];
 	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height || newData.linetype !== oldData.linetype || newData.marker !== oldData.marker || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.updateInternals();
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggNumeric !== oldData.aggNumeric || newData.aggDatetime !== oldData.aggDatetime || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.aggMethod !== oldData.aggMethod || newData.width !== oldData.width || newData.height !== oldData.height ||
+	      //(newData.linetype                !== oldData.linetype) ||
+	      //(newData.marker                  !== oldData.marker) ||
+	      newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (newData.linetype !== oldData.linetype || newData.marker !== oldData.marker || JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
 	      }
 	    }
 	  }, {
-	    key: 'updateInternals',
-	    value: function updateInternals() {
+	    key: 'reloadData',
+	    value: function reloadData() {
 	      var thisthis = this;
 	      var chart = this.refs.chart;
 	      var props = this.props;
@@ -77529,131 +77772,144 @@
 	          aggmethod: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
-	          if (rawData.data.length === 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
-	            return false;
-	          }
-	          if (rawData.error === 1) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Data Error</div>');
-	            return false;
-	          }
-	          // Load the raw data into the raw data table and make it nice if necessary.
-	          var tableData = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            tableData.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          if (data.aggDatetime === true) {
-	            _.each(tableData, function (datum, i) {
-	              tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
-	            });
-	          }
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
-	          // Then set up the plot.
-	          var plotdata = JSON.parse(JSON.stringify(rawData.data));
-	          if (data.aggDatetime == true) {
-	            var newplotdata = [];
-	            _.each(plotdata, function (a) {
-	              var h = {};
-	              h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
-	              h[data.metrics[1]] = a[data.metrics[1]] * 1000;
-	              newplotdata.push(h);
-	            });
-	            plotdata = JSON.parse(JSON.stringify(newplotdata));
-	          }
-	          // If it's to be sorted.
-	          if (data.aggNumeric == true || data.aggDatetime == true) {
-	            plotdata.sort(function (a, b) {
-	              return a[data.metrics[0]] - b[data.metrics[0]];
-	            });
-	          }
-	          var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
-	          var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
-	          var final = [];
-	          _.each(metricNumData0, function (datum, i) {
-	            var z = datum;
-	            if (data.aggDatetime == true) {
-	              z = (0, _support.niceDate)(z);
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
+	        return false;
+	      }
+	      if (rawData.error === 1) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Data Error</div>');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table and make it nice if necessary.
+	      var tableData = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        tableData.sort(function (a, b) {
+	          return a[data.metrics[0]] < b[data.metrics[0]] ? -1 : 1;
+	        });
+	      }
+	      if (data.aggDatetime === true) {
+	        _.each(tableData, function (datum, i) {
+	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
+	        });
+	      }
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      // Then set up the plot.
+	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
+	      if (data.aggDatetime == true) {
+	        var newplotdata = [];
+	        _.each(plotdata, function (a) {
+	          var h = {};
+	          h[data.metrics[0]] = a[data.metrics[0]] * 1000; // Convert from Unix to JS.
+	          h[data.metrics[1]] = a[data.metrics[1]] * 1000;
+	          newplotdata.push(h);
+	        });
+	        plotdata = JSON.parse(JSON.stringify(newplotdata));
+	      }
+	      // If it's to be sorted.
+	      if (data.aggNumeric == true || data.aggDatetime == true) {
+	        plotdata.sort(function (a, b) {
+	          return a[data.metrics[0]] < b[data.metrics[0]] ? -1 : 1;
+	        });
+	      }
+	      var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
+	      var metricNumData1 = _.pluck(plotdata, data.metrics[1]);
+	      var final = [];
+	      _.each(metricNumData0, function (datum, i) {
+	        var z = datum;
+	        if (data.aggDatetime == true) {
+	          z = (0, _support.niceDate)(z);
+	        }
+	        if (data.aggDatetime == true) {
+	          final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
+	        } else {
+	          final.push({ y: metricNumData1[i], z: z, name: datum });
+	        }
+	      });
+	      if (final.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
+	      } else {
+	        Highcharts.chart(ReactDOM.findDOMNode(chart), {
+	          chart: {
+	            type: data.linetype || 'line'
+	          },
+	          credits: {
+	            enabled: false
+	          },
+	          title: {
+	            text: data.mytitle
+	          },
+	          subtitle: {
+	            text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	          },
+	          plotOptions: {
+	            line: {
+	              marker: {
+	                enabled: data.marker === 'none' ? false : true
+	              },
+	              dataLabels: {
+	                enabled: false,
+	                format: '<b>{point.z}</b>: {point.y:.2f} ' //,
+	              }
+	            },
+	            spline: {
+	              marker: {
+	                enabled: data.marker === 'none' ? false : true
+	              },
+	              dataLabels: {
+	                enabled: false,
+	                format: '<b>{point.z}</b>: {point.y:.2f} ' //,
+	              }
+	            },
+	            area: {
+	              marker: {
+	                enabled: data.marker === 'none' ? false : true
+	              },
+	              dataLabels: {
+	                enabled: false,
+	                format: '<b>{point.z}</b>: {point.y:.2f} ' //,
+	              }
 	            }
-	            if (data.aggDatetime == true) {
-	              final.push({ x: datum, y: metricNumData1[i], z: z, name: datum });
-	            } else {
-	              final.push({ y: metricNumData1[i], z: z, name: datum });
+	          },
+	          tooltip: {
+	            formatter: function formatter() {
+	              return '<b>' + this.point.z + '</b><br>' + this.point.y;
 	            }
-	          });
-	          if (final.length == 0) {
-	            $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
-	          } else {
-	            Highcharts.chart(ReactDOM.findDOMNode(chart), {
-	              chart: {
-	                type: data.linetype || 'line'
-	              },
-	              credits: {
-	                enabled: false
-	              },
-	              title: {
-	                text: data.mytitle
-	              },
-	              subtitle: {
-	                text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
-	              },
-	              plotOptions: {
-	                line: {
-	                  marker: {
-	                    enabled: data.marker === 'none' ? false : true
-	                  },
-	                  dataLabels: {
-	                    enabled: false,
-	                    format: '<b>{point.z}</b>: {point.y:.2f} ' //,
-	                  }
-	                },
-	                spline: {
-	                  marker: {
-	                    enabled: data.marker === 'none' ? false : true
-	                  },
-	                  dataLabels: {
-	                    enabled: false,
-	                    format: '<b>{point.z}</b>: {point.y:.2f} ' //,
-	                  }
-	                },
-	                area: {
-	                  marker: {
-	                    enabled: data.marker === 'none' ? false : true
-	                  },
-	                  dataLabels: {
-	                    enabled: false,
-	                    format: '<b>{point.z}</b>: {point.y:.2f} ' //,
-	                  }
-	                }
-	              },
-	              tooltip: {
-	                formatter: function formatter() {
-	                  return '<b>' + this.point.z + '</b><br>' + this.point.y;
-	                }
-	              },
-	              xAxis: {
-	                type: data.aggDatetime == true ? 'datetime' : 'category'
-	              },
-	              legend: {
-	                enabled: false
-	              },
-	              series: [_defineProperty({
-	                name: '',
-	                showInLegend: false,
-	                data: final,
-	                size: null,
-	                innerSize: '0%'
-	              }, 'showInLegend', true)]
-	            });
-	          }
+	          },
+	          xAxis: {
+	            type: data.aggDatetime == true ? 'datetime' : 'category'
+	          },
+	          legend: {
+	            enabled: false
+	          },
+	          series: [_defineProperty({
+	            name: '',
+	            showInLegend: false,
+	            data: final,
+	            size: null,
+	            innerSize: '0%'
+	          }, 'showInLegend', true)]
 	        });
 	      }
 	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.updateInternals();
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -77790,7 +78046,6 @@
 	  _createClass(SelectBar, [{
 	    key: 'selectChoiceUpdate',
 	    value: function selectChoiceUpdate(e) {
-	      console.log(e);
 	      this.setState({
 	        current: e
 	      });
@@ -79874,6 +80129,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -79890,6 +80146,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -79906,6 +80163,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -79923,6 +80181,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -79936,11 +80195,27 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
 	      title: 'Simple Statistics',
 	      description: 'Provides a basic statistical breakdown of a numerical metric.'
+	    }, { type: 'singlevalue',
+	      width: 'half',
+	      height: 'half',
+	      source: '(undefined)',
+	      metrics: ['(undefined)'],
+	      aggMethod: '(undefined)',
+	      myStartDateISO: moment().toISOString(),
+	      myEndDateISO: moment().toISOString(),
+	      filters: [],
+	      postfilters: [],
+	      timeframe: '(undefined)',
+	      configDisplay: 'none',
+	      fob: 'front',
+	      title: 'Single Value',
+	      description: 'Displays a sinle numerical metric value.'
 	    }, { type: 'geospatial',
 	      width: 'full',
 	      height: 'full',
@@ -79949,6 +80224,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -79966,6 +80242,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -79980,6 +80257,7 @@
 	      myStartDateISO: moment().toISOString(),
 	      myEndDateISO: moment().toISOString(),
 	      filters: [],
+	      postfilters: [],
 	      timeframe: '(undefined)',
 	      configDisplay: 'none',
 	      fob: 'front',
@@ -80425,6 +80703,483 @@
 	////////////////////////////////////////////////////////////////////////////////
 	
 	exports.default = ConfigureLogin;
+
+/***/ },
+/* 547 */
+/*!************************************!*\
+  !*** ./WidgetConfigSingleValue.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	// How does the dash get access to the store?
+	
+	var WidgetConfigSingleValue = function (_React$Component) {
+	  _inherits(WidgetConfigSingleValue, _React$Component);
+	
+	  function WidgetConfigSingleValue(props) {
+	    _classCallCheck(this, WidgetConfigSingleValue);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigSingleValue.__proto__ || Object.getPrototypeOf(WidgetConfigSingleValue)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      filters: data.filters,
+	      postfilters: data.postfilters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      moveValue: -0.5
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigSingleValue, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: ['(undefined)'],
+	        filters: [],
+	        postfilters: []
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(i, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
+	      metrics[i] = e.target.value;
+	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
+	        width: this.state.width,
+	        height: this.state.height
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
+	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
+	        width: oldState.width,
+	        height: oldState.height
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = (0, _support.getMetricsForSource)(this.state.source);
+	      var aggMethods = (0, _support.getAggMethods)();
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Single Value Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metric'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Aggregate Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      })), React.createElement('br', null), 'Numerical Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigSingleValue;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigSingleValue);
+
+/***/ },
+/* 548 */
+/*!******************************!*\
+  !*** ./WidgetSingleValue.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
+	
+	var WidgetSingleValue = function (_React$Component) {
+	  _inherits(WidgetSingleValue, _React$Component);
+	
+	  function WidgetSingleValue(props) {
+	    _classCallCheck(this, WidgetSingleValue);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetSingleValue.__proto__ || Object.getPrototypeOf(WidgetSingleValue)).call(this));
+	
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetSingleValue, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(prevProps, prevState) {
+	      var newData = this.props.widgets[this.props.widgetindex].data;
+	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
+	      var newTabData = this.props.dashLayout[this.props.currentTab];
+	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.aggMethod !== oldData.aggMethod || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
+	      }
+	    }
+	  }, {
+	    key: 'reloadData',
+	    value: function reloadData() {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      var fs = data.filters.map(function (f) {
+	        return f.metric + ':' + f.comp + ':' + f.value;
+	      }).join();
+	      // If we're using the tab timeframe, add that as a filter.
+	      if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
+	        var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
+	        var tabEndDateUnix = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
+	        if (fs.length > 0) {
+	          fs = fs + ',';
+	        }
+	        fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
+	      }
+	      // If we're using the widget timeframe, add that as a filter.
+	      if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
+	        var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
+	        var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
+	        if (fs.length > 0) {
+	          fs = fs + ',';
+	        }
+	        fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
+	      }
+	      if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.timeframe === '(undefined)') {
+	        $(ReactDOM.findDOMNode(chart)).html('Single Value Widget Not Configured!');
+	      } else {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	          source: data.source,
+	          metrics: data.metrics[0] + ',' + data.metrics[1],
+	          aggmetric: data.metrics[0],
+	          nonaggmetric: data.metrics[1],
+	          aggmethod: data.aggMethod,
+	          filters: fs
+	        }), function (rawData) {
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Single Value Widget Has No Data!');
+	        return false;
+	      }
+	      // Load the raw data into the raw data table.
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      // Then set up the plot.
+	      var plotdata = rawData.data;
+	      var metricNumData = _.pluck(plotdata, data.metrics[1]);
+	      if (metricNumData.some(isNaN)) {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Single Value Widget Data Error</div>');
+	        return false;
+	      }
+	      if (metricNumData.length == 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Single Value widget has no data!');
+	      } else {
+	        var value = Math.round(100 * rawData.data[0][data.metrics[1]]) / 100;
+	        var r = '<div class="stats">';
+	        r += '<div class="stats-title">' + data.mytitle + '</div>';
+	        r += '<div class="stats-subtitle">' + data.metrics[1] + ' - ' + data.aggMethod + '</div><br/><br/><br/><br/>';
+	        r += '<div class="single-value-contents">' + value + '</div>';
+	        r += '</div>';
+	        $(ReactDOM.findDOMNode(chart)).html(r);
+	      }
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.reloadData();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
+	      var outersizecss = 'widget-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innersubcss = 'widget-sub-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	    }
+	  }]);
+	
+	  return WidgetSingleValue;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab,
+	    fullstate: state
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {};
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetSingleValue);
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ }
 /******/ ]);

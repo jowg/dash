@@ -23,24 +23,35 @@ class WidgetGeospatial extends React.Component {
     this.style = this.style.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
     this.featureClicked = this.featureClicked.bind(this);
+    this.featureEnter = this.featureEnter.bind(this);
+    this.featureExit = this.featureExit.bind(this);
   }
 
   onEachFeature(feature,layer) {
     var thisthis = this;
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
     const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.aggMethod+'('+widgetdata.metrics[0]+'): '+feature.properties[widgetdata.metrics[0]];
-    layer.bindPopup(datum);
-    //layer.on('mouseover', function (e) {
-    //  thisthis.setState({currentLabel: datum});
-    //});
-    //layer.on('mouseout', function (e) {
-    //  thisthis.setState({currentLabel: 'Hover for Data'});
-    //});
+    //layer.bindPopup(datum);
+    layer.on('mouseover', function (e) {
+      thisthis.setState({currentLabel: datum});
+    });
+    layer.on('mouseout', function (e) {
+      thisthis.setState({currentLabel: 'Hover for Data'});
+    });
     // New Stuff.
     // Figure out which precinct we're on and set the widget with index 0 to have that filter.
     layer.on({
-      click: thisthis.featureClicked
+      click: thisthis.featureClicked,
+      mouseover: thisthis.featureEnter,
+      mouseout: thisthis.featureExit
     });
+  }
+
+  featureEnter(e) {
+    e.target.setStyle({weight: 3});
+  }
+  featureExit(e) {
+    e.target.setStyle({weight: 1});
   }
 
   featureClicked(e) {
@@ -49,7 +60,7 @@ class WidgetGeospatial extends React.Component {
       var p = e.target.feature.properties.precinct;
       this.props.update_widget(0,{
         mytitle: 'Precinct: '+p,
-        filters: [{"metric":"precinct","comp":"==","value":p}]
+        filters: [{"metric":"precinct","comp":"==","value":p}],
       });
       this.props.update_widget(1,{
         mytitle: 'Precinct: '+p,
@@ -64,15 +75,30 @@ class WidgetGeospatial extends React.Component {
         filters: [{"metric":"precinct","comp":"==","value":p}]
       });
     }
-    // 5 controls 6
+    // 5 controls 6,7
     if (this.props.widgetindex === 5) {
       var s = e.target.feature.properties.sector;
       var p = e.target.feature.properties.preds;
       this.props.update_widget(6,{
-        mytitle: 'Sector: '+s,
+        mytitle: 'Preds for all Sectors',
         specialColumnValue: p
       });
+      this.props.update_widget(7,{
+        mytitle: 'Sector: ' + s,
+        //filters: [{"metric":"sector","comp":"==","value":s}]
+        postfilters: [{"metric":"sector","comp":"==","value":s}]
+      });
     }
+    // 9 controls 8
+    if (this.props.widgetindex === 9) {
+      var s = e.target.feature.properties.sector;
+      this.props.update_widget(8,{
+        mytitle: 'Sector: ' + s,
+        filters: [{"metric":"sector","comp":"==","value":s}]
+        //postfilters: [{"metric":"sector","comp":"==","value":s}]
+      });
+    }
+
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -133,9 +159,7 @@ class WidgetGeospatial extends React.Component {
           addgeo: data.metrics[1]
         }),
         function(rawData) {
-          //console.log(rawData);
-          // Join the geo data onto the data data.
-          //console.log(rawData);
+          // Construct the chart data and fill in the chart.
           var chartData = {
             metrics:[rawData.metrics[1],rawData.metrics[0]],
             data:[]
@@ -147,26 +171,28 @@ class WidgetGeospatial extends React.Component {
             chartData.data.push(v);
           });
           $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(chartData));
+          // Construct the geospatial data.
           var max = rawData.data[0][data.metrics[0]];
           var min = max;
           var g = [];
           var id = 0;
           _.each(rawData.data,function(datum) {
             //console.log(datum[data.metrics[1]]);
-            datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
-            //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
-            var v = datum[data.metrics[0]];
-            if (v < min) {min = v;}
-            if (v > max) {max = v;}
-            datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
-            datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
-            if (datum.geojsonfeature.id === undefined) {
-              datum.geojsonfeature.id = id;
-              id++;
+            if (rawData.geo[datum[data.metrics[1]]] !== undefined) {
+              datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
+              //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
+              var v = datum[data.metrics[0]];
+              if (v < min) {min = v;}
+              if (v > max) {max = v;}
+              datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
+              datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
+              if (datum.geojsonfeature.id === undefined) {
+                datum.geojsonfeature.id = id;
+                id++;
+              }
+              g.push(datum.geojsonfeature);
             }
-            g.push(datum.geojsonfeature);
           });
-
           // The data property is not dynamic, meaning that changing it
           // does not trigger an update of the component.  So we save
           // a key which alternates back and forth and makes sure to
@@ -211,7 +237,7 @@ class WidgetGeospatial extends React.Component {
         <div>
         <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
         {this.state.data !== undefined ?
-         <div>
+         <div><div className='widget-geospatial-title'>{widgetdata.aggMethod+'('+widgetdata.metrics[0]+') by '+widgetdata.metrics[1]}</div>
          <Map key={this.state.key} center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
          <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
          <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}>

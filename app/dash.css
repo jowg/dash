@@ -15,6 +15,8 @@
   --global-font-size-small:             100%;
   --global-font-size-75:                75%;
   --global-font-size-90:                90%;
+  --global-font-size-100:               100%;
+  --global-font-size-400:               400%;
   --config-window-border-color:         #4a708b;
   --config-window-border-thickness:     7px;
   --band-title-color:                   #eeeeee;
@@ -66,7 +68,7 @@ html,body {
 }
 .widget-chart-container-half-half {
   width:  300px;
-  height: 300px;
+  height: 280px;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
@@ -97,7 +99,7 @@ html,body {
 }
 .widget-chart-container-full-half {
   width:  650px;
-  height: 300px;
+  height: 280px;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
@@ -128,7 +130,7 @@ html,body {
 }
 .widget-chart-container-half-full {
   width:  300px;
-  height: 650px;
+  height: 630px;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
@@ -159,7 +161,7 @@ html,body {
 }
 .widget-chart-container-full-full {
   width:  650px;
-  height: 650px;
+  height: 630px;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
@@ -200,6 +202,14 @@ html,body {
   height: 24px;
   width:  24px;
   float:  right;
+}
+
+.single-value-contents {
+  width:       100%;
+  text-align:  center;
+  font-family: var(--global-font);
+  font-size:   var(--global-font-size-400);
+  color:       #000000;
 }
 
 .stats {
@@ -767,4 +777,9 @@ svg {
   width: 100%;
   height: 24px;
 }
-  
+
+.widget-geospatial-title {
+  font-family: var(--global-font);  
+  font-size:   var(--global-font-size-100);
+  padding-bottom: 5px;
+}

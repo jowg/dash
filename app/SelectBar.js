@@ -22,7 +22,6 @@ class SelectBar extends React.Component {
     this.selectChoiceUpdate      = this.selectChoiceUpdate.bind(this);
   }
   selectChoiceUpdate(e) {
-    console.log(e);
     this.setState({
       current: e
     });

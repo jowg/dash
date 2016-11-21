@@ -12,7 +12,7 @@ require('./dash.css');
 
 // How does the dash get access to the store?
 
-class WidgetConfigStats extends React.Component {
+class WidgetConfigSingleValue extends React.Component {
   constructor(props) {
     super();
     var data = props.widgets[props.widgetindex].data;
@@ -28,6 +28,7 @@ class WidgetConfigStats extends React.Component {
     }
     this.selectSourceUpdate      = this.selectSourceUpdate.bind(this);
     this.selectMetricUpdate      = this.selectMetricUpdate.bind(this);
+    this.selectAggMethodUpdate   = this.selectAggMethodUpdate.bind(this);
     this.updateWidget            = this.updateWidget.bind(this);
     this.cancelConfig            = this.cancelConfig.bind(this);
     this.selectFilterUpdate      = this.selectFilterUpdate.bind(this);
@@ -51,6 +52,9 @@ class WidgetConfigStats extends React.Component {
     metrics[i] = e.target.value;
     this.setState({metrics:metrics});
   }
+  selectAggMethodUpdate(e) {
+    this.setState({aggMethod:e.target.value});
+  }  
   selectFilterUpdate(value) {
     this.setState({filters:value});
   }
@@ -74,6 +78,7 @@ class WidgetConfigStats extends React.Component {
       configDisplay: 'none',
       source:        this.state.source,
       metrics:       this.state.metrics,
+      aggMethod:     this.state.aggMethod,
       timeframe:     this.state.timeframe,
       filters:       this.state.filters,
       postfilters:   this.state.postfilters,
@@ -87,6 +92,7 @@ class WidgetConfigStats extends React.Component {
     this.setState({
       source:        oldState.source,
       metrics:       oldState.metrics,
+      aggMethod:     oldState.aggMethod,
       filters:       oldState.filters,
       postfilters:   oldState.postfilters,
       width:         oldState.width,
@@ -107,14 +113,15 @@ class WidgetConfigStats extends React.Component {
     var data             = props.widgets[props.widgetindex].data;
     var sources          = getSources();
     var metrics          = getMetricsForSource(this.state.source);
+    var aggMethods       = getAggMethods();
     var timeframeOptions = getTimeframeOptions();
     metrics.unshift('(undefined)');
     return (
         <div style={{display: data.configDisplay}}>
         <div className='deactivating-overlay'></div>
         <div className='widget-config-window'>
-        <BorderTopPlusClose onClose={this.cancelConfig} title='Stats Widget Configuration'/>
-        <div className='bandsubtitle'>Choose Source & Metrics</div>
+        <BorderTopPlusClose onClose={this.cancelConfig} title='Single Value Widget Configuration'/>
+        <div className='bandsubtitle'>Choose Source & Metric</div>
         <div className='simpleborder'>
         Source
         <select onChange={this.selectSourceUpdate} value={this.state.source}>
@@ -122,8 +129,18 @@ class WidgetConfigStats extends React.Component {
       </select>
         </div>
         <div className='simpleborder'>
-        Numerical Metric
+        Aggregate Metric
         <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
+        {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
+      </select>
+        <br/>
+        Aggregate Method
+        <select onChange={this.selectAggMethodUpdate} value={this.state.aggMethod}>
+        {aggMethods.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
+      </select>
+        <br/>
+        Numerical Metric
+        <select onChange={this.selectMetricUpdate.bind(this,1)} value={this.state.metrics[1]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         </div>
@@ -133,8 +150,8 @@ class WidgetConfigStats extends React.Component {
         </div>
         <div className='simpleborder'>
         Post-Filters
-        <SelectFilter selectFilterUpdate={this.selectPostFilterUpdate} options={metrics} filters={this.state.postfilters || []} />
-        </div>        
+        <SelectFilter selectFilterUpdate={this.selectPostFilterUpdate} options={metrics} filters={this.state.postfilters} />
+        </div>
         <div className='simpleborder'>
         Time Frame
         <select onChange={this.selectTimeframeUpdate} value={this.state.timeframe}>
@@ -187,4 +204,4 @@ const mapDispatchToProps = (dispatch,ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WidgetConfigStats);
+)(WidgetConfigSingleValue);

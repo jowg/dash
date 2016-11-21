@@ -10,6 +10,30 @@
 // These are located where?
 // /Library/WebServer/CGI-Executables/rest/
 
+export function postFilter(rawData,postfilters) {
+  var newRawData = {
+    error:   rawData.error,
+    geo:     rawData.geo,
+    metrics: rawData.metrics,
+  };
+  var newData = [];
+  _.each(rawData.data,function(datum) {
+    var valid = true;
+    _.each(postfilters,function(f) {
+      if (_.contains(rawData.metrics,f.metric)) {
+        if ((f.comp === '==') && (f.value !== datum[f.metric])) {
+          valid = false;
+        }
+      }
+    });
+    if (valid) {
+      newData.push(datum);
+    }
+  });
+  newRawData.data = newData;
+  return newRawData;
+}
+
 export function tableFromRawData(rawData) {
   var k = rawData.metrics;
   var t = "<div class='div-table'>";
@@ -39,15 +63,27 @@ export function getMetricsForSource(source) {
   if (source == 'source03') {
     return ['precinct','numberofcrimes','policesatisfaction'];
   }
+  if (source == 'REST_source01') {
+    return ['precinct','number_of_crimes','police_satisfaction','outreach_metric','squad'];
+  }
+  if (source == 'REST_source02') {
+    return ['index','sector','age.bin','race','gender','quotas'];
+  }
+  if (source == 'REST_source03') {
+    return ['index','sector','precinct','preds'];
+  }
+  if (source == 'REST_source_complaints') {
+    return ['u1','date','time','u2','complaint','u3','latitude','longitude','sector','u4'];
+  }
   return [];
 }
 
 export function getSources() {
-  return ['(undefined)','source01','source02','source03'];
+  return ['(undefined)','source01','source02','source03','REST_source01','REST_source02','REST_source03','REST_source_complaints'];
 }
 
 export function getAggMethods() {
-  return ['(undefined)','mean','sum','count'];
+  return ['(undefined)','mean','sum','count','only'];
 }
 
 export function getTimeframeOptions() {
@@ -75,10 +111,10 @@ export function getMoveOptions(index,tabCurrent,tabLayout,widgets) {
   // Moving to the end of another row.
   _.each(layout,function(row,k) {
     if ((widgets[row[0]].data.width === 'half') && (widgets[index].data.width === 'half')) {
-      if (((row.length == 1) && (index != row[0])) || ((row.length == 2) && (index == row[0]))) {
+      //if (((row.length == 1) && (index != row[0])) || ((row.length == 2) && (index == row[0]))) {
         moves.push(k);
         movesText.push('Move to End of Row '+(k+1));
-      }
+      //}
     }
   });
   _.each(tabLayout,function(tab,ti) {
@@ -181,9 +217,12 @@ export function completeParams(params) {
   params.token = cookieExtract('token');
   return(params);
 }
+
 export function getColor(v) {
   var carray = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026'];
   return carray[Math.round(8*v)];
 }
 
+export function layout(tabs) {
 
+}

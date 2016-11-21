@@ -10,23 +10,25 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
 
-import WidgetConfigPie        from './WidgetConfigPie.js';
-import WidgetConfigBar        from './WidgetConfigBar.js';
-import WidgetConfigLine       from './WidgetConfigLine.js';
-import WidgetConfigColumn     from './WidgetConfigColumn.js';
-import WidgetConfigHistogram  from './WidgetConfigHistogram.js';
-import WidgetConfigStats      from './WidgetConfigStats.js';
-import WidgetConfigScatter    from './WidgetConfigScatter.js';
-import WidgetConfigGeospatial from './WidgetConfigGeospatial.js';
+import WidgetConfigPie         from './WidgetConfigPie.js';
+import WidgetConfigBar         from './WidgetConfigBar.js';
+import WidgetConfigLine        from './WidgetConfigLine.js';
+import WidgetConfigColumn      from './WidgetConfigColumn.js';
+import WidgetConfigHistogram   from './WidgetConfigHistogram.js';
+import WidgetConfigStats       from './WidgetConfigStats.js';
+import WidgetConfigScatter     from './WidgetConfigScatter.js';
+import WidgetConfigGeospatial  from './WidgetConfigGeospatial.js';
+import WidgetConfigSingleValue from './WidgetConfigSingleValue.js';
 
-import WidgetGeospatial from './WidgetGeospatial.js';
-import WidgetPie        from './WidgetPie.js';
-import WidgetHistogram  from './WidgetHistogram.js';
-import WidgetBar        from './WidgetBar.js';
-import WidgetColumn     from './WidgetColumn.js';
-import WidgetStats      from './WidgetStats.js';
-import WidgetScatter    from './WidgetScatter.js';
-import WidgetLine       from './WidgetLine.js';
+import WidgetGeospatial  from './WidgetGeospatial.js';
+import WidgetPie         from './WidgetPie.js';
+import WidgetHistogram   from './WidgetHistogram.js';
+import WidgetBar         from './WidgetBar.js';
+import WidgetColumn      from './WidgetColumn.js';
+import WidgetStats       from './WidgetStats.js';
+import WidgetScatter     from './WidgetScatter.js';
+import WidgetLine        from './WidgetLine.js';
+import WidgetSingleValue from './WidgetSingleValue.js';
 
 import SelectBar from './SelectBar.js';
 
@@ -78,19 +80,19 @@ class Widget extends React.Component {
     var innersubcss = 'widget-sub-container-'+widgetdata.width+'-'+widgetdata.height;
     return(
         <div className={outersizecss}>
-      
-        {configurable ? 
+
+        {configurable ?
          <div className='widget-top-bar'>{/*{this.props.widgetindex}*/}
          <img className='widget-cog-left' title='Configure Widget' onClick={this.openWidgetConfig.bind(this)} src='cog_icon.png'/>
-         
+
          {/* Any widget-specific selects at the top. */}
 
-         {(widgetdata.fob === 'front' && widgetdata.type === 'line') ?          
+         {(widgetdata.fob === 'front' && widgetdata.type === 'line') ?
           <div className='widget-bar-holder'>
           <SelectBar widgetindex={this.props.widgetindex} control={'linetype'} width={50} current={widgetdata.linetype} choices={['line','spline','area']}/>
           <SelectBar widgetindex={this.props.widgetindex} control={'marker'} width={50} current={widgetdata.marker} choices={['points','none']}/>
           </div> : <div style={{display:'inline-block'}}/>}
-         
+
          {(() => {
            switch (widgetdata.timeframe) {
            case 'tab':  return(<img className='widget-cog-right' title='Locked to Tab' src='lock_time.png'/>);
@@ -104,20 +106,21 @@ class Widget extends React.Component {
            }
          })()}</div>
          : <div className='widget-top-bar'></div>}
-      
+
         {/* The widget itself. */}
         <div style={{clear:'both'}}></div>
         <div className={innersubcss}>
         {(() => {
           switch (widgetdata.type) {
-          case 'pie':         return(<WidgetPie        widgetindex={this.props.widgetindex}/>);
-          case 'bar':         return(<WidgetBar        widgetindex={this.props.widgetindex}/>);
-          case 'histogram':   return(<WidgetHistogram  widgetindex={this.props.widgetindex}/>);
-          case 'column':      return(<WidgetColumn     widgetindex={this.props.widgetindex}/>);
-          case 'stats':       return(<WidgetStats      widgetindex={this.props.widgetindex}/>);
-          case 'scatter':     return(<WidgetScatter    widgetindex={this.props.widgetindex}/>);
-          case 'line':        return(<WidgetLine       widgetindex={this.props.widgetindex}/>);
-          case 'geospatial':  return(<WidgetGeospatial widgetindex={this.props.widgetindex}/>);
+          case 'pie':         return(<WidgetPie         widgetindex={this.props.widgetindex}/>);
+          case 'bar':         return(<WidgetBar         widgetindex={this.props.widgetindex}/>);
+          case 'histogram':   return(<WidgetHistogram   widgetindex={this.props.widgetindex}/>);
+          case 'column':      return(<WidgetColumn      widgetindex={this.props.widgetindex}/>);
+          case 'stats':       return(<WidgetStats       widgetindex={this.props.widgetindex}/>);
+          case 'singlevalue': return(<WidgetSingleValue widgetindex={this.props.widgetindex}/>);
+          case 'scatter':     return(<WidgetScatter     widgetindex={this.props.widgetindex}/>);
+          case 'line':        return(<WidgetLine        widgetindex={this.props.widgetindex}/>);
+          case 'geospatial':  return(<WidgetGeospatial  widgetindex={this.props.widgetindex}/>);
           }
         })()}</div>
         {/* The widget flip control. */}
@@ -125,14 +128,15 @@ class Widget extends React.Component {
         {/* The widget config. */}
         {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
-          case 'pie':         return(<WidgetConfigPie        widgetindex={props.widgetindex}/>);
-          case 'bar':         return(<WidgetConfigBar        widgetindex={props.widgetindex}/>);
-          case 'column':      return(<WidgetConfigColumn     widgetindex={props.widgetindex}/>);
-          case 'line':        return(<WidgetConfigLine       widgetindex={props.widgetindex}/>);
-          case 'histogram':   return(<WidgetConfigHistogram  widgetindex={props.widgetindex}/>);
-          case 'stats':       return(<WidgetConfigStats      widgetindex={props.widgetindex}/>);
-          case 'scatter':     return(<WidgetConfigScatter    widgetindex={props.widgetindex}/>);
-          case 'geospatial':  return(<WidgetConfigGeospatial widgetindex={props.widgetindex}/>);
+          case 'pie':         return(<WidgetConfigPie         widgetindex={props.widgetindex}/>);
+          case 'bar':         return(<WidgetConfigBar         widgetindex={props.widgetindex}/>);
+          case 'column':      return(<WidgetConfigColumn      widgetindex={props.widgetindex}/>);
+          case 'line':        return(<WidgetConfigLine        widgetindex={props.widgetindex}/>);
+          case 'histogram':   return(<WidgetConfigHistogram   widgetindex={props.widgetindex}/>);
+          case 'stats':       return(<WidgetConfigStats       widgetindex={props.widgetindex}/>);
+          case 'singlevalue': return(<WidgetConfigSingleValue widgetindex={props.widgetindex}/>);
+          case 'scatter':     return(<WidgetConfigScatter     widgetindex={props.widgetindex}/>);
+          case 'geospatial':  return(<WidgetConfigGeospatial  widgetindex={props.widgetindex}/>);
           }
         })()}
         </div>);

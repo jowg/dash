@@ -186,11 +186,11 @@ class Dashboard extends React.Component {
         {props.dashLayout.map(function(tab,tabindex) {
           return(
               <div className={props.currentTab==tabindex ? 'tab-selected' : 'tab-unselected'} key={tabindex} onClick={thisthis.changeCurrentTab.bind(this,tabindex)}>
-              {tab.tabName.length > 10 ? tab.tabName.substring(0,10)+'...' : tab.tabName}
+              {tab.tabName.length > 20 ? tab.tabName.substring(0,20)+'...' : tab.tabName}
             </div>
           );
         })}
-      {configurable ? 
+      {configurable ?
         <div className="dropdown">
         <div className='dropbtn'>Tools</div>
         <div className="dropdown-content">
@@ -202,7 +202,7 @@ class Dashboard extends React.Component {
         </div>
        </div> : <div/>
       }
-        </div>
+      </div>
         {props.dashLayout.map(function(tab,tabindex) {
           return(
               <div className={props.currentTab==tabindex ? 'tabsheet-visible' : 'tabsheet-invisible'} key={tabindex}>

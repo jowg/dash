@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 import L from 'leaflet';
 import {MapControl} from 'react-leaflet';
 
-export default class CenterControl extends MapControl { 
+export default class CenterControl extends MapControl {
 
   constructor(props) {
     console.log('connnnstructor!');
     super();
     this.state = {
       myLabel:props.myLabel,
-      centerControl:L.control({position:'bottomright'})
+      centerControl:L.control({position:'bottomleft'})
     };
   }
   componentWillMount() {
@@ -23,7 +23,7 @@ export default class CenterControl extends MapControl {
     this.state.centerControl.onRemove = function(map) {
       console.log('bonk');
     }
-    this.leafletElement = this.state.centerControl;    
+    this.leafletElement = this.state.centerControl;
   }
 
   componentWillReceiveProps(nextProps) {
