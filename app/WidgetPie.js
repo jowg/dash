@@ -169,7 +169,11 @@ class WidgetPie extends React.Component {
           pie: {
             dataLabels: {
               enabled: (data.label !== 'hide' ? true : false),
-              format:  '<b>{point.z}</b><br>{point.y:.2f} '//,
+              formatter: function() {
+                var top = (data.label !== 'trim' ? this.point.z : this.point.z.substr(0,7)+'...');
+                var v = Number.isInteger(this.point.y) ? this.point.y : Math.round(100*this.point.y)/100;
+                return '<b>'+top+'</b><br>'+v;
+              }
             }
           }
         },
