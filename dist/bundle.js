@@ -6926,6 +6926,7 @@
 	exports.jsonRestPoint = jsonRestPoint;
 	exports.completeParams = completeParams;
 	exports.getColor = getColor;
+	exports.layout = layout;
 	// Here we assume that request is more like a rest point.
 	// Hold on - I have a rest point on my machine.
 	//
@@ -7001,13 +7002,15 @@
 	    return ['index', 'sector', 'precinct', 'preds'];
 	  }
 	  if (source == 'REST_source_complaints') {
-	    return ['u1', 'date', 'time', 'u2', 'complaint', 'u3', 'latitude', 'longitude', 'sector', 'u4'];
+	    return ['u1', 'date', 'time', 'u2', 'complaint', 'u3', 'latitude', 'longitude', 'sector', 'precinct'];
 	  }
-	  return [];
+	  if (source == 'REST_source_311') {
+	    return ['u1', 'date', 'time', 'category', 'latitude', 'longitude', 'sector', 'precinct'];
+	  }
 	}
 	
 	function getSources() {
-	  return ['(undefined)', 'source01', 'source02', 'source03', 'REST_source01', 'REST_source02', 'REST_source03', 'REST_source_complaints'];
+	  return ['(undefined)', 'source01', 'source02', 'source03', 'REST_source01', 'REST_source02', 'REST_source03', 'REST_source_complaints', 'REST_source_311'];
 	}
 	
 	function getAggMethods() {
@@ -7146,6 +7149,8 @@
 	  var carray = ['#ffffcc', '#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c', '#bd0026', '#800026'];
 	  return carray[Math.round(8 * v)];
 	}
+	
+	function layout(tabs) {}
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! underscore */ 1), __webpack_require__(/*! jquery */ 56)))
 
 /***/ },
@@ -75847,7 +75852,7 @@
 	            text: data.mytitle
 	          },
 	          subtitle: {
-	            text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+	            text: data.aggMethod === 'count' ? data.aggMethod + ' by ' + data.metrics[0] : data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
 	          },
 	          plotOptions: {
 	            pie: {

@@ -73,13 +73,15 @@ export function getMetricsForSource(source) {
     return ['index','sector','precinct','preds'];
   }
   if (source == 'REST_source_complaints') {
-    return ['u1','date','time','u2','complaint','u3','latitude','longitude','sector','u4'];
+    return ['u1','date','time','u2','complaint','u3','latitude','longitude','sector','precinct'];
   }
-  return [];
+  if (source == 'REST_source_311') {
+    return ['u1','date','time','category','latitude','longitude','sector','precinct'];
+  }
 }
 
 export function getSources() {
-  return ['(undefined)','source01','source02','source03','REST_source01','REST_source02','REST_source03','REST_source_complaints'];
+  return ['(undefined)','source01','source02','source03','REST_source01','REST_source02','REST_source03','REST_source_complaints','REST_source_311'];
 }
 
 export function getAggMethods() {
@@ -223,4 +225,6 @@ export function getColor(v) {
   return carray[Math.round(8*v)];
 }
 
+export function layout(tabs) {
 
+}
