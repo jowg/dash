@@ -152,7 +152,7 @@ class WidgetBar extends React.Component {
           text: data.mytitle
         },
         subtitle: {
-          text: data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
+          text: data.aggMethod === 'count' ? data.aggMethod + ' by ' + data.metrics[0] : data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
         },
         plotOptions: {
           bar: {

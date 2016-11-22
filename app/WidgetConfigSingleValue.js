@@ -112,7 +112,7 @@ class WidgetConfigSingleValue extends React.Component {
     var dashLayout       = this.props.dashLayout;
     var data             = props.widgets[props.widgetindex].data;
     var sources          = getSources();
-    var metrics          = getMetricsForSource(this.state.source);
+    var metrics          = this.state.source === '(undefined)' ? [] : getMetricsForSource(this.state.source);
     var aggMethods       = getAggMethods();
     var timeframeOptions = getTimeframeOptions();
     metrics.unshift('(undefined)');

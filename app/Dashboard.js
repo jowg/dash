@@ -172,6 +172,9 @@ class Dashboard extends React.Component {
     } else if (this.state.showlogin === 'limbo') {
       return(<div/>);
     }
+    if (props.did === 0) {
+      return <div/>
+    }
     // Otherwise do the full thing.
     return(
         <div>
@@ -203,24 +206,72 @@ class Dashboard extends React.Component {
        </div> : <div/>
       }
       </div>
+
         {props.dashLayout.map(function(tab,tabindex) {
           return(
               <div className={props.currentTab==tabindex ? 'tabsheet-visible' : 'tabsheet-invisible'} key={tabindex}>
-              {_.flatten(tab.layout.map(function(row,rowindex) {
-                return(
-                  row.map(function(widgetindex,columnindex) {
+              {_.flatten(
+                tab.superlayout !== undefined ?
+                  tab.superlayout.toString().split(',').map(function(row,rowindex) {
                     return(
-                        <div key={props.widgets[widgetindex].key}>
-                        <Widget widgetindex={widgetindex}/>
-                        {columnindex==row.length-1 ? <div style={{clear:'both'}}></div> : ''}
-                      </div>
-                    );
-                  })
-                )
-              }))}
+                      row.split('|').map(function(col,colindex) {
+                        return(
+                            <div style={{float:'left'}} key={colindex}>{
+                              col.split('-').map(function(windex,w) {
+                                return(<div key={props.widgets[Number(windex)].key}><Widget widgetindex={Number(windex)}/></div>)
+                              })
+                            }
+                          </div>
+                        )
+                      })
+                    )
+                  }) :
+                tab.layout.map(function(row,rowindex) {
+                  return(
+                    row.map(function(widgetindex,columnindex) {
+                      return(
+                          <div key={props.widgets[widgetindex].key}>
+                          <div style={{float:'left'}}>
+                          <Widget widgetindex={widgetindex}/>
+                          </div>
+                          {columnindex==row.length-1 ? <div style={{clear:'both'}}></div> : ''}
+                        </div>
+                      );
+                    })
+                  )
+                })
+              )
+              }
             </div>
           )
         })}
+
+                {/*
+
+        {props.dashLayout.map(function(tab,tabindex) {
+          return(
+              <div className={props.currentTab==tabindex ? 'tabsheet-visible' : 'tabsheet-invisible'} key={tabindex}>
+              {_.flatten(
+                tab.layout.map(function(row,rowindex) {
+                  return(
+                    row.map(function(widgetindex,columnindex) {
+                      return(
+                          <div key={props.widgets[widgetindex].key}>
+                          <div style={{float:'left'}}>
+                          <Widget widgetindex={widgetindex}/>
+                          </div>
+                          {columnindex==row.length-1 ? <div style={{clear:'both'}}></div> : ''}
+                        </div>
+                      );
+                    })
+                  )
+                })
+              )}
+            </div>
+          )
+        })}
+           */}
+
       </div>
     );
   }

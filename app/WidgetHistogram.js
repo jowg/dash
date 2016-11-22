@@ -103,7 +103,8 @@ class WidgetHistogram extends React.Component {
     }
     var min = Math.min(...metricNumData);
     var max = Math.max(...metricNumData);
-    max = max + 0.01*(max-min);
+    max = max + 0.1*(max-min);
+    min = min - 0.1*(max-min);
     for (var i=0;i<data.buckets;i++) {
       var left = Math.round( 100* (min+i*(max-min)/data.buckets) ) / 100;
       var right = Math.round( 100* (min+(i+1)*(max-min)/data.buckets) ) / 100;

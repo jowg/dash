@@ -55,47 +55,45 @@ class WidgetGeospatial extends React.Component {
   }
 
   featureClicked(e) {
-    // 2 controls 0,1,3,4
-    if (this.props.widgetindex === 2) {
+    // 0 controls 1,8.9
+    if (this.props.widgetindex === 0) {
       var p = e.target.feature.properties.precinct;
-      this.props.update_widget(0,{
+      this.props.update_widget(1,{
         mytitle: 'Precinct: '+p,
         filters: [{"metric":"precinct","comp":"==","value":p}],
       });
-      this.props.update_widget(1,{
+      this.props.update_widget(8,{
         mytitle: 'Precinct: '+p,
         filters: [{"metric":"precinct","comp":"==","value":p}]
       });
-      this.props.update_widget(3,{
-        mytitle: 'Precinct: '+p,
-        filters: [{"metric":"precinct","comp":"==","value":p}]
-      });
-      this.props.update_widget(4,{
+      this.props.update_widget(9,{
         mytitle: 'Precinct: '+p,
         filters: [{"metric":"precinct","comp":"==","value":p}]
       });
     }
-    // 5 controls 6,7
-    if (this.props.widgetindex === 5) {
+    // 2 controls 3,4
+    if (this.props.widgetindex === 2) {
       var s = e.target.feature.properties.sector;
       var p = e.target.feature.properties.preds;
-      this.props.update_widget(6,{
+      this.props.update_widget(3,{
         mytitle: 'Preds for all Sectors',
         specialColumnValue: p
       });
-      this.props.update_widget(7,{
+      this.props.update_widget(4,{
         mytitle: 'Sector: ' + s,
-        //filters: [{"metric":"sector","comp":"==","value":s}]
         postfilters: [{"metric":"sector","comp":"==","value":s}]
       });
     }
-    // 9 controls 8
-    if (this.props.widgetindex === 9) {
+    // 6 controls 5,7
+    if (this.props.widgetindex === 6) {
       var s = e.target.feature.properties.sector;
-      this.props.update_widget(8,{
+      this.props.update_widget(5,{
         mytitle: 'Sector: ' + s,
         filters: [{"metric":"sector","comp":"==","value":s}]
-        //postfilters: [{"metric":"sector","comp":"==","value":s}]
+      });
+      this.props.update_widget(7,{
+        mytitle: 'Sector: ' + s,
+        filters: [{"metric":"sector","comp":"==","value":s}]
       });
     }
 
