@@ -211,7 +211,7 @@ class Dashboard extends React.Component {
           return(
               <div className={props.currentTab==tabindex ? 'tabsheet-visible' : 'tabsheet-invisible'} key={tabindex}>
               {_.flatten(
-                tab.superlayout !== undefined ?
+                props.fullstate.hassuperlayout ? 
                   tab.superlayout.toString().split(',').map(function(row,rowindex) {
                     return(
                       row.split('|').map(function(col,colindex) {

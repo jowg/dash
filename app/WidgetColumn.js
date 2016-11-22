@@ -159,6 +159,7 @@ class WidgetColumn extends React.Component {
         },
         plotOptions: {
           column: {
+            animation: false,
             dataLabels: {
               enabled: false,
               format:  '<b>{point.z}</b>: {point.y:.2f} '//,

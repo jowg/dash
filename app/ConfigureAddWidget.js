@@ -131,7 +131,9 @@ class ConfigureAddWidget extends React.Component {
        description:      'Provides a basic geospatial view.',
        latitude:         40.7831,
        longitude:        -73.9712,
-       zoom:             10
+       zoom:             10,
+       showBackground:   true,
+       obeyChoropleth:   true
       },
       {type:             'scatter',
        width:            'half',

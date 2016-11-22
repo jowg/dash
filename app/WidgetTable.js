@@ -7,12 +7,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {postFilter,niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
 
-class WidgetHistogram extends React.Component {
+class WidgetStats extends React.Component {
   constructor(props) {
     super();
     this.state = {rawData: undefined}
     this.reloadData = this.reloadData.bind(this);
-    this.plot = this.plot.bind(this);
+    this.plot = this.plot.bind(this);    
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -31,9 +31,7 @@ class WidgetHistogram extends React.Component {
         ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) || (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
       this.reloadData();
     }
-    if ((newData.specialColumnValue !== oldData.specialColumnValue) ||
-        (newData.buckets            !== oldData.buckets) ||
-        (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters))) {
+    if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
       this.plot(this.state.rawData);
     }
   }
@@ -60,8 +58,8 @@ class WidgetHistogram extends React.Component {
       if (fs.length > 0) {fs = fs + ',';}
       fs = fs + 'datetime:>=:'+myStartDateUnix+',datetime:<=:'+myEndDateUnix;
     }
-    if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.buckets === '(undefined)') || (data.timeframe === '(undefined)')) {
-      $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Not Configured!');
+    if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.timeframe === '(undefined)')) {
+      $(ReactDOM.findDOMNode(chart)).html('Stats Widget Not Configured!');
     } else {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
@@ -75,21 +73,20 @@ class WidgetHistogram extends React.Component {
           thisthis.setState({rawData:rawData});
           thisthis.plot(rawData);
         }
-      );
+      )
     }
   }
 
   plot(rawData) {
     var thisthis = this;
     var chart = this.refs.chart;
-    var data = this.props.widgets[this.props.widgetindex].data;
-    var cats = [];
-    var vals = [];
+    var props = this.props;
+    var data = props.widgets[props.widgetindex].data;
     // First we post-filter the rawData.
     rawData = postFilter(rawData,data.postfilters);
     // Then proceed.
     if (rawData.data.length === 0) {
-      $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Has No Data!');
+      $(ReactDOM.findDOMNode(chart)).html('Stats Widget Has No Data!');
       return false;
     }
     // Load the raw data into the raw data table.
@@ -98,71 +95,39 @@ class WidgetHistogram extends React.Component {
     var plotdata = rawData.data;
     var metricNumData = _.pluck(plotdata,data.metrics[0]);
     if (metricNumData.some(isNaN)) {
-      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Histogram Widget Data Error</div>');
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Stats Widget Data Error</div>');
       return false;
     }
-    var min = Math.min(...metricNumData);
-    var max = Math.max(...metricNumData);
-    max = max + 0.1*(max-min);
-    min = min - 0.1*(max-min);
-    for (var i=0;i<data.buckets;i++) {
-      var left = Math.round( 100* (min+i*(max-min)/data.buckets) ) / 100;
-      var right = Math.round( 100* (min+(i+1)*(max-min)/data.buckets) ) / 100;
-      cats.push(left+"-"+right);
-      //data.specialColumnValue = Math.round(100*data.specialColumnValue)/100;
-      if ((data.specialColumnValue >= left) && (data.specialColumnValue < right)) {
-        vals.push({y:0,color:'#ff0000'});
-      } else {
-        vals.push({y:0});
-      }
+    if (metricNumData.length == 0) {
+      $(ReactDOM.findDOMNode(chart)).html('Stats widget has no data!');
+    } else {
+      metricNumData.sort(function(a, b) {return a - b;});
+      var length = metricNumData.length;
+      var sum = _.reduce(metricNumData, function(memo, num){ return memo + num; }, 0);
+      var mean = Math.floor(100*sum/length)/100;
+      var median = (Math.floor(length/2)==length/2) ? (metricNumData[length/2]+metricNumData[length/2+1])/2 : metricNumData[(length-1)/2];
+      var variance = 0;
+      _.each(metricNumData,function(d) {variance += (mean-d)*(mean-d);});
+      variance = variance/length;
+      var stdev = Math.sqrt(variance);
+      variance = Math.floor(100*variance)/100;
+      stdev = Math.floor(100*stdev)/100;
+      var max = metricNumData[length-1];
+      var min = metricNumData[0];
+      var r = '<div class="stats">';
+      r += '<div class="stats-title">'+data.mytitle+'</div>';
+      r += '<div class="stats-subtitle">'+data.metrics[0]+'</div><br/>';
+      r += '<div class="stats-left">Minimum</div><div class="stats-right">'+min+'</div>';
+      r += '<div class="stats-left">Maximum</div><div class="stats-right">'+max+'</div>';
+      r += '<div class="stats-left">Mean</div><div class="stats-right">'+mean+'</div>';
+      r += '<div class="stats-left">Median</div><div class="stats-right">'+median+'</div>';
+      r += '<div class="stats-left">Variance</div><div class="stats-right">'+variance+'</div>';
+      r += '<div class="stats-left">Standard Deviation</div><div class="stats-right">'+stdev+'</div>';
+      r += '</div>';
+      $(ReactDOM.findDOMNode(chart)).html(r);
     }
-    _.each(metricNumData,function(datum) {
-      var c = Math.floor((datum-min)/((max-min)/data.buckets));
-      vals[c].y++;
-    });
-	  Highcharts.chart(ReactDOM.findDOMNode(chart),{
-      chart: {
-        type: 'column'
-      },
-      credits: {
-        enabled: false
-      },
-      title: {
-        text: data.mytitle
-      },
-      subtitle: {
-        text: data.metrics[0] + " in " + data.buckets + " Buckets"
-      },
-      xAxis: {
-        categories: cats
-      },
-      plotOptions: {
-        column: {
-          pointPadding: 0,
-          borderWidth:  1,
-          groupPadding: 0,
-          shadow:       false
-        }
-      },
-      legend: {
-        enabled: false
-      },
-      series: [{
-        color:        '#0000ff',
-        name:         '',
-        showInLegend: false,
-        data:         vals,
-        size:         '100%',
-        innerSize:    '85%',
-        showInLegend: true,
-        animation: false,
-        dataLabels: {
-          enabled: true
-        }
-      }]
-    });
   }
-
+  
   componentDidMount() {
     this.reloadData();
   }
@@ -205,4 +170,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WidgetHistogram);
+)(WidgetStats);

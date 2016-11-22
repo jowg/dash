@@ -156,6 +156,7 @@ class WidgetBar extends React.Component {
         },
         plotOptions: {
           bar: {
+            animation: false,
             dataLabels: {
               enabled: false,
               format:  '<b>{point.z}</b>: {point.y:.2f} '//,

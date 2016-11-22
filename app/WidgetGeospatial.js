@@ -17,10 +17,12 @@ class WidgetGeospatial extends React.Component {
       latitude: props.widgets[props.widgetindex].data.latitude,
       zoom: props.widgets[props.widgetindex].data.zoom,
       key: 0,
-      currentLabel: 'Hover for Data'
+      currentLabel: 'Hover for Data',
+      //showBackground: props.widgets[props.widgetindex].data.showBackground,
+      //obeyChoropleth: props.widgets[props.widgetindex].data.obeyChoropleth
     };
-    this.updateInternals = this.updateInternals.bind(this);
-    this.style = this.style.bind(this);
+    this.reloadData = this.reloadData.bind(this);
+    this.choroplethStyle = this.choroplethStyle.bind(this);
     this.onEachFeature = this.onEachFeature.bind(this);
     this.featureClicked = this.featureClicked.bind(this);
     this.featureEnter = this.featureEnter.bind(this);
@@ -33,10 +35,10 @@ class WidgetGeospatial extends React.Component {
     const datum = widgetdata.metrics[1]+': '+feature.properties[widgetdata.metrics[1]]+'<br>'+widgetdata.aggMethod+'('+widgetdata.metrics[0]+'): '+feature.properties[widgetdata.metrics[0]];
     //layer.bindPopup(datum);
     layer.on('mouseover', function (e) {
-      thisthis.setState({currentLabel: datum});
+      //thisthis.setState({currentLabel: datum});
     });
     layer.on('mouseout', function (e) {
-      thisthis.setState({currentLabel: 'Hover for Data'});
+      //thisthis.setState({currentLabel: 'Hover for Data'});
     });
     // New Stuff.
     // Figure out which precinct we're on and set the widget with index 0 to have that filter.
@@ -48,10 +50,10 @@ class WidgetGeospatial extends React.Component {
   }
 
   featureEnter(e) {
-    e.target.setStyle({weight: 3});
+    e.target.setStyle({weight: 3,fillColor:'#000055'});
   }
   featureExit(e) {
-    e.target.setStyle({weight: 1});
+    e.target.setStyle({weight: 1,fillColor:'#ffffff'});
   }
 
   featureClicked(e) {
@@ -96,7 +98,6 @@ class WidgetGeospatial extends React.Component {
         filters: [{"metric":"sector","comp":"==","value":s}]
       });
     }
-
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -116,11 +117,16 @@ class WidgetGeospatial extends React.Component {
         (newData.height                  !== oldData.height) ||
         ((newData.timeframe === 'tab') && ((newTabData.tabStartDateISO !== oldTabData.tabStartDateISO) ||
                                            (newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)))) {
-      this.updateInternals();
+      this.reloadData();
+    }
+    if ((newData.showBackground !== oldData.showBackground) ||
+        (newData.obeyChoropleth !== oldData.obeyChoropleth)) {
+      //this.reloadData();
+      this.render();
     }
   }
 
-  updateInternals() {
+  reloadData() {
     var thisthis = this;
     var props = this.props;
     var data = props.widgets[props.widgetindex].data;
@@ -211,18 +217,28 @@ class WidgetGeospatial extends React.Component {
   }
 
   componentDidMount() {
-    this.updateInternals();
+    this.reloadData();
   }
 
-  style(features) {
-    var v = (features.properties[this.props.widgets[this.props.widgetindex].data.metrics[0]]-this.state.min)/(this.state.max-this.state.min);
-    return {
-      fillColor: getColor(v),
-      weight: 1,
-      opacity: 1,
-      color: '#555555',
-      fillOpacity: 0.7
-    };
+  choroplethStyle(features) {
+    if (this.props.widgets[this.props.widgetindex].data.obeyChoropleth) {
+      var v = (features.properties[this.props.widgets[this.props.widgetindex].data.metrics[0]]-this.state.min)/(this.state.max-this.state.min);
+      return {
+        fillColor: getColor(v),
+        weight: 1,
+        opacity: 1,
+        color: '#555555',
+        fillOpacity: 0.7
+      };
+    } else {
+      return {
+        fillColor: '#ffffff',
+        weight: 1,
+        opacity: 1,
+        color: '#555555',
+        fillOpacity: 0.7
+      };
+    }
   }
 
   render() {
@@ -235,10 +251,13 @@ class WidgetGeospatial extends React.Component {
         <div>
         <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
         {this.state.data !== undefined ?
-         <div><div className='widget-geospatial-title'>{widgetdata.aggMethod+'('+widgetdata.metrics[0]+') by '+widgetdata.metrics[1]}</div>
+         <div>
+         <div className='widget-geospatial-title'>
+         {widgetdata.obeyChoropleth ? widgetdata.aggMethod+'('+widgetdata.metrics[0]+') by '+widgetdata.metrics[1] : widgetdata.metrics[1]}
+         </div>
          <Map key={this.state.key} center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
-         <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/>
-         <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.style} data={this.state.data}>
+         {widgetdata.showBackground ? <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/> : ''}
+         <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.choroplethStyle} data={this.state.data}>
          {/*<WidgetGeospatialInfo key={this.state.key} myLabel={this.state.currentLabel}/>*/}
          </GeoJson>
          </Map>
