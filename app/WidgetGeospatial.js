@@ -50,10 +50,10 @@ class WidgetGeospatial extends React.Component {
   }
 
   featureEnter(e) {
-    e.target.setStyle({weight: 3,fillColor:'#000055'});
+    e.target.setStyle({weight: 3});
   }
   featureExit(e) {
-    e.target.setStyle({weight: 1,fillColor:'#ffffff'});
+    e.target.setStyle({weight: 1});
   }
 
   featureClicked(e) {
