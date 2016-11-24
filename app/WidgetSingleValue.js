@@ -5,7 +5,7 @@ var Highcharts = require('highcharts');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {postFilter,niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
+import {postFilter,niceDate,getTimeframeRanges,completeParams,tableFromRawData,REST_aggregate} from './support.js';
 
 class WidgetSingleValue extends React.Component {
   constructor(props) {
@@ -64,15 +64,15 @@ class WidgetSingleValue extends React.Component {
       $(ReactDOM.findDOMNode(chart)).html('Single Value Widget Not Configured!');
     } else {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
-        dataRestPoint(),
+        REST_aggregate(),
         completeParams({
-          source:       data.source,
-          metrics:      data.metrics[0]+','+data.metrics[1],
-          aggmetric:    data.metrics[0],
-          nonaggmetric: data.metrics[1],
-          aggmethod:    data.aggMethod,
-          filters:      fs          
+          source:    data.source,
+          method:    data.aggMethod,
+          aggmetric: data.metrics[0],
+          metrics:   data.metrics[1],
+          filters:   fs
         }),
         function(rawData) {
           thisthis.setState({rawData:rawData});
@@ -88,14 +88,14 @@ class WidgetSingleValue extends React.Component {
     var props = this.props;
     var data = props.widgets[props.widgetindex].data;
     // First we post-filter the rawData.
-    rawData = postFilter(rawData,data.postfilters);
+    rawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
     // Then proceed.
     if (rawData.data.length === 0) {
       $(ReactDOM.findDOMNode(chart)).html('Single Value Widget Has No Data!');
       return false;
     }
     // Load the raw data into the raw data table.
-    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:rawData.data},(data.mytitle === undefined ? '' : data.mytitle)));    
     // Then set up the plot.
     var plotdata = rawData.data;
     var metricNumData = _.pluck(plotdata,data.metrics[1]);
@@ -108,7 +108,7 @@ class WidgetSingleValue extends React.Component {
     } else {
       var value = Math.round(100 * rawData.data[0][data.metrics[1]]) / 100;
       var r = '<div class="stats">';
-      r += '<div class="stats-title">' + data.mytitle + '</div>';
+      r += '<div class="stats-title">' + (data.mytitle === undefined ? 'Value' : data.mytitle) + '</div>';
       r += '<div class="stats-subtitle">' + data.metrics[1] + ' - ' + data.aggMethod + '</div><br/><br/><br/><br/>';
       r += '<div class="single-value-contents">' + value + '</div>';
       r += '</div>';

@@ -6903,7 +6903,7 @@
   \********************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_, $) {"use strict";
+	/* WEBPACK VAR INJECTION */(function(_, $) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -6919,6 +6919,9 @@
 	exports.niceDate = niceDate;
 	exports.saveDashboard = saveDashboard;
 	exports.cookieExtract = cookieExtract;
+	exports.REST_aggregate = REST_aggregate;
+	exports.REST_multiplevalue = REST_multiplevalue;
+	exports.REST_singlevalue = REST_singlevalue;
 	exports.dataRestPoint = dataRestPoint;
 	exports.saveloadRestPoint = saveloadRestPoint;
 	exports.attemptloginRestPoint = attemptloginRestPoint;
@@ -6963,9 +6966,18 @@
 	  return newRawData;
 	}
 	
-	function tableFromRawData(rawData) {
+	function tableFromRawData(rawData, title) {
+	  if (title === undefined) {
+	    title = 'Table';
+	  }
 	  var k = rawData.metrics;
 	  var t = "<div class='div-table'>";
+	  t += "<div class='div-table-row'>";
+	  t += "<div class='div-table-header'>" + title + "</div>";
+	  t += "</div>";
+	  t += "</div>";
+	
+	  t += "<div class='div-table'>";
 	  t += "<div class='div-table-row'>";
 	  _.each(k, function (key) {
 	    t += "<div class='div-table-header'>" + key + "</div>";
@@ -7014,7 +7026,7 @@
 	}
 	
 	function getAggMethods() {
-	  return ['(undefined)', 'mean', 'sum', 'count', 'only'];
+	  return ['(undefined)', 'mean', 'sum', 'count'];
 	}
 	
 	function getTimeframeOptions() {
@@ -7121,6 +7133,16 @@
 	  var value = "; " + document.cookie;
 	  var parts = value.split("; " + name + "=");
 	  if (parts.length == 2) return parts.pop().split(";").shift();
+	}
+	
+	function REST_aggregate() {
+	  return 'http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_restpoints/REST_aggregate.py';
+	}
+	function REST_multiplevalue() {
+	  return 'http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_restpoints/REST_multiplevalue.py';
+	}
+	function REST_singlevalue() {
+	  return 'http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_restpoints/REST_singlevalue.py';
 	}
 	
 	function dataRestPoint() {
@@ -17778,6 +17800,10 @@
 	
 	var _WidgetConfigSingleValue2 = _interopRequireDefault(_WidgetConfigSingleValue);
 	
+	var _WidgetConfigTable = __webpack_require__(/*! ./WidgetConfigTable.js */ 549);
+	
+	var _WidgetConfigTable2 = _interopRequireDefault(_WidgetConfigTable);
+	
 	var _WidgetGeospatial = __webpack_require__(/*! ./WidgetGeospatial.js */ 208);
 	
 	var _WidgetGeospatial2 = _interopRequireDefault(_WidgetGeospatial);
@@ -17813,6 +17839,10 @@
 	var _WidgetSingleValue = __webpack_require__(/*! ./WidgetSingleValue.js */ 548);
 	
 	var _WidgetSingleValue2 = _interopRequireDefault(_WidgetSingleValue);
+	
+	var _WidgetTable = __webpack_require__(/*! ./WidgetTable.js */ 550);
+	
+	var _WidgetTable2 = _interopRequireDefault(_WidgetTable);
 	
 	var _SelectBar = __webpack_require__(/*! ./SelectBar.js */ 532);
 	
@@ -17942,8 +17972,17 @@
 	            return React.createElement(_WidgetLine2.default, { widgetindex: _this2.props.widgetindex });
 	          case 'geospatial':
 	            return React.createElement(_WidgetGeospatial2.default, { widgetindex: _this2.props.widgetindex });
+	          case 'table':
+	            return React.createElement(_WidgetTable2.default, { widgetindex: _this2.props.widgetindex });
 	        }
-	      }()), React.createElement('img', { className: 'widget-flippy-right', src: 'flippy.png', title: widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic', onClick: this.flipToOtherSide }), function () {
+	      }()), function () {
+	        switch (widgetdata.type) {
+	          case 'table':
+	            return '';
+	          default:
+	            return React.createElement('img', { className: 'widget-flippy-right', src: 'flippy.png', title: widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic', onClick: _this2.flipToOtherSide });
+	        }
+	      }(), function () {
 	        switch (props.widgets[props.widgetindex].data.type) {
 	          case 'pie':
 	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
@@ -17963,6 +18002,8 @@
 	            return React.createElement(_WidgetConfigScatter2.default, { widgetindex: props.widgetindex });
 	          case 'geospatial':
 	            return React.createElement(_WidgetConfigGeospatial2.default, { widgetindex: props.widgetindex });
+	          case 'table':
+	            return React.createElement(_WidgetConfigTable2.default, { widgetindex: props.widgetindex });
 	        }
 	      }());
 	    }
@@ -36201,7 +36242,7 @@
 	
 	
 	// module
-	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --global-font-size-100:               100%;\n  --global-font-size-400:               400%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 280px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 280px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           732px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 690px;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 670px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           732px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 690px;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 670px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.single-value-contents {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-400);\n  color:       #000000;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #000000;\n}\n.stats-subtitle {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-75);\n  color:       #000000;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n  z-index: -1000;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-bar-holder {\n  display: inline-block;  \n}\n.widget-options-div-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);  \n}\n.widget-options-div {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right {  \n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*-----*/\n.widget-top-bar {\n  width: 100%;\n  height: 24px;\n}\n\n.widget-geospatial-title {\n  font-family: var(--global-font);  \n  font-size:   var(--global-font-size-100);\n  padding-bottom: 5px;\n}", ""]);
+	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --global-font-size-100:               100%;\n  --global-font-size-400:               400%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 280px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 280px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           732px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 690px;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 670px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           732px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 690px;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 670px;\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 90%;\n  position: relative;\n  overflow-y: auto;\n  overflow-x: hidden;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.single-value-contents {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-400);\n  color:       #000000;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #000000;\n}\n.stats-subtitle {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-75);\n  color:       #000000;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n  z-index: -1000;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n.div-table-title {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n  colspan:          0\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-bar-holder {\n  display: inline-block;\n}\n.widget-options-div-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*-----*/\n.widget-top-bar {\n  width: 100%;\n  height: 24px;\n}\n\n.widget-geospatial-title {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-100);\n  padding-bottom: 5px;\n}", ""]);
 	
 	// exports
 
@@ -38597,12 +38638,12 @@
 	  }, {
 	    key: 'featureEnter',
 	    value: function featureEnter(e) {
-	      e.target.setStyle({ weight: 3, fillColor: '#000055' });
+	      e.target.setStyle({ weight: 3 });
 	    }
 	  }, {
 	    key: 'featureExit',
 	    value: function featureExit(e) {
-	      e.target.setStyle({ weight: 1, fillColor: '#ffffff' });
+	      e.target.setStyle({ weight: 1 });
 	    }
 	  }, {
 	    key: 'featureClicked',
@@ -38648,6 +38689,14 @@
 	          filters: [{ "metric": "sector", "comp": "==", "value": s }]
 	        });
 	      }
+	      // 11 controls 10
+	      if (this.props.widgetindex === 11) {
+	        var s = e.target.feature.properties.sector;
+	        this.props.update_widget(10, {
+	          mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
+	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }]
+	        });
+	      }
 	    }
 	  }, {
 	    key: 'componentDidUpdate',
@@ -38685,29 +38734,49 @@
 	        thisthis.setState({ data: dummy, key: 1 - thisthis.state.key });
 	        //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Geospatial Widget Not Configured</div>');
 	      } else {
+	        var fs = data.filters.map(function (f) {
+	          return f.metric + ':' + f.comp + ':' + f.value;
+	        }).join();
+	        // If we're using the tab timeframe, add that as a filter.
+	        if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
+	          var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
+	          var tabEndDateUnix = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
+	          if (fs.length > 0) {
+	            fs = fs + ',';
+	          }
+	          fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
+	        }
+	        // If we're using the widget timeframe, add that as a filter.
+	        if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
+	          var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
+	          var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
+	          if (fs.length > 0) {
+	            fs = fs + ',';
+	          }
+	          fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
+	        }
 	        //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
 	        this.setState({ data: undefined });
-	        //console.log(data.metrics[1]);
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
 	          source: data.source,
-	          metrics: data.metrics[1] + ',' + data.metrics[0],
+	          method: data.aggMethod,
 	          aggmetric: data.metrics[1],
-	          nonaggmetric: data.metrics[0],
-	          aggmethod: data.aggMethod,
+	          metrics: data.metrics[0],
+	          filters: fs,
 	          addgeo: data.metrics[1]
 	        }), function (rawData) {
 	          // Construct the chart data and fill in the chart.
 	          var chartData = {
-	            metrics: [rawData.metrics[1], rawData.metrics[0]],
+	            metrics: data.metrics,
 	            data: []
 	          };
 	          _.each(rawData.data, function (datum) {
 	            var v = {};
-	            v[rawData.metrics[0]] = datum[rawData.metrics[0]];
-	            v[rawData.metrics[1]] = datum[rawData.metrics[1]];
+	            v[data.metrics[0]] = datum[data.metrics[0]];
+	            v[data.metrics[1]] = datum[data.metrics[1]];
 	            chartData.data.push(v);
 	          });
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(chartData));
+	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(chartData, data.mytitle === undefined ? '' : data.mytitle));
 	          // Construct the geospatial data.
 	          var max = rawData.data[0][data.metrics[0]];
 	          var min = max;
@@ -75801,14 +75870,14 @@
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
 	        //console.log(data);
 	        //console.log(fs);
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
 	          source: data.source,
-	          metrics: data.metrics[0] + ',' + data.metrics[1],
 	          aggmetric: data.metrics[0],
-	          nonaggmetric: data.metrics[1],
-	          aggmethod: data.aggMethod,
+	          metrics: data.metrics[1],
+	          method: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
 	          thisthis.setState({ rawData: rawData });
@@ -75824,7 +75893,7 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Has No Data</div>');
@@ -75846,7 +75915,7 @@
 	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
 	        });
 	      }
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	      if (data.aggDatetime == true) {
@@ -75890,7 +75959,7 @@
 	            enabled: false
 	          },
 	          title: {
-	            text: data.mytitle
+	            text: data.mytitle === undefined ? 'Pie Chart' : data.mytitle
 	          },
 	          subtitle: {
 	            text: data.aggMethod === 'count' ? data.aggMethod + ' by ' + data.metrics[0] : data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
@@ -76495,7 +76564,8 @@
 	        $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Not Configured!');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_multiplevalue)(), (0, _support.completeParams)({
 	          source: data.source,
 	          metrics: data.metrics[0],
 	          filters: fs
@@ -76516,14 +76586,14 @@
 	      var cats = [];
 	      var vals = [];
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Has No Data!');
 	        return false;
 	      }
 	      // Load the raw data into the raw data table.
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: rawData.data }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = rawData.data;
 	      var metricNumData = _.pluck(plotdata, data.metrics[0]);
@@ -76558,7 +76628,7 @@
 	          enabled: false
 	        },
 	        title: {
-	          text: data.mytitle
+	          text: data.mytitle === undefined ? 'Histogram' : data.mytitle
 	        },
 	        subtitle: {
 	          text: data.metrics[0] + " in " + data.buckets + " Buckets"
@@ -76753,12 +76823,12 @@
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Not Configured</div>');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
 	          source: data.source,
-	          metrics: data.metrics[0] + ',' + data.metrics[1],
 	          aggmetric: data.metrics[0],
-	          nonaggmetric: data.metrics[1],
-	          aggmethod: data.aggMethod,
+	          metrics: data.metrics[1],
+	          method: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
 	          thisthis.setState({ rawData: rawData });
@@ -76774,7 +76844,7 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Bar Widget Has No Data</div>');
@@ -76796,7 +76866,7 @@
 	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
 	        });
 	      }
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	      if (data.aggDatetime == true) {
@@ -76840,7 +76910,7 @@
 	            enabled: false
 	          },
 	          title: {
-	            text: data.mytitle
+	            text: data.mytitle === undefined ? 'Bar Chart' : data.mytitle
 	          },
 	          subtitle: {
 	            text: data.aggMethod === 'count' ? data.aggMethod + ' by ' + data.metrics[0] : data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
@@ -77042,12 +77112,12 @@
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Not Configured</div>');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
 	          source: data.source,
-	          metrics: data.metrics[0] + ',' + data.metrics[1],
 	          aggmetric: data.metrics[0],
-	          nonaggmetric: data.metrics[1],
-	          aggmethod: data.aggMethod,
+	          metrics: data.metrics[1],
+	          method: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
 	          thisthis.setState({ rawData: rawData });
@@ -77063,7 +77133,7 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Column Widget Has No Data</div>');
@@ -77085,7 +77155,7 @@
 	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
 	        });
 	      }
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	      if (data.aggDatetime == true) {
@@ -77129,7 +77199,7 @@
 	            enabled: false
 	          },
 	          title: {
-	            text: data.mytitle
+	            text: data.mytitle === undefined ? 'Column Chart' : data.mytitle
 	          },
 	          subtitle: {
 	            text: data.aggMethod === 'count' ? data.aggMethod + ' by ' + data.metrics[0] : data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
@@ -77323,7 +77393,8 @@
 	        $(ReactDOM.findDOMNode(chart)).html('Stats Widget Not Configured!');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_multiplevalue)(), (0, _support.completeParams)({
 	          source: data.source,
 	          metrics: data.metrics[0],
 	          filters: fs
@@ -77341,7 +77412,7 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('Stats Widget Has No Data!');
@@ -77366,7 +77437,7 @@
 	        var sum = _.reduce(metricNumData, function (memo, num) {
 	          return memo + num;
 	        }, 0);
-	        var mean = Math.floor(100 * sum / length) / 100;
+	        var mean = sum / length;
 	        var median = Math.floor(length / 2) == length / 2 ? (metricNumData[length / 2] + metricNumData[length / 2 + 1]) / 2 : metricNumData[(length - 1) / 2];
 	        var variance = 0;
 	        _.each(metricNumData, function (d) {
@@ -77374,12 +77445,10 @@
 	        });
 	        variance = variance / length;
 	        var stdev = Math.sqrt(variance);
-	        variance = Math.floor(100 * variance) / 100;
-	        stdev = Math.floor(100 * stdev) / 100;
 	        var max = metricNumData[length - 1];
 	        var min = metricNumData[0];
 	        var r = '<div class="stats">';
-	        r += '<div class="stats-title">' + data.mytitle + '</div>';
+	        r += '<div class="stats-title">' + (data.mytitle === undefined ? 'Statistics' : data.mytitle) + '</div>';
 	        r += '<div class="stats-subtitle">' + data.metrics[0] + '</div><br/>';
 	        r += '<div class="stats-left">Minimum</div><div class="stats-right">' + min + '</div>';
 	        r += '<div class="stats-left">Maximum</div><div class="stats-right">' + max + '</div>';
@@ -77558,7 +77627,8 @@
 	        $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Not Configured!');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_multiplevalue)(), (0, _support.completeParams)({
 	          source: data.source,
 	          metrics: data.metrics[0] + ',' + data.metrics[1],
 	          filters: fs
@@ -77576,14 +77646,14 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Has No Data!');
 	        return false;
 	      }
 	      // Load the raw data into the raw data table.
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = rawData.data;
 	      var metricNumData0 = _.pluck(plotdata, data.metrics[0]);
@@ -77610,7 +77680,7 @@
 	            enabled: false
 	          },
 	          title: {
-	            text: data.mytitle
+	            text: data.mytitle === undefined ? 'Scatter Plot' : data.mytitle
 	          },
 	          subtitle: {
 	            text: data.metrics[1] + ' vs ' + data.metrics[0]
@@ -77817,12 +77887,11 @@
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Not Configured</div>');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
 	          source: data.source,
-	          metrics: data.metrics[0] + ',' + data.metrics[1],
 	          aggmetric: data.metrics[0],
-	          nonaggmetric: data.metrics[1],
-	          aggmethod: data.aggMethod,
+	          metrics: data.metrics[1],
+	          method: data.aggMethod,
 	          filters: fs
 	        }), function (rawData) {
 	          thisthis.setState({ rawData: rawData });
@@ -77838,7 +77907,7 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Line Widget Has No Data</div>');
@@ -77860,7 +77929,7 @@
 	          tableData[i][data.metrics[0]] = (0, _support.niceDate)(1000 * datum[data.metrics[0]]);
 	        });
 	      }
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: tableData }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = JSON.parse(JSON.stringify(rawData.data));
 	      if (data.aggDatetime == true) {
@@ -77904,7 +77973,7 @@
 	            enabled: false
 	          },
 	          title: {
-	            text: data.mytitle
+	            text: data.mytitle === undefined ? 'Line Chart' : data.mytitle
 	          },
 	          subtitle: {
 	            text: data.aggMethod === 'count' ? data.aggMethod + ' by ' + data.metrics[0] : data.aggMethod + " of " + data.metrics[1] + " by " + data.metrics[0]
@@ -80318,6 +80387,20 @@
 	      fob: 'front',
 	      title: 'Histogram',
 	      description: 'Breaks down a numerical metric into a fixed number of buckets.'
+	    }, { type: 'table',
+	      width: 'half',
+	      height: 'half',
+	      source: '(undefined)',
+	      metrics: [],
+	      myStartDateISO: moment().toISOString(),
+	      myEndDateISO: moment().toISOString(),
+	      filters: [],
+	      postfilters: [],
+	      timeframe: '(undefined)',
+	      configDisplay: 'none',
+	      fob: 'back',
+	      title: 'Table',
+	      description: 'A table of values.'
 	    }];
 	    _this.state = {
 	      configs: configs,
@@ -81143,12 +81226,12 @@
 	        $(ReactDOM.findDOMNode(chart)).html('Single Value Widget Not Configured!');
 	      } else {
 	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $.post((0, _support.dataRestPoint)(), (0, _support.completeParams)({
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
 	          source: data.source,
-	          metrics: data.metrics[0] + ',' + data.metrics[1],
+	          method: data.aggMethod,
 	          aggmetric: data.metrics[0],
-	          nonaggmetric: data.metrics[1],
-	          aggmethod: data.aggMethod,
+	          metrics: data.metrics[1],
 	          filters: fs
 	        }), function (rawData) {
 	          thisthis.setState({ rawData: rawData });
@@ -81164,14 +81247,14 @@
 	      var props = this.props;
 	      var data = props.widgets[props.widgetindex].data;
 	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)(rawData, data.postfilters);
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
 	      // Then proceed.
 	      if (rawData.data.length === 0) {
 	        $(ReactDOM.findDOMNode(chart)).html('Single Value Widget Has No Data!');
 	        return false;
 	      }
 	      // Load the raw data into the raw data table.
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData));
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: rawData.data }, data.mytitle === undefined ? '' : data.mytitle));
 	      // Then set up the plot.
 	      var plotdata = rawData.data;
 	      var metricNumData = _.pluck(plotdata, data.metrics[1]);
@@ -81184,7 +81267,7 @@
 	      } else {
 	        var value = Math.round(100 * rawData.data[0][data.metrics[1]]) / 100;
 	        var r = '<div class="stats">';
-	        r += '<div class="stats-title">' + data.mytitle + '</div>';
+	        r += '<div class="stats-title">' + (data.mytitle === undefined ? 'Value' : data.mytitle) + '</div>';
 	        r += '<div class="stats-subtitle">' + data.metrics[1] + ' - ' + data.aggMethod + '</div><br/><br/><br/><br/>';
 	        r += '<div class="single-value-contents">' + value + '</div>';
 	        r += '</div>';
@@ -81235,6 +81318,556 @@
 	
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetSingleValue);
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
+
+/***/ },
+/* 549 */
+/*!******************************!*\
+  !*** ./WidgetConfigTable.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _SelectMetrics = __webpack_require__(/*! ./SelectMetrics.js */ 551);
+	
+	var _SelectMetrics2 = _interopRequireDefault(_SelectMetrics);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	// How does the dash get access to the store?
+	
+	var WidgetConfigTable = function (_React$Component) {
+	  _inherits(WidgetConfigTable, _React$Component);
+	
+	  function WidgetConfigTable(props) {
+	    _classCallCheck(this, WidgetConfigTable);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigTable.__proto__ || Object.getPrototypeOf(WidgetConfigTable)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      filters: data.filters,
+	      postfilters: data.postfilters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      moveValue: -0.5
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricsUpdate = _this.selectMetricsUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectPostFilterUpdate = _this.selectPostFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigTable, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: [],
+	        filters: [],
+	        postfilters: []
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricsUpdate',
+	    value: function selectMetricsUpdate(value) {
+	      this.setState({ metrics: value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectPostFilterUpdate',
+	    value: function selectPostFilterUpdate(value) {
+	      this.setState({ postfilters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        postfilters: this.state.postfilters,
+	        width: this.state.width,
+	        height: this.state.height
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        filters: oldState.filters,
+	        postfilters: oldState.postfilters,
+	        width: oldState.width,
+	        height: oldState.height
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = this.state.source === '(undefined)' ? [] : (0, _support.getMetricsForSource)(this.state.source);
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Table Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMetrics2.default, { selectMetricsUpdate: this.selectMetricsUpdate, options: metrics, metrics: this.state.metrics })), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Post-Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectPostFilterUpdate, options: metrics, filters: this.state.postfilters || [] })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigTable;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigTable);
+
+/***/ },
+/* 550 */
+/*!************************!*\
+  !*** ./WidgetTable.js ***!
+  \************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	var moment = __webpack_require__(/*! moment */ 418);
+	var Highcharts = __webpack_require__(/*! highcharts */ 525);
+	
+	var WidgetStats = function (_React$Component) {
+	  _inherits(WidgetStats, _React$Component);
+	
+	  function WidgetStats(props) {
+	    _classCallCheck(this, WidgetStats);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetStats.__proto__ || Object.getPrototypeOf(WidgetStats)).call(this));
+	
+	    _this.state = { rawData: undefined };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.plot = _this.plot.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetStats, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(prevProps, prevState) {
+	      var newData = this.props.widgets[this.props.widgetindex].data;
+	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
+	      var newTabData = this.props.dashLayout[this.props.currentTab];
+	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
+	      if (newData.source !== oldData.source || JSON.stringify(newData.metrics) !== JSON.stringify(oldData.metrics) || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        this.plot(this.state.rawData);
+	      }
+	    }
+	  }, {
+	    key: 'reloadData',
+	    value: function reloadData() {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      var fs = data.filters.map(function (f) {
+	        return f.metric + ':' + f.comp + ':' + f.value;
+	      }).join();
+	      // If we're using the tab timeframe, add that as a filter.
+	      if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
+	        var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
+	        var tabEndDateUnix = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
+	        if (fs.length > 0) {
+	          fs = fs + ',';
+	        }
+	        fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
+	      }
+	      // If we're using the widget timeframe, add that as a filter.
+	      if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
+	        var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
+	        var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
+	        if (fs.length > 0) {
+	          fs = fs + ',';
+	        }
+	        fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
+	      }
+	      if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.timeframe === '(undefined)') {
+	        $(ReactDOM.findDOMNode(chart)).html('Table Widget Not Configured!');
+	      } else {
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $.post((0, _support.REST_multiplevalue)(), (0, _support.completeParams)({
+	          source: data.source,
+	          metrics: data.metrics.join(','),
+	          filters: fs
+	        }), function (rawData) {
+	          thisthis.setState({ rawData: rawData });
+	          thisthis.plot(rawData);
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(rawData) {
+	      var thisthis = this;
+	      var chart = this.refs.chart;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      // First we post-filter the rawData.
+	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
+	      // Then proceed.
+	      if (rawData.data.length === 0) {
+	        $(ReactDOM.findDOMNode(chart)).html('Table Widget Has No Data!');
+	        return false;
+	      }
+	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData, data.mytitle));
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.reloadData();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
+	      var outersizecss = 'widget-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innersubcss = 'widget-sub-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	    }
+	  }]);
+	
+	  return WidgetStats;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab,
+	    fullstate: state
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {};
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetStats);
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56)))
+
+/***/ },
+/* 551 */
+/*!**************************!*\
+  !*** ./SelectMetrics.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _react = __webpack_require__(/*! react */ 4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var SelectMetrics = function (_React$Component) {
+	  _inherits(SelectMetrics, _React$Component);
+	
+	  function SelectMetrics(props) {
+	    _classCallCheck(this, SelectMetrics);
+	
+	    // bind.
+	    var _this = _possibleConstructorReturn(this, (SelectMetrics.__proto__ || Object.getPrototypeOf(SelectMetrics)).call(this));
+	
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.addNewMetric = _this.addNewMetric.bind(_this);
+	    _this.removeThisMetric = _this.removeThisMetric.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(SelectMetrics, [{
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(index, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.props.metrics));
+	      metrics[index] = e.target.value;
+	      this.props.selectMetricsUpdate(metrics);
+	    }
+	  }, {
+	    key: 'addNewMetric',
+	    value: function addNewMetric() {
+	      var metrics = JSON.parse(JSON.stringify(this.props.metrics));
+	      metrics.push({
+	        metric: '(undefined)'
+	      });
+	      this.props.selectMetricsUpdate(metrics);
+	    }
+	  }, {
+	    key: 'removeThisMetric',
+	    value: function removeThisMetric(index) {
+	      var metrics = JSON.parse(JSON.stringify(this.props.metrics));
+	      metrics.splice(index, 1);
+	      this.props.selectMetricsUpdate(metrics);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var thisthis = this;
+	      var metricOptions = this.props.options;
+	      return _react2.default.createElement('div', null, this.props.metrics.map(function (metric, metricindex) {
+	        return _react2.default.createElement('div', { key: metricindex }, 'Metric', _react2.default.createElement('select', { onChange: thisthis.selectMetricUpdate.bind(this, metricindex), value: metric }, metricOptions.map(function (mopt, i) {
+	          return _react2.default.createElement('option', { key: i, value: mopt }, mopt);
+	        })), _react2.default.createElement('button', { className: 'config-window-button-plus', onClick: thisthis.removeThisMetric.bind(this, metricindex) }, '-'));
+	      }), _react2.default.createElement('button', { className: 'config-window-button-plus', onClick: this.addNewMetric }, '+'));
+	    }
+	  }]);
+	
+	  return SelectMetrics;
+	}(_react2.default.Component);
+	
+	exports.default = SelectMetrics;
 
 /***/ }
 /******/ ]);

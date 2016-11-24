@@ -3,7 +3,7 @@ var ReactDOM = require('react-dom');
 var moment = require('moment');
 
 import {Map,TileLayer,GeoJson} from 'react-leaflet';
-import {dataRestPoint,completeParams,jsonRestPoint,getColor,tableFromRawData} from './support.js';
+import {REST_aggregate,completeParams,getColor,tableFromRawData} from './support.js';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import WidgetGeospatialInfo from './WidgetGeospatialInfo.js';
@@ -98,6 +98,14 @@ class WidgetGeospatial extends React.Component {
         filters: [{"metric":"sector","comp":"==","value":s}]
       });
     }
+    // 11 controls 10
+    if (this.props.widgetindex === 11) {
+      var s = e.target.feature.properties.sector;
+      this.props.update_widget(10,{
+        mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
+        postfilters: [{"metric":"sector","comp":"==","value":s}]
+      });
+    }
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -149,32 +157,48 @@ class WidgetGeospatial extends React.Component {
       thisthis.setState({data: dummy,key: 1-thisthis.state.key })
       //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Geospatial Widget Not Configured</div>');
     } else {
+      var fs = data.filters.map(function(f) {
+        return(f.metric+':'+f.comp+':'+f.value);
+      }).join();
+      // If we're using the tab timeframe, add that as a filter.
+      if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
+        var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
+        var tabEndDateUnix   = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
+        if (fs.length > 0) {fs = fs + ',';}
+        fs = fs + 'datetime:>=:'+tabStartDateUnix+',datetime:<=:'+tabEndDateUnix;
+      }
+      // If we're using the widget timeframe, add that as a filter.
+      if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
+        var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
+        var myEndDateUnix   = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
+        if (fs.length > 0) {fs = fs + ',';}
+        fs = fs + 'datetime:>=:'+myStartDateUnix+',datetime:<=:'+myEndDateUnix;
+      }
       //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
       this.setState({data:undefined});
-      //console.log(data.metrics[1]);
       $.post(
-        dataRestPoint(),
+        REST_aggregate(),
         completeParams({
-          source: data.source,
-          metrics: data.metrics[1]+','+data.metrics[0],
+          source:    data.source,
+          method:    data.aggMethod,
           aggmetric: data.metrics[1],
-          nonaggmetric: data.metrics[0],
-          aggmethod: data.aggMethod,
-          addgeo: data.metrics[1]
+          metrics:   data.metrics[0],
+          filters:   fs,
+          addgeo:    data.metrics[1]
         }),
         function(rawData) {
           // Construct the chart data and fill in the chart.
           var chartData = {
-            metrics:[rawData.metrics[1],rawData.metrics[0]],
+            metrics:data.metrics,
             data:[]
           };
           _.each(rawData.data,function(datum) {
             var v = {};
-            v[rawData.metrics[0]] = datum[rawData.metrics[0]];
-            v[rawData.metrics[1]] = datum[rawData.metrics[1]];
+            v[data.metrics[0]] = datum[data.metrics[0]];
+            v[data.metrics[1]] = datum[data.metrics[1]];
             chartData.data.push(v);
           });
-          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(chartData));
+          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(chartData,(data.mytitle === undefined ? '' : data.mytitle)));
           // Construct the geospatial data.
           var max = rawData.data[0][data.metrics[0]];
           var min = max;

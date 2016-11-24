@@ -659,6 +659,14 @@ html,body {
   border:           1px solid  #666666;
   font-weight:      bold;
 }
+.div-table-title {
+  display:          table-cell;
+  height:           auto;
+  background-color: #ffffffff;
+  border:           1px solid  #666666;
+  font-weight:      bold;
+  colspan:          0
+}
 
 /* Highcharts Overflow Fix Crap */
 
@@ -693,22 +701,22 @@ svg {
 
 /* Fancy Select Button */
 .widget-bar-holder {
-  display: inline-block;  
+  display: inline-block;
 }
 .widget-options-div-selected {
   display: inline-block;
   border: 2px solid #aaaaaa;
   background-color: #dddddd;
   padding: 2px;
-  font-family: var(--global-font);  
-  font-size:   var(--global-font-size-90);  
+  font-family: var(--global-font);
+  font-size:   var(--global-font-size-90);
 }
 .widget-options-div {
   display: inline-block;
   border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
-  font-family: var(--global-font);  
+  font-family: var(--global-font);
   font-size:   var(--global-font-size-90);
 }
 .widget-options-div:hover {
@@ -722,7 +730,7 @@ svg {
   background-color: #dddddd;
   padding: 2px;
   margin-left: 2px;
-  font-family: var(--global-font);  
+  font-family: var(--global-font);
   font-size:   var(--global-font-size-90);
   border-top-left-radius:  5px;
   border-bottom-left-radius:  5px;
@@ -733,7 +741,7 @@ svg {
   background-color: #ffffff;
   padding: 2px;
   margin-left: 2px;
-  font-family: var(--global-font);  
+  font-family: var(--global-font);
   font-size:   var(--global-font-size-90);
   border-top-left-radius:  5px;
   border-bottom-left-radius:  5px;
@@ -749,18 +757,18 @@ svg {
   background-color: #dddddd;
   padding: 2px;
   margin-right: 2px;
-  font-family: var(--global-font);  
+  font-family: var(--global-font);
   font-size:   var(--global-font-size-90);
   border-top-right-radius:  5px;
   border-bottom-right-radius:  5px;
 }
-.widget-options-div-right {  
+.widget-options-div-right {
   display: inline-block;
   border: 2px solid #aaaaaa;
   background-color: #ffffff;
   padding: 2px;
   margin-right: 2px;
-  font-family: var(--global-font);  
+  font-family: var(--global-font);
   font-size:   var(--global-font-size-90);
   border-top-right-radius:  5px;
   border-bottom-right-radius:  5px;
@@ -776,7 +784,7 @@ svg {
 }
 
 .widget-geospatial-title {
-  font-family: var(--global-font);  
+  font-family: var(--global-font);
   font-size:   var(--global-font-size-100);
   padding-bottom: 5px;
 }

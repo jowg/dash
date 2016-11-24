@@ -5,7 +5,7 @@ var Highcharts = require('highcharts');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {postFilter,niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
+import {postFilter,niceDate,getTimeframeRanges,completeParams,tableFromRawData,REST_multiplevalue} from './support.js';
 
 class WidgetHistogram extends React.Component {
   constructor(props) {
@@ -64,12 +64,13 @@ class WidgetHistogram extends React.Component {
       $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Not Configured!');
     } else {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
-        dataRestPoint(),
+        REST_multiplevalue(),
         completeParams({
-          source:  data.source,
-          metrics: data.metrics[0],
-          filters: fs
+          source:       data.source,
+          metrics:      data.metrics[0],
+          filters:      fs
         }),
         function(rawData) {
           thisthis.setState({rawData:rawData});
@@ -86,14 +87,14 @@ class WidgetHistogram extends React.Component {
     var cats = [];
     var vals = [];
     // First we post-filter the rawData.
-    rawData = postFilter(rawData,data.postfilters);
+    rawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
     // Then proceed.
     if (rawData.data.length === 0) {
       $(ReactDOM.findDOMNode(chart)).html('Histogram Widget Has No Data!');
       return false;
     }
     // Load the raw data into the raw data table.
-    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:rawData.data},(data.mytitle === undefined ? '' : data.mytitle)));
     // Then set up the plot.
     var plotdata = rawData.data;
     var metricNumData = _.pluck(plotdata,data.metrics[0]);
@@ -128,7 +129,7 @@ class WidgetHistogram extends React.Component {
         enabled: false
       },
       title: {
-        text: data.mytitle
+          text: data.mytitle === undefined ? 'Histogram' : data.mytitle
       },
       subtitle: {
         text: data.metrics[0] + " in " + data.buckets + " Buckets"

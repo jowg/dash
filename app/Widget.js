@@ -8,7 +8,7 @@ var L = require('leaflet')
 //import {Map,TileLayer } from 'react-leaflet';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
+import {niceDate,getTimeframeRanges} from './support.js';
 
 import WidgetConfigPie         from './WidgetConfigPie.js';
 import WidgetConfigBar         from './WidgetConfigBar.js';
@@ -19,6 +19,7 @@ import WidgetConfigStats       from './WidgetConfigStats.js';
 import WidgetConfigScatter     from './WidgetConfigScatter.js';
 import WidgetConfigGeospatial  from './WidgetConfigGeospatial.js';
 import WidgetConfigSingleValue from './WidgetConfigSingleValue.js';
+import WidgetConfigTable       from './WidgetConfigTable.js';
 
 import WidgetGeospatial  from './WidgetGeospatial.js';
 import WidgetPie         from './WidgetPie.js';
@@ -29,6 +30,7 @@ import WidgetStats       from './WidgetStats.js';
 import WidgetScatter     from './WidgetScatter.js';
 import WidgetLine        from './WidgetLine.js';
 import WidgetSingleValue from './WidgetSingleValue.js';
+import WidgetTable       from './WidgetTable.js';
 
 import SelectBar from './SelectBar.js';
 
@@ -121,12 +123,18 @@ class Widget extends React.Component {
           case 'scatter':     return(<WidgetScatter     widgetindex={this.props.widgetindex}/>);
           case 'line':        return(<WidgetLine        widgetindex={this.props.widgetindex}/>);
           case 'geospatial':  return(<WidgetGeospatial  widgetindex={this.props.widgetindex}/>);
+          case 'table':       return(<WidgetTable       widgetindex={this.props.widgetindex}/>);
           }
         })()}</div>
         {/* The widget flip control. */}
-        <img className='widget-flippy-right' src='flippy.png' title={widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic'} onClick={this.flipToOtherSide}></img>
-        {/* The widget config. */}
         {(() => {
+        switch (widgetdata.type) {
+        case 'table': return '';
+        default: return(<img className='widget-flippy-right' src='flippy.png' title={widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic'} onClick={this.flipToOtherSide}></img>);
+        }
+        })()}
+        {/* The widget config. */}
+          {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
           case 'pie':         return(<WidgetConfigPie         widgetindex={props.widgetindex}/>);
           case 'bar':         return(<WidgetConfigBar         widgetindex={props.widgetindex}/>);
@@ -137,6 +145,7 @@ class Widget extends React.Component {
           case 'singlevalue': return(<WidgetConfigSingleValue widgetindex={props.widgetindex}/>);
           case 'scatter':     return(<WidgetConfigScatter     widgetindex={props.widgetindex}/>);
           case 'geospatial':  return(<WidgetConfigGeospatial  widgetindex={props.widgetindex}/>);
+          case 'table':       return(<WidgetConfigTable       widgetindex={props.widgetindex}/>);
           }
         })()}
         </div>);

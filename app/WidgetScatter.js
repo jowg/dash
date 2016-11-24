@@ -5,7 +5,7 @@ var Highcharts = require('highcharts');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {postFilter,niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
+import {postFilter,niceDate,getTimeframeRanges,completeParams,tableFromRawData,REST_multiplevalue} from './support.js';
 
 class WidgetScatter extends React.Component {
   constructor(props) {
@@ -63,12 +63,13 @@ class WidgetScatter extends React.Component {
       $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Not Configured!');
     } else {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
-        dataRestPoint(),
+        REST_multiplevalue(),
         completeParams({
-          source:  data.source,
-          metrics: data.metrics[0]+','+data.metrics[1],
-          filters: fs
+          source:       data.source,
+          metrics:      data.metrics[0]+','+data.metrics[1],
+          filters:      fs
         }),
         function(rawData) {
           thisthis.setState({rawData:rawData});
@@ -84,14 +85,14 @@ class WidgetScatter extends React.Component {
     var props = this.props;
     var data = props.widgets[props.widgetindex].data;
     // First we post-filter the rawData.
-    rawData = postFilter(rawData,data.postfilters);
+    rawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
     // Then proceed.
     if (rawData.data.length === 0) {
       $(ReactDOM.findDOMNode(chart)).html('Scatter Widget Has No Data!');
       return false;
     }
     // Load the raw data into the raw data table.
-    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData));
+    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:tableData},(data.mytitle === undefined ? '' : data.mytitle)));
     // Then set up the plot.
     var plotdata = rawData.data;
     var metricNumData0 = _.pluck(plotdata,data.metrics[0]);
@@ -116,7 +117,7 @@ class WidgetScatter extends React.Component {
           enabled: false
         },
         title: {
-          text: data.mytitle
+          text: data.mytitle === undefined ? 'Scatter Plot' : data.mytitle
         },
         subtitle: {
           text: data.metrics[1]+' vs '+data.metrics[0]

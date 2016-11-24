@@ -8,22 +8,22 @@ class SelectMetrics extends React.Component {
     this.addNewMetric       = this.addNewMetric.bind(this);
     this.removeThisMetric   = this.removeThisMetric.bind(this);
   }
-  selectMetricUpdate(index,category,e) {
+  selectMetricUpdate(index,e) {
     var metrics = JSON.parse(JSON.stringify(this.props.metrics));
-    metrics[index][category] = e.target.value;
-    this.props.selectMetricUpdate(metrics);
+    metrics[index] = e.target.value;
+    this.props.selectMetricsUpdate(metrics);
   }
   addNewMetric() {
     var metrics = JSON.parse(JSON.stringify(this.props.metrics));
     metrics.push({
       metric: '(undefined)'
     });
-    this.props.selectMetricUpdate(metrics);
+    this.props.selectMetricsUpdate(metrics);
   }
   removeThisMetric(index) {
     var metrics = JSON.parse(JSON.stringify(this.props.metrics));
     metrics.splice(index,1);
-    this.props.selectMetricUpdate(metrics);
+    this.props.selectMetricsUpdate(metrics);
   }
   render() {
     var thisthis = this;
@@ -33,13 +33,15 @@ class SelectMetrics extends React.Component {
         {this.props.metrics.map(function(metric,metricindex) {
           return (
               <div key={metricindex}>
-              <select onChange={thisthis.selectMetricUpdate.bind(this,metricindex,'metric')} value={metric.metric} >
+              Metric 
+              <select onChange={thisthis.selectMetricUpdate.bind(this,metricindex)} value={metric} >
               {metricOptions.map(function(mopt,i) {
                 return (
                     <option key={i} value={mopt}>{mopt}</option>
                 )
               })}
-              </select>
+            </select>
+              <button className='config-window-button-plus' onClick={thisthis.removeThisMetric.bind(this,metricindex)}>-</button>              
               </div>
           )
         })}
@@ -49,4 +51,4 @@ class SelectMetrics extends React.Component {
   }
 }
 
-export default SelectMetric;
+export default SelectMetrics;

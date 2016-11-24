@@ -6,13 +6,14 @@ import {getMetricsForSource,getSources,getAggMethods,calculateNewLayout,getTimef
 import SelectFilter from './SelectFilter.js';
 import SelectMove from './SelectMove.js';
 import SelectSize from './SelectSize.js';
+import SelectMetrics from './SelectMetrics.js';
 import BorderTopPlusClose from './BorderTopPlusClose.js';
 
 require('./dash.css');
 
 // How does the dash get access to the store?
 
-class WidgetConfigStats extends React.Component {
+class WidgetConfigTable extends React.Component {
   constructor(props) {
     super();
     var data = props.widgets[props.widgetindex].data;
@@ -27,7 +28,7 @@ class WidgetConfigStats extends React.Component {
       moveValue:   -0.5
     }
     this.selectSourceUpdate      = this.selectSourceUpdate.bind(this);
-    this.selectMetricUpdate      = this.selectMetricUpdate.bind(this);
+    this.selectMetricsUpdate     = this.selectMetricsUpdate.bind(this);
     this.updateWidget            = this.updateWidget.bind(this);
     this.cancelConfig            = this.cancelConfig.bind(this);
     this.selectFilterUpdate      = this.selectFilterUpdate.bind(this);
@@ -41,15 +42,13 @@ class WidgetConfigStats extends React.Component {
   selectSourceUpdate(e) {
     this.setState({
       source:      e.target.value,
-      metrics:     ['(undefined)'],
+      metrics:     [],
       filters:     [],
       postfilters: []
     });
   }
-  selectMetricUpdate(i,e) {
-    var metrics = JSON.parse(JSON.stringify(this.state.metrics));
-    metrics[i] = e.target.value;
-    this.setState({metrics:metrics});
+  selectMetricsUpdate(value) {
+    this.setState({metrics:value});
   }
   selectFilterUpdate(value) {
     this.setState({filters:value});
@@ -113,7 +112,7 @@ class WidgetConfigStats extends React.Component {
         <div style={{display: data.configDisplay}}>
         <div className='deactivating-overlay'></div>
         <div className='widget-config-window'>
-        <BorderTopPlusClose onClose={this.cancelConfig} title='Stats Widget Configuration'/>
+        <BorderTopPlusClose onClose={this.cancelConfig} title='Table Widget Configuration'/>
         <div className='bandsubtitle'>Choose Source & Metrics</div>
         <div className='simpleborder'>
         Source
@@ -121,12 +120,11 @@ class WidgetConfigStats extends React.Component {
         {sources.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
       </select>
         </div>
+        
         <div className='simpleborder'>
-        Numerical Metric
-        <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
-        {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
-      </select>
+        <SelectMetrics selectMetricsUpdate={this.selectMetricsUpdate} options={metrics} metrics={this.state.metrics}/>
         </div>
+        
         <div className='simpleborder'>
         Filters
         <SelectFilter selectFilterUpdate={this.selectFilterUpdate} options={metrics} filters={this.state.filters} />
@@ -187,4 +185,4 @@ const mapDispatchToProps = (dispatch,ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WidgetConfigStats);
+)(WidgetConfigTable);

@@ -159,12 +159,27 @@ class ConfigureAddWidget extends React.Component {
        myStartDateISO:   moment().toISOString(),
        myEndDateISO:     moment().toISOString(),
        filters:          [],
-       postfilters:      [],       
+       postfilters:      [],
        timeframe:        '(undefined)',
        configDisplay:    'none',
        fob:              'front',
        title:            'Histogram',
        description:      'Breaks down a numerical metric into a fixed number of buckets.'
+      },
+      {type:             'table',
+       width:            'half',
+       height:           'half',
+       source:           '(undefined)',
+       metrics:          [],
+       myStartDateISO:   moment().toISOString(),
+       myEndDateISO:     moment().toISOString(),
+       filters:          [],
+       postfilters:      [],
+       timeframe:        '(undefined)',
+       configDisplay:    'none',
+       fob:              'back',
+       title:            'Table',
+       description:      'A table of values.'
       }
     ];
     this.state = {

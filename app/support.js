@@ -34,9 +34,18 @@ export function postFilter(rawData,postfilters) {
   return newRawData;
 }
 
-export function tableFromRawData(rawData) {
+export function tableFromRawData(rawData,title) {
+  if (title === undefined) {
+    title = 'Table';
+  }
   var k = rawData.metrics;
   var t = "<div class='div-table'>";
+  t += "<div class='div-table-row'>";
+  t += "<div class='div-table-header'>" + title + "</div>";
+  t += "</div>";
+  t += "</div>";
+
+  t += "<div class='div-table'>";
   t += "<div class='div-table-row'>";
   _.each(k,function(key) {
     t += "<div class='div-table-header'>" + key + "</div>";
@@ -85,7 +94,7 @@ export function getSources() {
 }
 
 export function getAggMethods() {
-  return ['(undefined)','mean','sum','count','only'];
+  return ['(undefined)','mean','sum','count'];
 }
 
 export function getTimeframeOptions() {
@@ -196,6 +205,16 @@ export function cookieExtract(name) {
   var value = "; " + document.cookie;
   var parts = value.split("; "+name+"=");
   if (parts.length == 2) return parts.pop().split(";").shift();
+}
+
+export function REST_aggregate() {
+  return('http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_restpoints/REST_aggregate.py');
+}
+export function REST_multiplevalue() {
+  return('http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_restpoints/REST_multiplevalue.py');
+}
+export function REST_singlevalue() {
+  return('http://ec2-54-213-91-179.us-west-2.compute.amazonaws.com/cgi-bin/dash_restpoints/REST_singlevalue.py');
 }
 
 export function dataRestPoint() {

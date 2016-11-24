@@ -5,14 +5,14 @@ var Highcharts = require('highcharts');
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {postFilter,niceDate,getTimeframeRanges,dataRestPoint,completeParams,tableFromRawData} from './support.js';
+import {postFilter,niceDate,getTimeframeRanges,REST_multiplevalue,completeParams,tableFromRawData} from './support.js';
 
 class WidgetStats extends React.Component {
   constructor(props) {
     super();
     this.state = {rawData: undefined}
     this.reloadData = this.reloadData.bind(this);
-    this.plot = this.plot.bind(this);    
+    this.plot = this.plot.bind(this);
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -62,8 +62,9 @@ class WidgetStats extends React.Component {
       $(ReactDOM.findDOMNode(chart)).html('Stats Widget Not Configured!');
     } else {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
       $.post(
-        dataRestPoint(),
+        REST_multiplevalue(),
         completeParams({
           source:  data.source,
           metrics: data.metrics[0],
@@ -83,7 +84,7 @@ class WidgetStats extends React.Component {
     var props = this.props;
     var data = props.widgets[props.widgetindex].data;
     // First we post-filter the rawData.
-    rawData = postFilter(rawData,data.postfilters);
+    rawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
     // Then proceed.
     if (rawData.data.length === 0) {
       $(ReactDOM.findDOMNode(chart)).html('Stats Widget Has No Data!');
@@ -104,30 +105,28 @@ class WidgetStats extends React.Component {
       metricNumData.sort(function(a, b) {return a - b;});
       var length = metricNumData.length;
       var sum = _.reduce(metricNumData, function(memo, num){ return memo + num; }, 0);
-      var mean = Math.floor(100*sum/length)/100;
+      var mean = sum/length;
       var median = (Math.floor(length/2)==length/2) ? (metricNumData[length/2]+metricNumData[length/2+1])/2 : metricNumData[(length-1)/2];
       var variance = 0;
       _.each(metricNumData,function(d) {variance += (mean-d)*(mean-d);});
       variance = variance/length;
       var stdev = Math.sqrt(variance);
-      variance = Math.floor(100*variance)/100;
-      stdev = Math.floor(100*stdev)/100;
       var max = metricNumData[length-1];
       var min = metricNumData[0];
       var r = '<div class="stats">';
-      r += '<div class="stats-title">'+data.mytitle+'</div>';
-      r += '<div class="stats-subtitle">'+data.metrics[0]+'</div><br/>';
-      r += '<div class="stats-left">Minimum</div><div class="stats-right">'+min+'</div>';
-      r += '<div class="stats-left">Maximum</div><div class="stats-right">'+max+'</div>';
-      r += '<div class="stats-left">Mean</div><div class="stats-right">'+mean+'</div>';
-      r += '<div class="stats-left">Median</div><div class="stats-right">'+median+'</div>';
-      r += '<div class="stats-left">Variance</div><div class="stats-right">'+variance+'</div>';
-      r += '<div class="stats-left">Standard Deviation</div><div class="stats-right">'+stdev+'</div>';
+      r += '<div class="stats-title">'+ (data.mytitle === undefined ? 'Statistics' : data.mytitle) + '</div>';
+      r += '<div class="stats-subtitle">' + data.metrics[0] + '</div><br/>';
+      r += '<div class="stats-left">Minimum</div><div class="stats-right">'            + min + '</div>';
+      r += '<div class="stats-left">Maximum</div><div class="stats-right">'            + max + '</div>';
+      r += '<div class="stats-left">Mean</div><div class="stats-right">'               + mean + '</div>';
+      r += '<div class="stats-left">Median</div><div class="stats-right">'             + median + '</div>';
+      r += '<div class="stats-left">Variance</div><div class="stats-right">'           + variance + '</div>';
+      r += '<div class="stats-left">Standard Deviation</div><div class="stats-right">' + stdev + '</div>';
       r += '</div>';
       $(ReactDOM.findDOMNode(chart)).html(r);
     }
   }
-  
+
   componentDidMount() {
     this.reloadData();
   }
