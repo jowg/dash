@@ -71,8 +71,8 @@ class WidgetPie extends React.Component {
         (data.timeframe  === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Pie Widget Not Configured</div>');
     } else {
-      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
       //console.log(data);
       //console.log(fs);
       $.post(
@@ -168,6 +168,7 @@ class WidgetPie extends React.Component {
         plotOptions: {
           pie: {
             dataLabels: {
+              distance: 15,
               enabled: (data.label !== 'hide' ? true : false),
               formatter: function() {
                 var top = (data.label !== 'trim' ? this.point.z : this.point.z.substr(0,7)+'...');
@@ -206,14 +207,12 @@ class WidgetPie extends React.Component {
 
   render() {
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
-    var outersizecss = 'widget-container-'+widgetdata.width+'-'+widgetdata.height;
-    var innersubcss = 'widget-sub-container-'+widgetdata.width+'-'+widgetdata.height;
     var innerchartcss = 'widget-chart-container-'+widgetdata.width+'-'+widgetdata.height;
     var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
-        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'/>
-        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
+        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'visible':'hidden')}} ref='chart'/>
+        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back'?'visible':'hidden')}} ref='chartdata'></div>
         </div>
     );
   }

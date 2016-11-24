@@ -61,8 +61,8 @@ class WidgetStats extends React.Component {
     if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.timeframe === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('Stats Widget Not Configured!');
     } else {
-      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
       $.post(
         REST_multiplevalue(),
         completeParams({
@@ -139,8 +139,8 @@ class WidgetStats extends React.Component {
     var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
-        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'/>
-        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
+        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'visible':'hidden')}} ref='chart'/>
+        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back'?'visible':'hidden')}} ref='chartdata'></div>
         </div>
     );
   }
