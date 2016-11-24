@@ -267,13 +267,11 @@ class WidgetGeospatial extends React.Component {
 
   render() {
     var widgetdata = this.props.widgets[this.props.widgetindex].data;
-    var outersizecss = 'widget-container-'+widgetdata.width+'-'+widgetdata.height;
-    var innersubcss = 'widget-sub-container-'+widgetdata.width+'-'+widgetdata.height;
     var innerchartcss = 'widget-chart-container-'+widgetdata.width+'-'+widgetdata.height;
     var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
-        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'visible':'hidden')}} ref='chart'>
+        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
         {this.state.data !== undefined ?
          <div>
          <div className='widget-geospatial-title'>
@@ -288,7 +286,7 @@ class WidgetGeospatial extends React.Component {
          </div>
          : <div className={innerchartcss}><div className='loading-spinner'></div><br/><br/>Retrieving Data</div>}
       </div>
-        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back' ? 'visible':'hidden')}} ref='chartdata'>
+        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back' ? 'inline-block':'none')}} ref='chartdata'>
         {this.state.data === undefined ?
          <div className={innerchartcss}><div className='loading-spinner'></div><br/><br/>Retrieving Data</div>
          : <div/>}
