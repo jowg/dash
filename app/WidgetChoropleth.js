@@ -106,7 +106,7 @@ class WidgetChoropleth extends React.Component {
         mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
         postfilters: [{"metric":"sector","comp":"==","value":s}]
       });
-      this.props.update_widget_plus_save(12,{
+      this.props.update_widget(12,{
         mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
         postfilters: [{"metric":"sector","comp":"==","value":s}],
         bounds: [[b.getSouth(),b.getWest()],[b.getNorth(),b.getEast()]]        
