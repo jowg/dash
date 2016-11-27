@@ -121,8 +121,10 @@ var userReducer = function(state, action) {
     }
   }
 
-  var newState = JSON.parse(JSON.stringify(state));
+  //var newState = JSON.parse(JSON.stringify(state));
+  var newState = $.extend(true, {}, state);
 
+  
   ////////////////////////////////////////////////////////////////////////////////////////
   // UPDATE_WIDGET
   // UPDATE_WIDGET_PLUS_SAVE

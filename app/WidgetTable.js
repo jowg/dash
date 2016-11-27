@@ -6,13 +6,13 @@ var Highcharts = require('highcharts');
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {postFilter,niceDate,getTimeframeRanges,REST_multiplevalue,completeParams,tableFromRawData} from './support.js';
+import SortableTable from './SortableTable.js';
 
 class WidgetStats extends React.Component {
   constructor(props) {
     super();
     this.state = {rawData: undefined}
     this.reloadData = this.reloadData.bind(this);
-    this.plot = this.plot.bind(this);
   }
 
   componentDidUpdate(prevProps,prevState) {
@@ -32,8 +32,14 @@ class WidgetStats extends React.Component {
       this.reloadData();
     }
     if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
-      this.plot(this.state.rawData);
+      var rawData = this.state.rawData;
+      var filteredRawData = postFilter({metrics:newData.metrics,data:rawData.data},newData.postfilters);
+      this.setState({filteredRawData:filteredRawData});
     }
+  }
+
+  componentDidMount() {
+    this.reloadData();
   }
 
   reloadData() {
@@ -61,8 +67,8 @@ class WidgetStats extends React.Component {
     if ((data.source === '(undefined)') || (data.metrics[0] === '(undefined)') || (data.timeframe === '(undefined)')) {
       $(ReactDOM.findDOMNode(chart)).html('Table Widget Not Configured!');
     } else {
-      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
       $.post(
         REST_multiplevalue(),
         completeParams({
@@ -71,31 +77,12 @@ class WidgetStats extends React.Component {
           filters: fs
         }),
         function(rawData) {
-          thisthis.setState({rawData:rawData});
-          thisthis.plot(rawData);
+          var filteredRawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
+          thisthis.setState({rawData:rawData,filteredRawData:filteredRawData});
+          //thisthis.plot(rawData);
         }
       )
     }
-  }
-
-  plot(rawData) {
-    var thisthis = this;
-    var chart = this.refs.chart;
-    var props = this.props;
-    var data = props.widgets[props.widgetindex].data;
-    // First we post-filter the rawData.
-    rawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
-    // Then proceed.
-    if (rawData.data.length === 0) {
-      $(ReactDOM.findDOMNode(chart)).html('Table Widget Has No Data!');
-      return false;
-    }    
-    $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(rawData,data.mytitle));
-
-  }
-
-  componentDidMount() {
-    this.reloadData();
   }
 
   render() {
@@ -104,8 +91,11 @@ class WidgetStats extends React.Component {
     var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
-        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'/>
-        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
+        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'inherit':'hidden')}} ref='chart'>
+        </div>
+        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back'?'inherit':'hidden')}} ref='chartdata'>
+        {this.state.filteredRawData !== undefined ? <SortableTable title={widgetdata.mytitle} metrics={widgetdata.metrics} data={this.state.filteredRawData.data}/> : ''}
+        </div>
         </div>
     );
   }

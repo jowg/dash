@@ -216,9 +216,9 @@ class Dashboard extends React.Component {
                     return(
                       row.split('|').map(function(col,colindex) {
                         return(
-                            <div style={{float:'left'}} key={colindex}>{
+                            <div style={{visibility:'inherit',float:'left'}} key={colindex}>{
                               col.split('-').map(function(windex,w) {
-                                return(<div key={props.widgets[Number(windex)].key}><Widget widgetindex={Number(windex)}/></div>)
+                                return(<div style={{visibility:'inherit'}} key={props.widgets[Number(windex)].key}><Widget widgetindex={Number(windex)}/></div>)
                               })
                             }
                           </div>

@@ -47,7 +47,7 @@
   \*****************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_) {'use strict';
+	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
 	
 	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
 	
@@ -171,7 +171,8 @@
 	    }
 	  }
 	
-	  var newState = JSON.parse(JSON.stringify(state));
+	  //var newState = JSON.parse(JSON.stringify(state));
+	  var newState = $.extend(true, {}, state);
 	
 	  ////////////////////////////////////////////////////////////////////////////////////////
 	  // UPDATE_WIDGET
@@ -286,7 +287,7 @@
 	var store = (0, _redux.createStore)(userReducer);
 	
 	ReactDOM.render(React.createElement(_reactRedux.Provider, { store: store }, React.createElement(_Dashboard2.default, null)), document.getElementById('app'));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! underscore */ 1)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
 
 /***/ },
 /* 1 */
@@ -17672,8 +17673,8 @@
 	      }), configurable ? React.createElement('div', { className: 'dropdown' }, React.createElement('div', { className: 'dropbtn' }, 'Tools'), React.createElement('div', { className: 'dropdown-content' }, React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddWidgetWindow }, 'Add Widget'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openEditTabWindow }, 'Rename Tab'), React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.openAddTabWindow }, 'Add Tab'), currentDash.layout.length === 0 && this.props.dashLayout.length > 1 ? React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.deleteCurrentTab }, 'Delete Tab') : '', React.createElement('div', { className: 'addstuffbutton', onClick: thisthis.toggleTabHideDate }, currentDash.tabHideDate ? 'Show Tab Date' : 'Hide Tab Date'))) : React.createElement('div', null)), props.dashLayout.map(function (tab, tabindex) {
 	        return React.createElement('div', { className: props.currentTab == tabindex ? 'tabsheet-visible' : 'tabsheet-invisible', key: tabindex }, _.flatten(props.fullstate.hassuperlayout ? tab.superlayout.toString().split(',').map(function (row, rowindex) {
 	          return row.split('|').map(function (col, colindex) {
-	            return React.createElement('div', { style: { float: 'left' }, key: colindex }, col.split('-').map(function (windex, w) {
-	              return React.createElement('div', { key: props.widgets[Number(windex)].key }, React.createElement(_Widget2.default, { widgetindex: Number(windex) }));
+	            return React.createElement('div', { style: { visibility: 'inherit', float: 'left' }, key: colindex }, col.split('-').map(function (windex, w) {
+	              return React.createElement('div', { style: { visibility: 'inherit' }, key: props.widgets[Number(windex)].key }, React.createElement(_Widget2.default, { widgetindex: Number(windex) }));
 	            }));
 	          });
 	        }) : tab.layout.map(function (row, rowindex) {
@@ -17792,9 +17793,9 @@
 	
 	var _WidgetConfigScatter2 = _interopRequireDefault(_WidgetConfigScatter);
 	
-	var _WidgetConfigGeospatial = __webpack_require__(/*! ./WidgetConfigGeospatial.js */ 207);
+	var _WidgetConfigChoropleth = __webpack_require__(/*! ./WidgetConfigChoropleth.js */ 553);
 	
-	var _WidgetConfigGeospatial2 = _interopRequireDefault(_WidgetConfigGeospatial);
+	var _WidgetConfigChoropleth2 = _interopRequireDefault(_WidgetConfigChoropleth);
 	
 	var _WidgetConfigSingleValue = __webpack_require__(/*! ./WidgetConfigSingleValue.js */ 208);
 	
@@ -17804,9 +17805,13 @@
 	
 	var _WidgetConfigTable2 = _interopRequireDefault(_WidgetConfigTable);
 	
-	var _WidgetGeospatial = __webpack_require__(/*! ./WidgetGeospatial.js */ 211);
+	var _WidgetConfigPointMapper = __webpack_require__(/*! ./WidgetConfigPointMapper.js */ 556);
 	
-	var _WidgetGeospatial2 = _interopRequireDefault(_WidgetGeospatial);
+	var _WidgetConfigPointMapper2 = _interopRequireDefault(_WidgetConfigPointMapper);
+	
+	var _WidgetChoropleth = __webpack_require__(/*! ./WidgetChoropleth.js */ 554);
+	
+	var _WidgetChoropleth2 = _interopRequireDefault(_WidgetChoropleth);
 	
 	var _WidgetPie = __webpack_require__(/*! ./WidgetPie.js */ 527);
 	
@@ -17843,6 +17848,10 @@
 	var _WidgetTable = __webpack_require__(/*! ./WidgetTable.js */ 536);
 	
 	var _WidgetTable2 = _interopRequireDefault(_WidgetTable);
+	
+	var _WidgetPointMapper = __webpack_require__(/*! ./WidgetPointMapper.js */ 557);
+	
+	var _WidgetPointMapper2 = _interopRequireDefault(_WidgetPointMapper);
 	
 	var _SelectBar = __webpack_require__(/*! ./SelectBar.js */ 538);
 	
@@ -17970,19 +17979,21 @@
 	            return React.createElement(_WidgetScatter2.default, { widgetindex: _this2.props.widgetindex });
 	          case 'line':
 	            return React.createElement(_WidgetLine2.default, { widgetindex: _this2.props.widgetindex });
-	          case 'geospatial':
-	            return React.createElement(_WidgetGeospatial2.default, { widgetindex: _this2.props.widgetindex });
+	          case 'choropleth':
+	            return React.createElement(_WidgetChoropleth2.default, { widgetindex: _this2.props.widgetindex });
 	          case 'table':
 	            return React.createElement(_WidgetTable2.default, { widgetindex: _this2.props.widgetindex });
+	          case 'pointmapper':
+	            return React.createElement(_WidgetPointMapper2.default, { widgetindex: _this2.props.widgetindex });
 	        }
-	      }()), function () {
+	      }()), React.createElement('div', { className: 'widget-top-bar' }, function () {
 	        switch (widgetdata.type) {
 	          case 'table':
 	            return '';
 	          default:
 	            return React.createElement('img', { className: 'widget-flippy-right', src: 'flippy.png', title: widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic', onClick: _this2.flipToOtherSide });
 	        }
-	      }(), function () {
+	      }()), function () {
 	        switch (props.widgets[props.widgetindex].data.type) {
 	          case 'pie':
 	            return React.createElement(_WidgetConfigPie2.default, { widgetindex: props.widgetindex });
@@ -18000,10 +18011,12 @@
 	            return React.createElement(_WidgetConfigSingleValue2.default, { widgetindex: props.widgetindex });
 	          case 'scatter':
 	            return React.createElement(_WidgetConfigScatter2.default, { widgetindex: props.widgetindex });
-	          case 'geospatial':
-	            return React.createElement(_WidgetConfigGeospatial2.default, { widgetindex: props.widgetindex });
+	          case 'choropleth':
+	            return React.createElement(_WidgetConfigChoropleth2.default, { widgetindex: props.widgetindex });
 	          case 'table':
 	            return React.createElement(_WidgetConfigTable2.default, { widgetindex: props.widgetindex });
+	          case 'pointmapper':
+	            return React.createElement(_WidgetConfigPointMapper2.default, { widgetindex: props.widgetindex });
 	        }
 	      }());
 	    }
@@ -36242,7 +36255,7 @@
 	
 	
 	// module
-	exports.push([module.id, ":root {\n  --body-color:                         #cccccc;\n  --topbar-color:                       #4a708b;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --global-font-size-100:               100%;\n  --global-font-size-400:               400%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-half {\n  height: 300px;\n  position: relative;\n}\n.widget-chart-container-half-half {\n  width:  300px;\n  height: 280px;\n  vertical-align: middle;\n  text-align: center;\n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n.widget-data-container-half-half {\n  padding: 10px;\n  width: 300px;\n  height: 280px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  vertical-align: middle;\n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            740px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-half {\n  height: 300px;\n  position: relative;\n}\n.widget-chart-container-full-half {\n  width:  650px;\n  height: 280px;\n  vertical-align: middle;\n  text-align: center;\n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n.widget-data-container-full-half {\n  padding: 10px;\n  width: 650px;\n  height: 280px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  vertical-align: middle;  \n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  margin:           10px;\n  width:            350px;\n  height:           732px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-half-full {\n  height: 690px;\n  position: relative;\n}\n.widget-chart-container-half-full {\n  width:  300px;\n  height: 670px;\n  vertical-align: middle;\n  text-align: center;\n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n.widget-data-container-half-full {\n  padding: 10px;\n  width: 300px;\n  height: 670px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  vertical-align: middle;\n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  padding:          10px;\n  width:            740px;\n  margin:           10px;\n  height:           732px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n}\n.widget-sub-container-full-full {\n  height: 690px;\n  position: relative;\n}\n.widget-chart-container-full-full {\n  width:  650px;\n  height: 670px;\n  vertical-align: middle;\n  text-align: center;\n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n.widget-data-container-full-full {\n  padding: 10px;\n  width: 650px;\n  height: 670px;\n  overflow-y: auto;\n  overflow-x: hidden;\n  vertical-align: middle;    \n  position: absolute;\n  top: 0px;\n  left: 10px;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 24px;\n  width:  24px;\n  float:  right;\n}\n\n.single-value-contents {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-400);\n  color:       #000000;\n}\n\n.stats {\n  width:   90%;\n  padding: 20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #000000;\n}\n.stats-subtitle {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-75);\n  color:       #000000;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top: 2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n  z-index: -1000;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n.loading-spinner {\n  border: 16px solid #f3f3f3;\n  border-top: 16px solid #3498db; \n  border-radius: 50%;\n  width: 80px;\n  height: 80px;\n  animation: spin 1s linear infinite;\n  display: inline-block;\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);  \n}\n@keyframes spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n.config-window-button {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 4px;\n  padding-bottom: 4px;\n  padding-left: 16px;\n  padding-right: 16px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border: 1px solid var(--config-window-button-color);\n  color: var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top: 0px;\n  padding-bottom: 0px;\n  padding-left: 2px;\n  padding-right: 2px;\n  text-align: center;\n  display: inline-block;\n  font-size: var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #666666;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n}\n.div-table-title {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #666666;\n  font-weight:      bold;\n  colspan:          0\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-bar-holder {\n  display: inline-block;\n}\n.widget-options-div-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-left: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-left-radius:  5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right {\n  display: inline-block;\n  border: 2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding: 2px;\n  margin-right: 2px;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-90);\n  border-top-right-radius:  5px;\n  border-bottom-right-radius:  5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor: pointer;\n}\n/*-----*/\n.widget-top-bar {\n  width: 100%;\n  height: 24px;\n}\n\n.widget-geospatial-title {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-100);\n  padding-bottom: 5px;\n}", ""]);
+	exports.push([module.id, ":root {\n  --body-color:                         #bbbbbb;\n  --topbar-color:                       #4a708b;\n  --widget-topbar-color:                #ffffff;\n  --tabholder-color:                    #ffffff;\n  --tabholder-width:                    160px;\n  --tab-selected-background-color:      #e0e0e0;\n  --tab-hover-background-color:         #eeeeee;\n  --tab-default-color:                  #000000;\n  --topbar-default-color:               #ffffff;\n  --widget-border-color:                #cccccc;\n  --widget-border-radius:               5px;\n  --widget-border-thickness:            1px;\n  --global-font:                        Helvetica;\n  --global-font-size-medium:            120%;\n  --global-font-size-small:             100%;\n  --global-font-size-75:                75%;\n  --global-font-size-90:                90%;\n  --global-font-size-100:               100%;\n  --global-font-size-400:               400%;\n  --config-window-border-color:         #4a708b;\n  --config-window-border-thickness:     7px;\n  --band-title-color:                   #eeeeee;\n  --band-title-background-color:        #4a708b;\n  --widget-datepicker-background-color: #ffffff;\n  --widget-datepicker-border-color:     #ffffff;\n  --widget-datepicker-color:            #000000;\n  --datepicker-background-color:        #4a708b;\n  --config-window-button-color:         #ffffff;\n  --config-window-button-background-color: #4a708b;\n  --config-window-button-background-color-hover: #5a809b;\n}\n\n.disabled {\n  color: #aaaaaa;\n}\n\nhtml,body {\n  margin:           0px;\n  width:            100%;\n  margin:           0px;\n  overflow-x: hidden;\n  background-color: var(--body-color);\n}\n\n/*---------------------------------------------------------------------------------------------------------*/\n/* Widget container information */\n.hidden {\n  display: none;\n}\n.visible {\n  display: inline-block;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n.widget-container-half-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  width:            350px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n  visibility:       inherit;\n  margin-top:       10px;\n  margin-left:      10px;\n}\n.widget-sub-container-half-half {\n  width:      350px;\n  height:     300px;\n  position:   relative;\n  visibility: inherit;\n}\n.widget-chart-container-half-half {\n  width:          350px;\n  height:         300px;\n  vertical-align: middle;\n  text-align:     center;\n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n.widget-data-container-half-half {\n  width:          350px;\n  height:         300px;\n  overflow-y:     auto;\n  overflow-x:     hidden;\n  vertical-align: middle;\n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n/*-------------------------------------------*/\n.widget-container-full-half {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  width:            710px;\n  height:           350px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n  visibility:       inherit;\n  margin-top:       10px;\n  margin-left:      10px;\n}\n.widget-sub-container-full-half {\n  width:      710px;\n  height:     300px;\n  position:   relative;\n  visibility: inherit;\n}\n.widget-chart-container-full-half {\n  width:          710px;\n  height:         300px;\n  vertical-align: middle;\n  text-align:     center;\n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n.widget-data-container-full-half {\n  width:          710px;\n  height:         300px;\n  overflow-y:     auto;\n  overflow-x:     hidden;\n  vertical-align: middle;  \n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n/*-------------------------------------------*/\n.widget-container-half-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  width:            350px;\n  height:           710px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n  visibility:       inherit;\n  margin-top:       10px;\n  margin-left:      10px;\n}\n.widget-sub-container-half-full {\n  width:      350px;\n  height:     660px;\n  position:   relative;\n  visibility: inherit;\n}\n.widget-chart-container-half-full {\n  width:          350px;\n  height:         660px;\n  vertical-align: middle;\n  text-align:     center;\n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n.widget-data-container-half-full {\n  width:          350px;\n  height:         660px;\n  overflow-y:     auto;\n  overflow-x:     hidden;\n  vertical-align: middle;\n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n/*-------------------------------------------*/\n.widget-container-full-full {\n  border:           var(--widget-border-thickness) solid var(--widget-border-color);\n  background-color: #ffffff;\n  border-radius:    var(--widget-border-radius);\n  width:            700px;\n  height:           710px;\n  text-align:       center;\n  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);\n  visibility:       inherit;\n  margin-top:       10px;\n  margin-left:      10px;\n}\n.widget-sub-container-full-full {\n  width:      700px;\n  height:     660px;\n  position:   relative;\n  visibility: inherit;\n}\n.widget-chart-container-full-full {\n  width:          700px;\n  height:         660px;\n  vertical-align: middle;\n  text-align:     center;\n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n.widget-data-container-full-full {\n  width:          700px;\n  height:         660px;\n  overflow-y:     auto;\n  overflow-x:     hidden;\n  vertical-align: middle;    \n  position:       absolute;\n  top:            0px;\n  left:           0px;\n  visibility:     inherit;\n}\n/*---------------------------------------------------------------------------------------------------------*/\n/* Stuff inside the widget container */\n\n.widget-cog-left:hover {\n  opacity: 0.5;\n}\n.widget-cog-left {\n  cursor: pointer;\n  height: 20px;\n  width:  20px;\n  margin: 2px;\n  float:  left;\n}\n.widget-cog-right:hover {\n  opacity: 0.5;\n}\n.widget-cog-right {\n  height: 20px;\n  width:  20px;\n  margin: 2px;\n  float:  right;\n}\n.widget-flippy-right:hover {\n  opacity: 0.5;\n}\n.widget-flippy-right {\n  cursor: pointer;\n  height: 20px;\n  width:  20px;\n  margin: 2px;\n  float:  right;\n}\n\n.single-value-contents {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-400);\n  color:       #000000;\n}\n\n.stats {\n  width:        90%;\n  padding:      20px;\n  margin-right: 40px;\n}\n.stats-title {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n  color:       #000000;\n}\n.stats-subtitle {\n  width:       100%;\n  text-align:  center;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-75);\n  color:       #000000;\n}\n.stats-left {\n  width:       55%;\n  text-align:  left;\n  float:       left;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n.stats-right {\n  width:       45%;\n  text-align:  right;\n  float:       right;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n  color:       #000000;\n}\n\n.widget-config-window {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  overflow:         auto;\n  text-align:       center;\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -300px;\n  margin-left:      -250px;\n  width:            500px;\n  height:           auto;\n  z-index:          1000;\n  background-color: #ffffff;\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n}\n.bandtitle {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       5px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-top {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    5px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n.bandtitle-bottom {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  margin-bottom:    0px;\n  margin-top:       0px;\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n.bandsubtitle {\n  font-weight: bold;\n  border-top:  2px solid var(--band-title-background-color);\n  padding-top: 5px;\n}\n.bandtitle-top-plus-close {\n  background-color: var(--band-title-background-color);\n  color:            var(--band-title-color);\n  font-size:        var(--global-font);\n  padding-bottom:   5px;\n  padding-top:      5px;\n}\n\n\n\n.simpleborder {\n  text-align:    left;\n  border:        1px solid #dddddd;\n  border-radius: 5px;\n  padding:       5px;\n  margin:        5px;\n  overflow:      hidden;\n}\n\n.topbar {\n  position:         fixed;\n  left:             0px;\n  top:              0px;\n  width:            100%;\n  height:           36px;\n  background-color: var(--topbar-color);\n  z-index:          900;\n}\n\n\n.tabsheet-visible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   visible;\n}\n.tabsheet-invisible {\n  position:     absolute;\n  left:         var(--tabholder-width);\n  top:          0px;\n  width:        100%;\n  height:       100%;\n  padding-left: 16px;\n  padding-top:  48px;\n  display:      inline-block;\n  visibility:   hidden;\n  z-index:      -1000;\n}\n.tabholder-left {\n  margin-top:       10px;\n  position:         fixed;\n  padding-top:      10px;\n  padding-bottom:   10px;\n  left:             4px;\n  top:              46px;\n  bottom:           10px;\n  width:            var(--tabholder-width);\n  background-color: var(--tabholder-color);\n  z-index:          899;\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n  border-radius:    var(--widget-border-radius);\n}\n\n.tab-selected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tab-selected-background-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-small);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  z-index:                   3;\n  cursor:                    pointer;\n}\n.tab-unselected:hover {\n  background-color: var(--tab-hover-background-color);\n}\n\n.daterangepickerholder-small:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-small {\n  border:           1px solid var(--widget-datepicker-border-color);\n  border-radius:    0px;\n  background-color: var(--widget-datepicker-background-color);\n  color:            var(--widget-datepicker-color);\n  padding:          2px;\n  float:            right;\n  cursor:           pointer;\n  text-align:       center;\n  font-size:        var(--global-font-size-small);\n  font-family:      var(--global-font);\n}\n\n.daterangepickerholder-dash:hover {\n  opacity: 0.5;\n}\n.daterangepickerholder-dash {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            0px;\n  padding-right:           10px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  cursor:                  pointer;\n  float:                   right;\n  text-align:              right;\n}\n\n.dashboardidholder {\n  top:                     0px;\n  width:                   45%;\n  height:                  32px;\n  line-height:             32px;\n  color:                   var(--topbar-default-color);\n  background-color:        var(--datepicker-background-color);\n  font-family:             var(--global-font);\n  font-size:               var(--global-font-size-medium);\n  padding-left:            10px;\n  padding-right:           0px;\n  margin-top:              0px;\n  padding-top:             0px;\n  margin-right:            0px;\n  border-top:              1px solid var(--datepicker-background-color);\n  border-right:            1px solid var(--datepicker-background-color);\n  border-left:             1px solid var(--datepicker-background-color);\n  border-top-left-radius:  15px;\n  border-top-right-radius: 15px;\n  z-index:                 3;\n  float:                   left;\n  text-align:              left;\n}\n\n.deactivating-overlay {\n  position:         fixed;\n  top:              0;\n  left:             0;\n  width:            100%;\n  height:           100%;\n  opacity:          0.5;\n  z-index:          999;\n  background-color: #555555;\n}\n\n.addwidgetdiv:hover {\n  background-color: #aaaaaa;\n}\n.addwidgetdiv {\n  cursor:           pointer;\n  width:            100%;\n  margin-right:     0%;\n  margin-left:      0%;\n  height:           64px;\n  border:           1px solid #aaaaaa;\n  text-align:       left;\n}\n.addwidgetdiv-text {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.addwidgetdiv-title {\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-medium);\n}\n.addwidgetwindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-left:      -250px;\n  margin-top:       -200px;\n  width:            500px;\n  height:           400px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addwidgetwindowinner {\n  position:   absolute;\n  height:     350px;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n.addstuffbutton:hover {\n  background-color: var(--tab-selected-background-color);\n}\n.addstuffbutton {\n  color:          var(--tab-default-color);\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-medium);\n  padding-left:   10px;\n  padding-right:  10px;\n  padding-top:    5px;\n  padding-bottom: 5px;\n  border:         0px;\n  z-index:        10;\n  cursor:         pointer;\n}\n\n.addTabWindow {\n  position:         fixed;\n  top:              50%;\n  left:             50%;\n  margin-top:       -150px;\n  margin-left:      -200px;\n  width:            300px;\n  height:           200px;\n  z-index:          1000;\n  background-color: #ffffff;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-small);\n  border:           var(--config-window-border-thickness) solid var(--config-window-border-color);\n  border-radius:    10px;\n  text-align:       center;\n}\n.addTabTextfield {\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-medium);\n}\n\n\n.dropbtn {\n  color:                     var(--tab-default-color);\n  background-color:          var(--tabholder-color);\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-medium);\n  padding-left:              10px;\n  padding-right:             10px;\n  padding-top:               5px;\n  padding-bottom:            5px;\n  margin-top:                0px;\n  margin-bottom:             0px;\n  margin-left:               0px;\n  cursor:                    pointer;\n  z-index:                   4;\n}\n\n/* The container <div> - needed to position the dropdown content */\n.dropdown {\n  position: absolute;\n  bottom:   10px;\n  left:     0px;\n  display:  inline-block;\n  width:    var(--tabholder-width);\n}\n\n/* Dropdown Content (Hidden by Default) */\n.dropdown-content {\n  display:          none;\n  background-color: var(--tabholder-color);\n  position:         fixed;\n  bottom:           0px;\n  left:             var(--tabholder-width);\n  box-shadow:       0px 8px 16px 0px rgba(0,0,0,0.2);\n}\n.dropdown:hover .dropbtn {\n  background-color: var(--tab-selected-background-color);\n}\n/* Show the dropdown menu on hover */\n.dropdown:hover .dropdown-content {\n  display: block;\n}\n\n.nice-middle {\n  width:          inherit;\n  height:         inherit;\n  display:        table-cell;\n  text-align:     center;\n  vertical-align: middle;\n}\n.loading-spinner {\n  border:        16px solid #f3f3f3;\n  border-top:    16px solid #3498db; \n  border-radius: 50%;\n  width:         80px;\n  height:        80px;\n  animation:     spin 1s linear infinite;\n  display:       inline-block;\n  font-family:   var(--global-font);\n  font-size:     var(--global-font-size-medium);  \n}\n@keyframes spin {\n  0%   { transform: rotate(0deg);   }\n  100% { transform: rotate(360deg); }\n}\n\n.config-window-button {\n  border:           1px solid var(--config-window-button-color);\n  color:            var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top:      4px;\n  padding-bottom:   4px;\n  padding-left:     16px;\n  padding-right:    16px;\n  text-align:       center;\n  display:          inline-block;\n  font-size:        var(--global-font-size-small);\n}\n.config-window-button:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.config-window-button-plus {\n  border:           1px solid var(--config-window-button-color);\n  color:            var(--config-window-button-color);\n  background-color: var(--config-window-button-background-color);\n  padding-top:      0px;\n  padding-bottom:   0px;\n  padding-left:     2px;\n  padding-right:    2px;\n  text-align:       center;\n  display:          inline-block;\n  font-size:        var(--global-font-size-90);\n}\n.config-window-button-plus:hover {\n  background-color: var(--config-window-button-background-color-hover);\n}\n\n.div-table {\n  display:          table;\n  background-color: #ffffff;\n  width:            100%;\n  border:           1px solid #999999;\n}\n.div-table-row {\n  display: table-row;\n  clear:   both;\n}\n.div-table-cell {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #999999;\n}\n.div-table-header {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #999999;\n  font-weight:      bold;\n}\n.div-table-title {\n  display:          table-cell;\n  height:           auto;\n  background-color: #ffffffff;\n  border:           1px solid  #999999;\n  font-weight:      bold;\n  colspan:          0\n}\n\n/* Highcharts Overflow Fix Crap */\n\n.highcharts-container {\n  overflow: visible !important;\n}\n\nsvg {\n  overflow: visible;\n}\n\n\n.leaflet-container {\n  width: 100%;\n  height: 100%;\n}\n\n/* leaflet box div */\n.myinfobox {\n  text-align: left;\n  width: 200px;\n  height: 40px;\n  padding: 2px;\n  border: 1px solid black;\n  border-radius: 5px;\n  background-color: #eeeeee;\n  color: black;\n  font-weight: bold;\n  font-family: var(--global-font);\n  font-size:   var(--global-font-size-small);\n}\n\n/* Fancy Select Button */\n.widget-bar-holder {\n  display: inline-block;\n}\n.widget-options-div-selected {\n  display:          inline-block;\n  border:           2px solid #aaaaaa;\n  background-color: #dddddd;\n  padding:          2px;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.widget-options-div {\n  display:          inline-block;\n  border:           2px solid #aaaaaa;\n  background-color: #ffffff;\n  padding:          2px;\n  font-family:      var(--global-font);\n  font-size:        var(--global-font-size-90);\n}\n.widget-options-div:hover {\n  background-color: #eeeeee;\n  cursor:           pointer;\n}\n/*--------*/\n.widget-options-div-left-selected {\n  display: inline-block;\n  border:                     2px solid #aaaaaa;\n  background-color:           #dddddd;\n  padding:                    2px;\n  margin-left:                2px;\n  font-family:                var(--global-font);\n  font-size:                  var(--global-font-size-90);\n  border-top-left-radius:     5px;\n  border-bottom-left-radius:  5px;\n}\n.widget-options-div-left {\n  display:                   inline-block;\n  border:                    2px solid #aaaaaa;\n  background-color:          #ffffff;\n  padding:                   2px;\n  margin-left:               2px;\n  font-family:               var(--global-font);\n  font-size:                 var(--global-font-size-90);\n  border-top-left-radius:    5px;\n  border-bottom-left-radius: 5px;\n}\n.widget-options-div-left:hover {\n  background-color: #eeeeee;\n  cursor:           pointer;\n}\n/*--------*/\n.widget-options-div-right-selected {\n  display:                    inline-block;\n  border:                     2px solid #aaaaaa;\n  background-color:           #dddddd;\n  padding:                    2px;\n  margin-right:               2px;\n  font-family:                var(--global-font);\n  font-size:                  var(--global-font-size-90);\n  border-top-right-radius:    5px;\n  border-bottom-right-radius: 5px;\n}\n.widget-options-div-right {\n  display:                    inline-block;\n  border:                     2px solid #aaaaaa;\n  background-color:           #ffffff;\n  padding:                    2px;\n  margin-right:               2px;\n  font-family:                var(--global-font);\n  font-size:                  var(--global-font-size-90);\n  border-top-right-radius:    5px;\n  border-bottom-right-radius: 5px;\n}\n.widget-options-div-right:hover {\n  background-color: #eeeeee;\n  cursor:           pointer;\n}\n/*-----*/\n.widget-top-bar {\n  width:            100%;\n  height:           25px;\n  visibility:       inherit;\n  background-color: var(--widget-topbar-color);\n}\n\n.widget-choropleth-title {\n  font-family:    var(--global-font);\n  font-size:      var(--global-font-size-100);\n  padding-bottom: 5px;\n}", ""]);
 	
 	// exports
 
@@ -38217,316 +38230,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigScatter);
 
 /***/ },
-/* 207 */
-/*!***********************************!*\
-  !*** ./WidgetConfigGeospatial.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
-	}();
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
-	
-	var _redux = __webpack_require__(/*! redux */ 38);
-	
-	var _support = __webpack_require__(/*! ./support.js */ 55);
-	
-	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
-	
-	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
-	
-	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
-	
-	var _SelectMove2 = _interopRequireDefault(_SelectMove);
-	
-	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
-	
-	var _SelectSize2 = _interopRequireDefault(_SelectSize);
-	
-	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
-	
-	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { default: obj };
-	}
-	
-	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-	
-	function _possibleConstructorReturn(self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-	}
-	
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-	}
-	
-	var React = __webpack_require__(/*! react */ 4);
-	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	
-	__webpack_require__(/*! ./dash.css */ 197);
-	
-	// How does the dash get access to the store?
-	
-	var WidgetConfigGeospatial = function (_React$Component) {
-	  _inherits(WidgetConfigGeospatial, _React$Component);
-	
-	  function WidgetConfigGeospatial(props) {
-	    _classCallCheck(this, WidgetConfigGeospatial);
-	
-	    var _this = _possibleConstructorReturn(this, (WidgetConfigGeospatial.__proto__ || Object.getPrototypeOf(WidgetConfigGeospatial)).call(this));
-	
-	    var data = props.widgets[props.widgetindex].data;
-	    _this.state = {
-	      source: data.source,
-	      metrics: data.metrics,
-	      aggMethod: data.aggMethod,
-	      filters: data.filters,
-	      timeframe: data.timeframe,
-	      width: data.width,
-	      height: data.height,
-	      latitude: data.latitude,
-	      longitude: data.longitude,
-	      zoom: data.zoom,
-	      moveValue: -0.5,
-	      showBackground: data.showBackground,
-	      obeyChoropleth: data.obeyChoropleth
-	    };
-	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
-	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
-	    _this.updateWidget = _this.updateWidget.bind(_this);
-	    _this.cancelConfig = _this.cancelConfig.bind(_this);
-	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
-	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
-	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
-	    _this.selectShowBackgroundUpdate = _this.selectShowBackgroundUpdate.bind(_this);
-	    _this.selectObeyChoroplethUpdate = _this.selectObeyChoroplethUpdate.bind(_this);
-	    _this.updateLayout = _this.updateLayout.bind(_this);
-	    _this.deleteWidget = _this.deleteWidget.bind(_this);
-	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
-	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
-	    _this.onChangeLatitude = _this.onChangeLatitude.bind(_this);
-	    _this.onChangeLongitude = _this.onChangeLongitude.bind(_this);
-	    _this.onChangeZoom = _this.onChangeZoom.bind(_this);
-	    return _this;
-	  }
-	
-	  _createClass(WidgetConfigGeospatial, [{
-	    key: 'selectSourceUpdate',
-	    value: function selectSourceUpdate(e) {
-	      this.setState({
-	        source: e.target.value,
-	        metrics: ['(undefined)'],
-	        aggMethod: ['(undefined)'],
-	        filters: [],
-	        showBackground: true,
-	        obeyChoropleth: true
-	      });
-	    }
-	  }, {
-	    key: 'selectMetricUpdate',
-	    value: function selectMetricUpdate(i, e) {
-	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
-	      metrics[i] = e.target.value;
-	      this.setState({ metrics: metrics });
-	    }
-	  }, {
-	    key: 'selectAggMethodUpdate',
-	    value: function selectAggMethodUpdate(e) {
-	      this.setState({ aggMethod: e.target.value });
-	    }
-	  }, {
-	    key: 'selectFilterUpdate',
-	    value: function selectFilterUpdate(value) {
-	      this.setState({ filters: value });
-	    }
-	  }, {
-	    key: 'selectMoveValueUpdate',
-	    value: function selectMoveValueUpdate(value) {
-	      this.setState({ moveValue: value });
-	    }
-	  }, {
-	    key: 'selectTimeframeUpdate',
-	    value: function selectTimeframeUpdate(e) {
-	      this.setState({ timeframe: e.target.value });
-	    }
-	  }, {
-	    key: 'selectShowBackgroundUpdate',
-	    value: function selectShowBackgroundUpdate(e) {
-	      this.setState({ showBackground: e.target.checked });
-	    }
-	  }, {
-	    key: 'selectObeyChoroplethUpdate',
-	    value: function selectObeyChoroplethUpdate(e) {
-	      this.setState({ obeyChoropleth: e.target.checked });
-	    }
-	  }, {
-	    key: 'updateLayout',
-	    value: function updateLayout() {
-	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
-	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
-	      this.props.update_layout(newDashLayout);
-	    }
-	  }, {
-	    key: 'updateWidget',
-	    value: function updateWidget() {
-	      // Update the widget according to props.
-	      this.props.update_widget_plus_save(this.props.widgetindex, {
-	        configDisplay: 'none',
-	        source: this.state.source,
-	        metrics: this.state.metrics,
-	        aggMethod: this.state.aggMethod,
-	        timeframe: this.state.timeframe,
-	        filters: this.state.filters,
-	        width: this.state.width,
-	        height: this.state.height,
-	        latitude: Number(this.state.latitude),
-	        longitude: Number(this.state.longitude),
-	        zoom: Number(this.state.zoom),
-	        showBackground: this.state.showBackground,
-	        obeyChoropleth: this.state.obeyChoropleth
-	      });
-	    }
-	  }, {
-	    key: 'cancelConfig',
-	    value: function cancelConfig() {
-	      // Reset the configuration state to the old props state.
-	      var oldState = this.props.widgets[this.props.widgetindex].data;
-	      this.setState({
-	        source: oldState.source,
-	        metrics: oldState.metrics,
-	        aggMethod: oldState.aggMethod,
-	        timeframe: oldState.timeframe,
-	        filters: oldState.filters,
-	        width: oldState.width,
-	        height: oldState.height,
-	        latitude: oldState.latitude,
-	        longitude: oldState.longitude,
-	        zoom: oldState.zoom,
-	        showBackground: oldState.showBackground,
-	        obeyChoropleth: oldState.obeyChoropleth
-	      });
-	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
-	    }
-	  }, {
-	    key: 'onChangeLatitude',
-	    value: function onChangeLatitude(e) {
-	      this.setState({ latitude: e.target.value });
-	    }
-	  }, {
-	    key: 'onChangeLongitude',
-	    value: function onChangeLongitude(e) {
-	      this.setState({ longitude: e.target.value });
-	    }
-	  }, {
-	    key: 'onChangeZoom',
-	    value: function onChangeZoom(e) {
-	      this.setState({ zoom: e.target.value });
-	    }
-	  }, {
-	    key: 'deleteWidget',
-	    value: function deleteWidget() {
-	      this.props.delete_widget(this.props.widgetindex);
-	    }
-	  }, {
-	    key: 'selectSizeUpdate',
-	    value: function selectSizeUpdate(dim, value) {
-	      if (dim === 'width') {
-	        this.setState({ width: value });
-	      }
-	      if (dim === 'height') {
-	        this.setState({ height: value });
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var props = this.props;
-	      var dashLayout = this.props.dashLayout;
-	      var data = props.widgets[props.widgetindex].data;
-	      var sources = (0, _support.getSources)();
-	      var metrics = this.state.source === '(undefined)' ? [] : (0, _support.getMetricsForSource)(this.state.source);
-	      var timeframeOptions = (0, _support.getTimeframeOptions)();
-	      var aggMethods = (0, _support.getAggMethods)();
-	      metrics.unshift('(undefined)');
-	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Geospatial Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
-	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Geospatial Aggregation Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
-	        return React.createElement('option', { key: i, value: metric }, metric);
-	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
-	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Choropleth Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
-	        return React.createElement('option', { key: i, value: metric }, metric);
-	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement('label', null, React.createElement('input', { type: 'checkbox', checked: this.state.showBackground, onChange: this.selectShowBackgroundUpdate }), ' Show Background'), React.createElement('br', null), React.createElement('label', null, React.createElement('input', { type: 'checkbox', checked: this.state.obeyChoropleth, onChange: this.selectObeyChoroplethUpdate }), ' Obey Choropleth')), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
-	        return React.createElement('option', { key: i, value: option }, option);
-	      }))), React.createElement('div', { className: 'simpleborder' }, 'Initial Latitude:', React.createElement('input', { type: 'text', value: this.state.latitude, onChange: this.onChangeLatitude.bind(this) }), React.createElement('br', null), 'Initial Longitude:', React.createElement('input', { type: 'text', value: this.state.longitude, onChange: this.onChangeLongitude.bind(this) }), React.createElement('br', null), 'Initial Zoom:', React.createElement('input', { type: 'text', value: this.state.zoom, onChange: this.onChangeZoom.bind(this) })), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
-	    }
-	  }]);
-	
-	  return WidgetConfigGeospatial;
-	}(React.Component);
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// I think:
-	// This maps the state, or part of it, to our props.
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return {
-	    widgets: state.widgets,
-	    dashLayout: state.dashLayout,
-	    currentTab: state.currentTab
-	  };
-	};
-	
-	// I think:
-	// This maps the dispatch tools, or some of them, to our props.
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-	  return {
-	    update_widget: function update_widget(widgetindex, changes) {
-	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
-	    },
-	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
-	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
-	    },
-	    update_layout: function update_layout(newLayout) {
-	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
-	    },
-	    delete_widget: function delete_widget(widgetindex) {
-	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
-	    }
-	  };
-	};
-	
-	////////////////////////////////////////////////////////////////////////////////
-	
-	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigGeospatial);
-
-/***/ },
+/* 207 */,
 /* 208 */
 /*!************************************!*\
   !*** ./WidgetConfigSingleValue.js ***!
@@ -39161,373 +38865,7 @@
 	exports.default = SelectMetrics;
 
 /***/ },
-/* 211 */
-/*!*****************************!*\
-  !*** ./WidgetGeospatial.js ***!
-  \*****************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
-	}();
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 212);
-	
-	var _support = __webpack_require__(/*! ./support.js */ 55);
-	
-	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
-	
-	var _redux = __webpack_require__(/*! redux */ 38);
-	
-	var _WidgetGeospatialInfo = __webpack_require__(/*! ./WidgetGeospatialInfo.js */ 420);
-	
-	var _WidgetGeospatialInfo2 = _interopRequireDefault(_WidgetGeospatialInfo);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { default: obj };
-	}
-	
-	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-	
-	function _possibleConstructorReturn(self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-	}
-	
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-	}
-	
-	var React = __webpack_require__(/*! react */ 4);
-	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
-	var moment = __webpack_require__(/*! moment */ 421);
-	
-	var WidgetGeospatial = function (_React$Component) {
-	  _inherits(WidgetGeospatial, _React$Component);
-	
-	  function WidgetGeospatial(props) {
-	    _classCallCheck(this, WidgetGeospatial);
-	
-	    var _this = _possibleConstructorReturn(this, (WidgetGeospatial.__proto__ || Object.getPrototypeOf(WidgetGeospatial)).call(this));
-	
-	    _this.state = {
-	      data: undefined,
-	      longitude: props.widgets[props.widgetindex].data.longitude,
-	      latitude: props.widgets[props.widgetindex].data.latitude,
-	      zoom: props.widgets[props.widgetindex].data.zoom,
-	      key: 0,
-	      currentLabel: 'Hover for Data'
-	    };
-	    _this.reloadData = _this.reloadData.bind(_this);
-	    _this.choroplethStyle = _this.choroplethStyle.bind(_this);
-	    _this.onEachFeature = _this.onEachFeature.bind(_this);
-	    _this.featureClicked = _this.featureClicked.bind(_this);
-	    _this.featureEnter = _this.featureEnter.bind(_this);
-	    _this.featureExit = _this.featureExit.bind(_this);
-	    return _this;
-	  }
-	
-	  _createClass(WidgetGeospatial, [{
-	    key: 'onEachFeature',
-	    value: function onEachFeature(feature, layer) {
-	      var thisthis = this;
-	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
-	      var datum = widgetdata.metrics[1] + ': ' + feature.properties[widgetdata.metrics[1]] + '<br>' + widgetdata.aggMethod + '(' + widgetdata.metrics[0] + '): ' + feature.properties[widgetdata.metrics[0]];
-	      //layer.bindPopup(datum);
-	      layer.on('mouseover', function (e) {
-	        //thisthis.setState({currentLabel: datum});
-	      });
-	      layer.on('mouseout', function (e) {
-	        //thisthis.setState({currentLabel: 'Hover for Data'});
-	      });
-	      // New Stuff.
-	      // Figure out which precinct we're on and set the widget with index 0 to have that filter.
-	      layer.on({
-	        click: thisthis.featureClicked,
-	        mouseover: thisthis.featureEnter,
-	        mouseout: thisthis.featureExit
-	      });
-	    }
-	  }, {
-	    key: 'featureEnter',
-	    value: function featureEnter(e) {
-	      e.target.setStyle({ weight: 3 });
-	    }
-	  }, {
-	    key: 'featureExit',
-	    value: function featureExit(e) {
-	      e.target.setStyle({ weight: 1 });
-	    }
-	  }, {
-	    key: 'featureClicked',
-	    value: function featureClicked(e) {
-	      // 0 controls 1,8.9
-	      if (this.props.widgetindex === 0) {
-	        var p = e.target.feature.properties.precinct;
-	        this.props.update_widget(1, {
-	          mytitle: 'Precinct: ' + p,
-	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	        });
-	        this.props.update_widget(8, {
-	          mytitle: 'Precinct: ' + p,
-	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	        });
-	        this.props.update_widget(9, {
-	          mytitle: 'Precinct: ' + p,
-	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
-	        });
-	      }
-	      // 2 controls 3,4
-	      if (this.props.widgetindex === 2) {
-	        var s = e.target.feature.properties.sector;
-	        var p = e.target.feature.properties.preds;
-	        this.props.update_widget(3, {
-	          mytitle: 'Preds for all Sectors',
-	          specialColumnValue: p
-	        });
-	        this.props.update_widget(4, {
-	          mytitle: 'Sector: ' + s,
-	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }]
-	        });
-	      }
-	      // 6 controls 5,7
-	      if (this.props.widgetindex === 6) {
-	        var s = e.target.feature.properties.sector;
-	        this.props.update_widget(5, {
-	          mytitle: 'Sector: ' + s,
-	          filters: [{ "metric": "sector", "comp": "==", "value": s }]
-	        });
-	        this.props.update_widget(7, {
-	          mytitle: 'Sector: ' + s,
-	          filters: [{ "metric": "sector", "comp": "==", "value": s }]
-	        });
-	      }
-	      // 11 controls 10
-	      if (this.props.widgetindex === 11) {
-	        var s = e.target.feature.properties.sector;
-	        this.props.update_widget(10, {
-	          mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
-	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }]
-	        });
-	      }
-	    }
-	  }, {
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate(prevProps, prevState) {
-	      var newData = this.props.widgets[this.props.widgetindex].data;
-	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
-	      var newTabData = this.props.dashLayout[this.props.currentTab];
-	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
-	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggMethod !== oldData.aggMethod || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
-	        this.reloadData();
-	      }
-	      if (newData.showBackground !== oldData.showBackground || newData.obeyChoropleth !== oldData.obeyChoropleth) {
-	        //this.reloadData();
-	        this.render();
-	      }
-	    }
-	  }, {
-	    key: 'reloadData',
-	    value: function reloadData() {
-	      var thisthis = this;
-	      var props = this.props;
-	      var data = props.widgets[props.widgetindex].data;
-	      if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.label === '(undefined)' || data.timeframe === '(undefined)') {
-	        var dummy = {
-	          type: 'FeatureCollection',
-	          crs: {
-	            type: 'name',
-	            properties: {
-	              name: 'dummy'
-	            }
-	          },
-	          features: []
-	        };
-	
-	        thisthis.setState({ data: dummy, key: 1 - thisthis.state.key });
-	        //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Geospatial Widget Not Configured</div>');
-	      } else {
-	        var fs = data.filters.map(function (f) {
-	          return f.metric + ':' + f.comp + ':' + f.value;
-	        }).join();
-	        // If we're using the tab timeframe, add that as a filter.
-	        if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
-	          var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
-	          var tabEndDateUnix = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
-	          if (fs.length > 0) {
-	            fs = fs + ',';
-	          }
-	          fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
-	        }
-	        // If we're using the widget timeframe, add that as a filter.
-	        if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
-	          var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
-	          var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
-	          if (fs.length > 0) {
-	            fs = fs + ',';
-	          }
-	          fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
-	        }
-	        //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
-	        this.setState({ data: undefined });
-	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
-	          source: data.source,
-	          method: data.aggMethod,
-	          aggmetric: data.metrics[1],
-	          metrics: data.metrics[0],
-	          filters: fs,
-	          addgeo: data.metrics[1]
-	        }), function (rawData) {
-	          // Construct the chart data and fill in the chart.
-	          var chartData = {
-	            metrics: data.metrics,
-	            data: []
-	          };
-	          _.each(rawData.data, function (datum) {
-	            var v = {};
-	            v[data.metrics[0]] = datum[data.metrics[0]];
-	            v[data.metrics[1]] = datum[data.metrics[1]];
-	            chartData.data.push(v);
-	          });
-	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(chartData, data.mytitle === undefined ? '' : data.mytitle));
-	          // Construct the geospatial data.
-	          var max = rawData.data[0][data.metrics[0]];
-	          var min = max;
-	          var g = [];
-	          var id = 0;
-	          _.each(rawData.data, function (datum) {
-	            //console.log(datum[data.metrics[1]]);
-	            if (rawData.geo[datum[data.metrics[1]]] !== undefined) {
-	              datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
-	              //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
-	              var v = datum[data.metrics[0]];
-	              if (v < min) {
-	                min = v;
-	              }
-	              if (v > max) {
-	                max = v;
-	              }
-	              datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
-	              datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
-	              if (datum.geojsonfeature.id === undefined) {
-	                datum.geojsonfeature.id = id;
-	                id++;
-	              }
-	              g.push(datum.geojsonfeature);
-	            }
-	          });
-	          // The data property is not dynamic, meaning that changing it
-	          // does not trigger an update of the component.  So we save
-	          // a key which alternates back and forth and makes sure to
-	          // trigger an update.
-	          var dummy = {
-	            type: 'FeatureCollection',
-	            crs: {
-	              type: 'name',
-	              properties: {
-	                name: 'dummy'
-	              }
-	            },
-	            features: g
-	          };
-	          thisthis.setState({ min: min, max: max, data: dummy, key: 1 - thisthis.state.key });
-	        });
-	      }
-	    }
-	  }, {
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.reloadData();
-	    }
-	  }, {
-	    key: 'choroplethStyle',
-	    value: function choroplethStyle(features) {
-	      if (this.props.widgets[this.props.widgetindex].data.obeyChoropleth) {
-	        var v = (features.properties[this.props.widgets[this.props.widgetindex].data.metrics[0]] - this.state.min) / (this.state.max - this.state.min);
-	        return {
-	          fillColor: (0, _support.getColor)(v),
-	          weight: 1,
-	          opacity: 1,
-	          color: '#555555',
-	          fillOpacity: 0.7
-	        };
-	      } else {
-	        return {
-	          fillColor: '#ffffff',
-	          weight: 1,
-	          opacity: 1,
-	          color: '#555555',
-	          fillOpacity: 0.7
-	        };
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
-	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
-	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }, this.state.data !== undefined ? React.createElement('div', null, React.createElement('div', { className: 'widget-geospatial-title' }, widgetdata.obeyChoropleth ? widgetdata.aggMethod + '(' + widgetdata.metrics[0] + ') by ' + widgetdata.metrics[1] : widgetdata.metrics[1]), React.createElement(_reactLeaflet.Map, { key: this.state.key, center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, widgetdata.showBackground ? React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }) : '', React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, onEachFeature: this.onEachFeature, style: this.choroplethStyle, data: this.state.data }))) : React.createElement('div', { className: innerchartcss }, React.createElement('div', { className: 'loading-spinner' }), React.createElement('br', null), React.createElement('br', null), 'Retrieving Data')), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }, this.state.data === undefined ? React.createElement('div', { className: innerchartcss }, React.createElement('div', { className: 'loading-spinner' }), React.createElement('br', null), React.createElement('br', null), 'Retrieving Data') : React.createElement('div', null)));
-	    }
-	  }]);
-	
-	  return WidgetGeospatial;
-	}(React.Component);
-	
-	////////////////////////////////////////////////////////////////////////////////
-	// I think:
-	// This maps the state, or part of it, to our props.
-	
-	var mapStateToProps = function mapStateToProps(state) {
-	  return {
-	    widgets: state.widgets,
-	    dashLayout: state.dashLayout,
-	    currentTab: state.currentTab,
-	    fullstate: state
-	  };
-	};
-	
-	// I think:
-	// This maps the dispatch tools, or some of them, to our props.
-	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-	  return {
-	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
-	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
-	    },
-	    update_widget: function update_widget(widgetindex, changes) {
-	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
-	    }
-	  };
-	};
-	
-	////////////////////////////////////////////////////////////////////////////////
-	
-	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetGeospatial);
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
-
-/***/ },
+/* 211 */,
 /* 212 */
 /*!***************************************!*\
   !*** ../~/react-leaflet/lib/index.js ***!
@@ -61560,112 +60898,7 @@
 	exports.default = ZoomControl;
 
 /***/ },
-/* 420 */
-/*!*********************************!*\
-  !*** ./WidgetGeospatialInfo.js ***!
-  \*********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
-	}();
-	
-	var _react = __webpack_require__(/*! react */ 4);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(/*! react-dom */ 64);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _leaflet = __webpack_require__(/*! leaflet */ 213);
-	
-	var _leaflet2 = _interopRequireDefault(_leaflet);
-	
-	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 212);
-	
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { default: obj };
-	}
-	
-	function _classCallCheck(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-	
-	function _possibleConstructorReturn(self, call) {
-	  if (!self) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-	}
-	
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
-	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-	}
-	
-	var CenterControl = function (_MapControl) {
-	  _inherits(CenterControl, _MapControl);
-	
-	  function CenterControl(props) {
-	    _classCallCheck(this, CenterControl);
-	
-	    console.log('connnnstructor!');
-	
-	    var _this = _possibleConstructorReturn(this, (CenterControl.__proto__ || Object.getPrototypeOf(CenterControl)).call(this));
-	
-	    _this.state = {
-	      myLabel: props.myLabel,
-	      centerControl: _leaflet2.default.control({ position: 'bottomleft' })
-	    };
-	    return _this;
-	  }
-	
-	  _createClass(CenterControl, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      var jsx = _react2.default.createElement('div', { className: 'myinfobox' }, this.state.myLabel);
-	      this.state.centerControl.onAdd = function (map) {
-	        var div = _leaflet2.default.DomUtil.create('div', '');
-	        _reactDom2.default.render(jsx, div);
-	        return div;
-	      };
-	      this.state.centerControl.onRemove = function (map) {
-	        console.log('bonk');
-	      };
-	      this.leafletElement = this.state.centerControl;
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var jsx = "<div class='myinfobox'>" + nextProps.myLabel + "</div>";
-	      this.state.centerControl.getContainer().innerHTML = jsx;
-	      this.setState({ myLabel: nextProps.myLabel });
-	    }
-	  }]);
-	
-	  return CenterControl;
-	}(_reactLeaflet.MapControl);
-	
-	exports.default = CenterControl;
-
-/***/ },
+/* 420 */,
 /* 421 */
 /*!*****************************!*\
   !*** ../~/moment/moment.js ***!
@@ -76641,7 +75874,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -77301,7 +76534,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -77585,7 +76818,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -77872,7 +77105,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -78096,7 +77329,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -78351,7 +77584,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -78661,7 +77894,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -78866,7 +78099,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }));
 	    }
 	  }]);
 	
@@ -78929,6 +78162,14 @@
 	
 	var _support = __webpack_require__(/*! ./support.js */ 55);
 	
+	var _SortableTable = __webpack_require__(/*! ./SortableTable.js */ 537);
+	
+	var _SortableTable2 = _interopRequireDefault(_SortableTable);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
 	function _classCallCheck(instance, Constructor) {
 	  if (!(instance instanceof Constructor)) {
 	    throw new TypeError("Cannot call a class as a function");
@@ -78962,7 +78203,6 @@
 	
 	    _this.state = { rawData: undefined };
 	    _this.reloadData = _this.reloadData.bind(_this);
-	    _this.plot = _this.plot.bind(_this);
 	    return _this;
 	  }
 	
@@ -78977,8 +78217,15 @@
 	        this.reloadData();
 	      }
 	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
-	        this.plot(this.state.rawData);
+	        var rawData = this.state.rawData;
+	        var filteredRawData = (0, _support.postFilter)({ metrics: newData.metrics, data: rawData.data }, newData.postfilters);
+	        this.setState({ filteredRawData: filteredRawData });
 	      }
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.reloadData();
 	    }
 	  }, {
 	    key: 'reloadData',
@@ -79011,38 +78258,18 @@
 	      if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.timeframe === '(undefined)') {
 	        $(ReactDOM.findDOMNode(chart)).html('Table Widget Not Configured!');
 	      } else {
-	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Retrieving Data</div>');
-	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle">Retrieving Data</div>');
+	        $(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
+	        $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html('<div class="nice-middle"><div class="loading-spinner"></div><br><br>Retrieving Data</div>');
 	        $.post((0, _support.REST_multiplevalue)(), (0, _support.completeParams)({
 	          source: data.source,
 	          metrics: data.metrics.join(','),
 	          filters: fs
 	        }), function (rawData) {
-	          thisthis.setState({ rawData: rawData });
-	          thisthis.plot(rawData);
+	          var filteredRawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
+	          thisthis.setState({ rawData: rawData, filteredRawData: filteredRawData });
+	          //thisthis.plot(rawData);
 	        });
 	      }
-	    }
-	  }, {
-	    key: 'plot',
-	    value: function plot(rawData) {
-	      var thisthis = this;
-	      var chart = this.refs.chart;
-	      var props = this.props;
-	      var data = props.widgets[props.widgetindex].data;
-	      // First we post-filter the rawData.
-	      rawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
-	      // Then proceed.
-	      if (rawData.data.length === 0) {
-	        $(ReactDOM.findDOMNode(chart)).html('Table Widget Has No Data!');
-	        return false;
-	      }
-	      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(rawData, data.mytitle));
-	    }
-	  }, {
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.reloadData();
 	    }
 	  }, {
 	    key: 'render',
@@ -79050,7 +78277,7 @@
 	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
 	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
 	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
-	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { display: widgetdata.fob === 'front' ? 'inline-block' : 'none' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { display: widgetdata.fob === 'back' ? 'inline-block' : 'none' }, ref: 'chartdata' }));
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }, this.state.filteredRawData !== undefined ? React.createElement(_SortableTable2.default, { title: widgetdata.mytitle, metrics: widgetdata.metrics, data: this.state.filteredRawData.data }) : ''));
 	    }
 	  }]);
 	
@@ -79083,7 +78310,110 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56)))
 
 /***/ },
-/* 537 */,
+/* 537 */
+/*!**************************!*\
+  !*** ./SortableTable.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	var SortableTable = function (_React$Component) {
+	  _inherits(SortableTable, _React$Component);
+	
+	  function SortableTable(props) {
+	    _classCallCheck(this, SortableTable);
+	
+	    var _this = _possibleConstructorReturn(this, (SortableTable.__proto__ || Object.getPrototypeOf(SortableTable)).call(this));
+	
+	    _this.sort = _this.sort.bind(_this);
+	    _this.state = {
+	      sortMetric: props.metrics[0],
+	      sortDirection: 'up'
+	    };
+	    return _this;
+	  }
+	
+	  _createClass(SortableTable, [{
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate(nextProps, nextState) {
+	      if (this.state.sortMetric !== nextState.sortMetric || this.state.sortDirection !== nextState.sortMetric) {
+	        return true;
+	      } else {
+	        return false;
+	      }
+	    }
+	  }, {
+	    key: 'sort',
+	    value: function sort(k, d) {
+	      this.setState({ sortDirection: d, sortMetric: k });
+	      console.log(k);
+	      console.log(d);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var thisthis = this;
+	      var sortedData = thisthis.state.sortDirection === 'up' ? thisthis.props.data.sort(function (a, b) {
+	        return a[thisthis.state.sortMetric] < b[thisthis.state.sortMetric] ? -1 : 1;
+	      }) : thisthis.props.data.sort(function (a, b) {
+	        return a[thisthis.state.sortMetric] > b[thisthis.state.sortMetric] ? -1 : 1;
+	      });
+	      return React.createElement('div', null, React.createElement('div', { className: 'div-table' }, React.createElement('div', { className: 'div-table-row' }, React.createElement('div', { className: 'div-table-header' }, thisthis.props.title))), React.createElement('div', { className: 'div-table' }, React.createElement('div', { className: 'div-table-row' }, thisthis.props.metrics.map(function (key, i) {
+	        return React.createElement('div', { className: 'div-table-header' }, React.createElement('div', { style: { display: 'inline-block', float: 'left', cursor: 'pointer' }, onClick: thisthis.sort.bind(this, key, 'up') }, thisthis.state.sortMetric === key && thisthis.state.sortDirection === 'up' ? React.createElement('span', null, "\u21D1") : React.createElement('span', null, "\u2191")), React.createElement('div', { style: { display: 'inline-block', float: 'left', cursor: 'pointer' }, onClick: thisthis.sort.bind(this, key, 'dn') }, thisthis.state.sortMetric === key && thisthis.state.sortDirection === 'dn' ? React.createElement('span', null, "\u21D3") : React.createElement('span', null, "\u2193")), key);
+	      })), sortedData.map(function (datum, i) {
+	        return React.createElement('div', { className: 'div-table-row' }, thisthis.props.metrics.map(function (key, j) {
+	          return React.createElement('div', { className: 'div-table-cell' }, datum[key]);
+	        }));
+	      })));
+	    }
+	  }]);
+	
+	  return SortableTable;
+	}(React.Component);
+	
+	exports.default = SortableTable;
+
+/***/ },
 /* 538 */
 /*!**********************!*\
   !*** ./SelectBar.js ***!
@@ -81348,7 +80678,7 @@
 	      fob: 'front',
 	      title: 'Single Value',
 	      description: 'Displays a sinle numerical metric value.'
-	    }, { type: 'geospatial',
+	    }, { type: 'choropleth',
 	      width: 'full',
 	      height: 'full',
 	      source: '(undefined)',
@@ -81361,13 +80691,32 @@
 	      configDisplay: 'none',
 	      fob: 'front',
 	      map: '',
-	      title: 'Geospatial',
-	      description: 'Provides a basic geospatial view.',
+	      title: 'Choropleth',
+	      description: 'Provides a basic choropleth view.',
 	      latitude: 40.7831,
 	      longitude: -73.9712,
 	      zoom: 10,
 	      showBackground: true,
 	      obeyChoropleth: true
+	    }, { type: 'pointmapper',
+	      width: 'full',
+	      height: 'full',
+	      source: '(undefined)',
+	      metrics: ['(undefined)'],
+	      myStartDateISO: moment().toISOString(),
+	      myEndDateISO: moment().toISOString(),
+	      filters: [],
+	      postfilters: [],
+	      timeframe: '(undefined)',
+	      configDisplay: 'none',
+	      fob: 'front',
+	      map: '',
+	      title: 'Point Mapper',
+	      description: 'Plots a collection of points on a map',
+	      latitude: 40.7831,
+	      longitude: -73.9712,
+	      zoom: 10,
+	      showBackground: true
 	    }, { type: 'scatter',
 	      width: 'half',
 	      height: 'half',
@@ -81851,6 +81200,1349 @@
 	////////////////////////////////////////////////////////////////////////////////
 	
 	exports.default = ConfigureLogin;
+
+/***/ },
+/* 553 */
+/*!***********************************!*\
+  !*** ./WidgetConfigChoropleth.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	// How does the dash get access to the store?
+	
+	var WidgetConfigChoropleth = function (_React$Component) {
+	  _inherits(WidgetConfigChoropleth, _React$Component);
+	
+	  function WidgetConfigChoropleth(props) {
+	    _classCallCheck(this, WidgetConfigChoropleth);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigChoropleth.__proto__ || Object.getPrototypeOf(WidgetConfigChoropleth)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      aggMethod: data.aggMethod,
+	      filters: data.filters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      latitude: data.latitude,
+	      longitude: data.longitude,
+	      zoom: data.zoom,
+	      moveValue: -0.5,
+	      showBackground: data.showBackground,
+	      obeyChoropleth: data.obeyChoropleth
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
+	    _this.selectShowBackgroundUpdate = _this.selectShowBackgroundUpdate.bind(_this);
+	    _this.selectObeyChoroplethUpdate = _this.selectObeyChoroplethUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    _this.onChangeLatitude = _this.onChangeLatitude.bind(_this);
+	    _this.onChangeLongitude = _this.onChangeLongitude.bind(_this);
+	    _this.onChangeZoom = _this.onChangeZoom.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigChoropleth, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: ['(undefined)'],
+	        aggMethod: ['(undefined)'],
+	        filters: [],
+	        showBackground: true,
+	        obeyChoropleth: true
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(i, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
+	      metrics[i] = e.target.value;
+	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'selectShowBackgroundUpdate',
+	    value: function selectShowBackgroundUpdate(e) {
+	      this.setState({ showBackground: e.target.checked });
+	    }
+	  }, {
+	    key: 'selectObeyChoroplethUpdate',
+	    value: function selectObeyChoroplethUpdate(e) {
+	      this.setState({ obeyChoropleth: e.target.checked });
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        width: this.state.width,
+	        height: this.state.height,
+	        latitude: Number(this.state.latitude),
+	        longitude: Number(this.state.longitude),
+	        zoom: Number(this.state.zoom),
+	        showBackground: this.state.showBackground,
+	        obeyChoropleth: this.state.obeyChoropleth
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
+	        timeframe: oldState.timeframe,
+	        filters: oldState.filters,
+	        width: oldState.width,
+	        height: oldState.height,
+	        latitude: oldState.latitude,
+	        longitude: oldState.longitude,
+	        zoom: oldState.zoom,
+	        showBackground: oldState.showBackground,
+	        obeyChoropleth: oldState.obeyChoropleth
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'onChangeLatitude',
+	    value: function onChangeLatitude(e) {
+	      this.setState({ latitude: e.target.value });
+	    }
+	  }, {
+	    key: 'onChangeLongitude',
+	    value: function onChangeLongitude(e) {
+	      this.setState({ longitude: e.target.value });
+	    }
+	  }, {
+	    key: 'onChangeZoom',
+	    value: function onChangeZoom(e) {
+	      this.setState({ zoom: e.target.value });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = this.state.source === '(undefined)' ? [] : (0, _support.getMetricsForSource)(this.state.source);
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      var aggMethods = (0, _support.getAggMethods)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Choropleth Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Choropleth Region Aggregation Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Aggregate Method', React.createElement('select', { onChange: this.selectAggMethodUpdate, value: this.state.aggMethod }, aggMethods.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Choropleth Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement('label', null, React.createElement('input', { type: 'checkbox', checked: this.state.showBackground, onChange: this.selectShowBackgroundUpdate }), ' Show Background'), React.createElement('br', null), React.createElement('label', null, React.createElement('input', { type: 'checkbox', checked: this.state.obeyChoropleth, onChange: this.selectObeyChoroplethUpdate }), ' Obey Choropleth')), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Initial Latitude:', React.createElement('input', { type: 'text', value: this.state.latitude, onChange: this.onChangeLatitude.bind(this) }), React.createElement('br', null), 'Initial Longitude:', React.createElement('input', { type: 'text', value: this.state.longitude, onChange: this.onChangeLongitude.bind(this) }), React.createElement('br', null), 'Initial Zoom:', React.createElement('input', { type: 'text', value: this.state.zoom, onChange: this.onChangeZoom.bind(this) })), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigChoropleth;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigChoropleth);
+
+/***/ },
+/* 554 */
+/*!*****************************!*\
+  !*** ./WidgetChoropleth.js ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($, _) {'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 212);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _WidgetChoroplethInfo = __webpack_require__(/*! ./WidgetChoroplethInfo.js */ 555);
+	
+	var _WidgetChoroplethInfo2 = _interopRequireDefault(_WidgetChoroplethInfo);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	var moment = __webpack_require__(/*! moment */ 421);
+	
+	var WidgetChoropleth = function (_React$Component) {
+	  _inherits(WidgetChoropleth, _React$Component);
+	
+	  function WidgetChoropleth(props) {
+	    _classCallCheck(this, WidgetChoropleth);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetChoropleth.__proto__ || Object.getPrototypeOf(WidgetChoropleth)).call(this));
+	
+	    _this.state = {
+	      data: undefined,
+	      longitude: props.widgets[props.widgetindex].data.longitude,
+	      latitude: props.widgets[props.widgetindex].data.latitude,
+	      zoom: props.widgets[props.widgetindex].data.zoom,
+	      key: 0,
+	      currentLabel: 'Hover for Data'
+	    };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.choroplethStyle = _this.choroplethStyle.bind(_this);
+	    _this.onEachFeature = _this.onEachFeature.bind(_this);
+	    _this.featureClicked = _this.featureClicked.bind(_this);
+	    _this.featureEnter = _this.featureEnter.bind(_this);
+	    _this.featureExit = _this.featureExit.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetChoropleth, [{
+	    key: 'onEachFeature',
+	    value: function onEachFeature(feature, layer) {
+	      var thisthis = this;
+	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
+	      var datum = widgetdata.metrics[1] + ': ' + feature.properties[widgetdata.metrics[1]] + '<br>' + widgetdata.aggMethod + '(' + widgetdata.metrics[0] + '): ' + feature.properties[widgetdata.metrics[0]];
+	      //layer.bindPopup(datum);
+	      layer.on('mouseover', function (e) {
+	        //thisthis.setState({currentLabel: datum});
+	      });
+	      layer.on('mouseout', function (e) {
+	        //thisthis.setState({currentLabel: 'Hover for Data'});
+	      });
+	      // New Stuff.
+	      // Figure out which precinct we're on and set the widget with index 0 to have that filter.
+	      layer.on({
+	        click: thisthis.featureClicked,
+	        mouseover: thisthis.featureEnter,
+	        mouseout: thisthis.featureExit
+	      });
+	    }
+	  }, {
+	    key: 'featureEnter',
+	    value: function featureEnter(e) {
+	      e.target.setStyle({ weight: 3 });
+	    }
+	  }, {
+	    key: 'featureExit',
+	    value: function featureExit(e) {
+	      e.target.setStyle({ weight: 1 });
+	    }
+	  }, {
+	    key: 'featureClicked',
+	    value: function featureClicked(e) {
+	      // 0 controls 1,8.9
+	      if (this.props.widgetindex === 0) {
+	        var p = e.target.feature.properties.precinct;
+	        this.props.update_widget(1, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	        this.props.update_widget(8, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	        this.props.update_widget(9, {
+	          mytitle: 'Precinct: ' + p,
+	          filters: [{ "metric": "precinct", "comp": "==", "value": p }]
+	        });
+	      }
+	      // 2 controls 3,4
+	      if (this.props.widgetindex === 2) {
+	        var s = e.target.feature.properties.sector;
+	        var p = e.target.feature.properties.preds;
+	        this.props.update_widget(3, {
+	          mytitle: 'Preds for all Sectors',
+	          specialColumnValue: p
+	        });
+	        this.props.update_widget(4, {
+	          mytitle: 'Sector: ' + s,
+	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }]
+	        });
+	      }
+	      // 6 controls 5,7
+	      if (this.props.widgetindex === 6) {
+	        var s = e.target.feature.properties.sector;
+	        this.props.update_widget(5, {
+	          mytitle: 'Sector: ' + s,
+	          filters: [{ "metric": "sector", "comp": "==", "value": s }]
+	        });
+	        this.props.update_widget(7, {
+	          mytitle: 'Sector: ' + s,
+	          filters: [{ "metric": "sector", "comp": "==", "value": s }]
+	        });
+	      }
+	      // 11 controls 10 and 12.
+	      if (this.props.widgetindex === 11) {
+	        var s = e.target.feature.properties.sector;
+	        var b = e.target.getBounds();
+	        this.props.update_widget(10, {
+	          mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
+	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }]
+	        });
+	        this.props.update_widget_plus_save(12, {
+	          mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
+	          postfilters: [{ "metric": "sector", "comp": "==", "value": s }],
+	          bounds: [[b.getSouth(), b.getWest()], [b.getNorth(), b.getEast()]]
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(prevProps, prevState) {
+	      var newData = this.props.widgets[this.props.widgetindex].data;
+	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
+	      var newTabData = this.props.dashLayout[this.props.currentTab];
+	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.aggMethod !== oldData.aggMethod || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (newData.showBackground !== oldData.showBackground || newData.obeyChoropleth !== oldData.obeyChoropleth) {
+	        //this.reloadData();
+	        this.render();
+	      }
+	    }
+	  }, {
+	    key: 'reloadData',
+	    value: function reloadData() {
+	      var thisthis = this;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.label === '(undefined)' || data.timeframe === '(undefined)') {
+	        var dummy = {
+	          type: 'FeatureCollection',
+	          crs: {
+	            type: 'name',
+	            properties: {
+	              name: 'dummy'
+	            }
+	          },
+	          features: []
+	        };
+	
+	        thisthis.setState({ data: dummy, key: 1 - thisthis.state.key });
+	        //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Choropleth Widget Not Configured</div>');
+	      } else {
+	        var fs = data.filters.map(function (f) {
+	          return f.metric + ':' + f.comp + ':' + f.value;
+	        }).join();
+	        // If we're using the tab timeframe, add that as a filter.
+	        if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
+	          var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
+	          var tabEndDateUnix = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
+	          if (fs.length > 0) {
+	            fs = fs + ',';
+	          }
+	          fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
+	        }
+	        // If we're using the widget timeframe, add that as a filter.
+	        if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
+	          var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
+	          var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
+	          if (fs.length > 0) {
+	            fs = fs + ',';
+	          }
+	          fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
+	        }
+	        //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Choropleth Widget Loading</div>');
+	        this.setState({ data: undefined });
+	        $.post((0, _support.REST_aggregate)(), (0, _support.completeParams)({
+	          source: data.source,
+	          method: data.aggMethod,
+	          aggmetric: data.metrics[1],
+	          metrics: data.metrics[0],
+	          filters: fs,
+	          addgeo: data.metrics[1]
+	        }), function (rawData) {
+	          // Construct the chart data and fill in the chart.
+	          var chartData = {
+	            metrics: data.metrics,
+	            data: []
+	          };
+	          _.each(rawData.data, function (datum) {
+	            var v = {};
+	            v[data.metrics[0]] = datum[data.metrics[0]];
+	            v[data.metrics[1]] = datum[data.metrics[1]];
+	            chartData.data.push(v);
+	          });
+	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)(chartData, data.mytitle === undefined ? '' : data.mytitle));
+	          // Construct the choropleth data.
+	          var max = rawData.data[0][data.metrics[0]];
+	          var min = max;
+	          var g = [];
+	          var id = 0;
+	          _.each(rawData.data, function (datum) {
+	            //console.log(datum[data.metrics[1]]);
+	            if (rawData.geo[datum[data.metrics[1]]] !== undefined) {
+	              datum.geojsonfeature = rawData.geo[datum[data.metrics[1]]];
+	              //datum.geojsonfeature = JSON.parse(datum.geojsonfeature);
+	              var v = datum[data.metrics[0]];
+	              if (v < min) {
+	                min = v;
+	              }
+	              if (v > max) {
+	                max = v;
+	              }
+	              datum.geojsonfeature.properties[data.metrics[0]] = datum[data.metrics[0]];
+	              datum.geojsonfeature.properties[data.metrics[1]] = datum[data.metrics[1]];
+	              if (datum.geojsonfeature.id === undefined) {
+	                datum.geojsonfeature.id = id;
+	                id++;
+	              }
+	              g.push(datum.geojsonfeature);
+	            }
+	          });
+	          // The data property is not dynamic, meaning that changing it
+	          // does not trigger an update of the component.  So we save
+	          // a key which alternates back and forth and makes sure to
+	          // trigger an update.
+	          var dummy = {
+	            type: 'FeatureCollection',
+	            crs: {
+	              type: 'name',
+	              properties: {
+	                name: 'dummy'
+	              }
+	            },
+	            features: g
+	          };
+	          thisthis.setState({ min: min, max: max, data: dummy, key: 1 - thisthis.state.key });
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.reloadData();
+	    }
+	  }, {
+	    key: 'choroplethStyle',
+	    value: function choroplethStyle(features) {
+	      if (this.props.widgets[this.props.widgetindex].data.obeyChoropleth) {
+	        var v = (features.properties[this.props.widgets[this.props.widgetindex].data.metrics[0]] - this.state.min) / (this.state.max - this.state.min);
+	        return {
+	          fillColor: (0, _support.getColor)(v),
+	          weight: 1,
+	          opacity: 1,
+	          color: '#555555',
+	          fillOpacity: 0.7
+	        };
+	      } else {
+	        return {
+	          fillColor: '#ffffff',
+	          weight: 1,
+	          opacity: 1,
+	          color: '#555555',
+	          fillOpacity: 0.7
+	        };
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
+	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }, this.state.data !== undefined ? React.createElement('div', null, React.createElement(_reactLeaflet.Map, { key: this.state.key, bounds: widgetdata.bounds, center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, widgetdata.showBackground ? React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }) : '', React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, onEachFeature: this.onEachFeature, style: this.choroplethStyle, data: this.state.data }))) : React.createElement('div', { className: 'nice-middle' }, React.createElement('div', { className: 'loading-spinner' }), React.createElement('br', null), React.createElement('br', null), 'Retrieving Data')), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }, this.state.data === undefined ? React.createElement('div', { className: 'nice-middle' }, React.createElement('div', { className: 'loading-spinner' }), React.createElement('br', null), React.createElement('br', null), 'Retrieving Data') : React.createElement('div', null)));
+	    }
+	  }]);
+	
+	  return WidgetChoropleth;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab,
+	    fullstate: state
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetChoropleth);
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! jquery */ 56), __webpack_require__(/*! underscore */ 1)))
+
+/***/ },
+/* 555 */
+/*!*********************************!*\
+  !*** ./WidgetChoroplethInfo.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _react = __webpack_require__(/*! react */ 4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(/*! react-dom */ 64);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _leaflet = __webpack_require__(/*! leaflet */ 213);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 212);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var CenterControl = function (_MapControl) {
+	  _inherits(CenterControl, _MapControl);
+	
+	  function CenterControl(props) {
+	    _classCallCheck(this, CenterControl);
+	
+	    console.log('connnnstructor!');
+	
+	    var _this = _possibleConstructorReturn(this, (CenterControl.__proto__ || Object.getPrototypeOf(CenterControl)).call(this));
+	
+	    _this.state = {
+	      myLabel: props.myLabel,
+	      centerControl: _leaflet2.default.control({ position: 'bottomleft' })
+	    };
+	    return _this;
+	  }
+	
+	  _createClass(CenterControl, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var jsx = _react2.default.createElement('div', { className: 'myinfobox' }, this.state.myLabel);
+	      this.state.centerControl.onAdd = function (map) {
+	        var div = _leaflet2.default.DomUtil.create('div', '');
+	        _reactDom2.default.render(jsx, div);
+	        return div;
+	      };
+	      this.state.centerControl.onRemove = function (map) {
+	        console.log('bonk');
+	      };
+	      this.leafletElement = this.state.centerControl;
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      var jsx = "<div class='myinfobox'>" + nextProps.myLabel + "</div>";
+	      this.state.centerControl.getContainer().innerHTML = jsx;
+	      this.setState({ myLabel: nextProps.myLabel });
+	    }
+	  }]);
+	
+	  return CenterControl;
+	}(_reactLeaflet.MapControl);
+	
+	exports.default = CenterControl;
+
+/***/ },
+/* 556 */
+/*!************************************!*\
+  !*** ./WidgetConfigPointMapper.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _SelectFilter = __webpack_require__(/*! ./SelectFilter.js */ 60);
+	
+	var _SelectFilter2 = _interopRequireDefault(_SelectFilter);
+	
+	var _SelectMove = __webpack_require__(/*! ./SelectMove.js */ 61);
+	
+	var _SelectMove2 = _interopRequireDefault(_SelectMove);
+	
+	var _SelectSize = __webpack_require__(/*! ./SelectSize.js */ 62);
+	
+	var _SelectSize2 = _interopRequireDefault(_SelectSize);
+	
+	var _BorderTopPlusClose = __webpack_require__(/*! ./BorderTopPlusClose.js */ 63);
+	
+	var _BorderTopPlusClose2 = _interopRequireDefault(_BorderTopPlusClose);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	
+	__webpack_require__(/*! ./dash.css */ 197);
+	
+	// How does the dash get access to the store?
+	
+	var WidgetConfigPointMapper = function (_React$Component) {
+	  _inherits(WidgetConfigPointMapper, _React$Component);
+	
+	  function WidgetConfigPointMapper(props) {
+	    _classCallCheck(this, WidgetConfigPointMapper);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetConfigPointMapper.__proto__ || Object.getPrototypeOf(WidgetConfigPointMapper)).call(this));
+	
+	    var data = props.widgets[props.widgetindex].data;
+	    _this.state = {
+	      source: data.source,
+	      metrics: data.metrics,
+	      aggMethod: data.aggMethod,
+	      filters: data.filters,
+	      timeframe: data.timeframe,
+	      width: data.width,
+	      height: data.height,
+	      latitude: data.latitude,
+	      longitude: data.longitude,
+	      zoom: data.zoom,
+	      moveValue: -0.5,
+	      showBackground: data.showBackground
+	    };
+	    _this.selectSourceUpdate = _this.selectSourceUpdate.bind(_this);
+	    _this.selectMetricUpdate = _this.selectMetricUpdate.bind(_this);
+	    _this.updateWidget = _this.updateWidget.bind(_this);
+	    _this.cancelConfig = _this.cancelConfig.bind(_this);
+	    _this.selectFilterUpdate = _this.selectFilterUpdate.bind(_this);
+	    _this.selectMoveValueUpdate = _this.selectMoveValueUpdate.bind(_this);
+	    _this.selectAggMethodUpdate = _this.selectAggMethodUpdate.bind(_this);
+	    _this.selectShowBackgroundUpdate = _this.selectShowBackgroundUpdate.bind(_this);
+	    _this.updateLayout = _this.updateLayout.bind(_this);
+	    _this.deleteWidget = _this.deleteWidget.bind(_this);
+	    _this.selectTimeframeUpdate = _this.selectTimeframeUpdate.bind(_this);
+	    _this.selectSizeUpdate = _this.selectSizeUpdate.bind(_this);
+	    _this.onChangeLatitude = _this.onChangeLatitude.bind(_this);
+	    _this.onChangeLongitude = _this.onChangeLongitude.bind(_this);
+	    _this.onChangeZoom = _this.onChangeZoom.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetConfigPointMapper, [{
+	    key: 'selectSourceUpdate',
+	    value: function selectSourceUpdate(e) {
+	      this.setState({
+	        source: e.target.value,
+	        metrics: ['(undefined)'],
+	        aggMethod: ['(undefined)'],
+	        filters: [],
+	        showBackground: true
+	      });
+	    }
+	  }, {
+	    key: 'selectMetricUpdate',
+	    value: function selectMetricUpdate(i, e) {
+	      var metrics = JSON.parse(JSON.stringify(this.state.metrics));
+	      metrics[i] = e.target.value;
+	      this.setState({ metrics: metrics });
+	    }
+	  }, {
+	    key: 'selectAggMethodUpdate',
+	    value: function selectAggMethodUpdate(e) {
+	      this.setState({ aggMethod: e.target.value });
+	    }
+	  }, {
+	    key: 'selectFilterUpdate',
+	    value: function selectFilterUpdate(value) {
+	      this.setState({ filters: value });
+	    }
+	  }, {
+	    key: 'selectMoveValueUpdate',
+	    value: function selectMoveValueUpdate(value) {
+	      this.setState({ moveValue: value });
+	    }
+	  }, {
+	    key: 'selectTimeframeUpdate',
+	    value: function selectTimeframeUpdate(e) {
+	      this.setState({ timeframe: e.target.value });
+	    }
+	  }, {
+	    key: 'selectShowBackgroundUpdate',
+	    value: function selectShowBackgroundUpdate(e) {
+	      this.setState({ showBackground: e.target.checked });
+	    }
+	  }, {
+	    key: 'updateLayout',
+	    value: function updateLayout() {
+	      var newDashLayout = (0, _support.calculateNewLayout)(this.props.currentTab, this.props.dashLayout, this.props.widgetindex, Number(this.state.moveValue));
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	      this.props.update_layout(newDashLayout);
+	    }
+	  }, {
+	    key: 'updateWidget',
+	    value: function updateWidget() {
+	      // Update the widget according to props.
+	      this.props.update_widget_plus_save(this.props.widgetindex, {
+	        configDisplay: 'none',
+	        source: this.state.source,
+	        metrics: this.state.metrics,
+	        aggMethod: this.state.aggMethod,
+	        timeframe: this.state.timeframe,
+	        filters: this.state.filters,
+	        width: this.state.width,
+	        height: this.state.height,
+	        latitude: Number(this.state.latitude),
+	        longitude: Number(this.state.longitude),
+	        zoom: Number(this.state.zoom),
+	        showBackground: this.state.showBackground
+	      });
+	    }
+	  }, {
+	    key: 'cancelConfig',
+	    value: function cancelConfig() {
+	      // Reset the configuration state to the old props state.
+	      var oldState = this.props.widgets[this.props.widgetindex].data;
+	      this.setState({
+	        source: oldState.source,
+	        metrics: oldState.metrics,
+	        aggMethod: oldState.aggMethod,
+	        timeframe: oldState.timeframe,
+	        filters: oldState.filters,
+	        width: oldState.width,
+	        height: oldState.height,
+	        latitude: oldState.latitude,
+	        longitude: oldState.longitude,
+	        zoom: oldState.zoom,
+	        showBackground: oldState.showBackground
+	      });
+	      this.props.update_widget(this.props.widgetindex, { configDisplay: 'none' });
+	    }
+	  }, {
+	    key: 'onChangeLatitude',
+	    value: function onChangeLatitude(e) {
+	      this.setState({ latitude: e.target.value });
+	    }
+	  }, {
+	    key: 'onChangeLongitude',
+	    value: function onChangeLongitude(e) {
+	      this.setState({ longitude: e.target.value });
+	    }
+	  }, {
+	    key: 'onChangeZoom',
+	    value: function onChangeZoom(e) {
+	      this.setState({ zoom: e.target.value });
+	    }
+	  }, {
+	    key: 'deleteWidget',
+	    value: function deleteWidget() {
+	      this.props.delete_widget(this.props.widgetindex);
+	    }
+	  }, {
+	    key: 'selectSizeUpdate',
+	    value: function selectSizeUpdate(dim, value) {
+	      if (dim === 'width') {
+	        this.setState({ width: value });
+	      }
+	      if (dim === 'height') {
+	        this.setState({ height: value });
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var props = this.props;
+	      var dashLayout = this.props.dashLayout;
+	      var data = props.widgets[props.widgetindex].data;
+	      var sources = (0, _support.getSources)();
+	      var metrics = this.state.source === '(undefined)' ? [] : (0, _support.getMetricsForSource)(this.state.source);
+	      var timeframeOptions = (0, _support.getTimeframeOptions)();
+	      var aggMethods = (0, _support.getAggMethods)();
+	      metrics.unshift('(undefined)');
+	      return React.createElement('div', { style: { display: data.configDisplay } }, React.createElement('div', { className: 'deactivating-overlay' }), React.createElement('div', { className: 'widget-config-window' }, React.createElement(_BorderTopPlusClose2.default, { onClose: this.cancelConfig, title: 'Point Mapper Widget Configuration' }), React.createElement('div', { className: 'bandsubtitle' }, 'Choose Source & Metrics'), React.createElement('div', { className: 'simpleborder' }, 'Source', React.createElement('select', { onChange: this.selectSourceUpdate, value: this.state.source }, sources.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Region Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 0), value: this.state.metrics[0] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Latitude Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 1), value: this.state.metrics[1] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Longitude Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 2), value: this.state.metrics[2] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      })), React.createElement('br', null), 'Data Metric', React.createElement('select', { onChange: this.selectMetricUpdate.bind(this, 3), value: this.state.metrics[3] }, metrics.map(function (metric, i) {
+	        return React.createElement('option', { key: i, value: metric }, metric);
+	      }))), React.createElement('div', { className: 'simpleborder' }, React.createElement('label', null, React.createElement('input', { type: 'checkbox', checked: this.state.showBackground, onChange: this.selectShowBackgroundUpdate }), ' Show Background')), React.createElement('div', { className: 'simpleborder' }, 'Filters', React.createElement(_SelectFilter2.default, { selectFilterUpdate: this.selectFilterUpdate, options: metrics, filters: this.state.filters })), React.createElement('div', { className: 'simpleborder' }, 'Time Frame', React.createElement('select', { onChange: this.selectTimeframeUpdate, value: this.state.timeframe }, timeframeOptions.map(function (option, i) {
+	        return React.createElement('option', { key: i, value: option }, option);
+	      }))), React.createElement('div', { className: 'simpleborder' }, 'Initial Latitude:', React.createElement('input', { type: 'text', value: this.state.latitude, onChange: this.onChangeLatitude.bind(this) }), React.createElement('br', null), 'Initial Longitude:', React.createElement('input', { type: 'text', value: this.state.longitude, onChange: this.onChangeLongitude.bind(this) }), React.createElement('br', null), 'Initial Zoom:', React.createElement('input', { type: 'text', value: this.state.zoom, onChange: this.onChangeZoom.bind(this) })), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectSize2.default, { selectSizeUpdate: this.selectSizeUpdate, width: this.state.width, height: this.state.height, layout: props.dashLayout[props.currentTab].layout, widgetindex: props.widgetindex })), React.createElement('button', { className: 'config-window-button', onClick: this.updateWidget }, 'Update'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Move Widget'), React.createElement('div', { className: 'simpleborder' }, React.createElement(_SelectMove2.default, { selectMoveUpdate: this.selectMoveValueUpdate, myIndex: props.widgetindex, tabCurrent: this.props.currentTab, tabLayout: dashLayout, widgets: props.widgets })), React.createElement('button', { className: 'config-window-button', onClick: this.updateLayout }, 'Move'), React.createElement('br', null), React.createElement('br', null), React.createElement('div', { className: 'bandsubtitle' }, 'Delete Widget'), React.createElement('br', null), React.createElement('button', { className: 'config-window-button', onClick: this.deleteWidget }, 'Delete'), React.createElement('br', null), React.createElement('br', null)));
+	    }
+	  }]);
+	
+	  return WidgetConfigPointMapper;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_layout: function update_layout(newLayout) {
+	      return dispatch({ type: 'UPDATE_LAYOUT', newLayout: newLayout });
+	    },
+	    delete_widget: function delete_widget(widgetindex) {
+	      return dispatch({ type: 'DELETE_WIDGET', widgetindex: widgetindex });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetConfigPointMapper);
+
+/***/ },
+/* 557 */
+/*!******************************!*\
+  !*** ./WidgetPointMapper.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_, $) {'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+	
+	var _leaflet = __webpack_require__(/*! leaflet */ 213);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _reactLeaflet = __webpack_require__(/*! react-leaflet */ 212);
+	
+	var _support = __webpack_require__(/*! ./support.js */ 55);
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 2);
+	
+	var _redux = __webpack_require__(/*! redux */ 38);
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 4);
+	var ReactDOM = __webpack_require__(/*! react-dom */ 64);
+	var moment = __webpack_require__(/*! moment */ 421);
+	
+	var WidgetPointMapper = function (_React$Component) {
+	  _inherits(WidgetPointMapper, _React$Component);
+	
+	  function WidgetPointMapper(props) {
+	    _classCallCheck(this, WidgetPointMapper);
+	
+	    var _this = _possibleConstructorReturn(this, (WidgetPointMapper.__proto__ || Object.getPrototypeOf(WidgetPointMapper)).call(this));
+	
+	    _this.state = {
+	      rawData: undefined,
+	      longitude: props.widgets[props.widgetindex].data.longitude,
+	      latitude: props.widgets[props.widgetindex].data.latitude,
+	      zoom: props.widgets[props.widgetindex].data.zoom,
+	      key: 0
+	    };
+	    _this.reloadData = _this.reloadData.bind(_this);
+	    _this.onEachFeature = _this.onEachFeature.bind(_this);
+	    _this.pointToLayer = _this.pointToLayer.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(WidgetPointMapper, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(prevProps, prevState) {
+	      var newData = this.props.widgets[this.props.widgetindex].data;
+	      var oldData = prevProps.widgets[prevProps.widgetindex].data;
+	      var newTabData = this.props.dashLayout[this.props.currentTab];
+	      var oldTabData = prevProps.dashLayout[this.props.currentTab];
+	      if (newData.source !== oldData.source || newData.metrics[0] !== oldData.metrics[0] || newData.metrics[1] !== oldData.metrics[1] || newData.metrics[2] !== oldData.metrics[2] || newData.metrics[3] !== oldData.metrics[3] || JSON.stringify(newData.filters) !== JSON.stringify(oldData.filters) || newData.timeframe !== oldData.timeframe || newData.myStartDateISO !== oldData.myStartDateISO || newData.myEndDateISO !== oldData.myEndDateISO || newData.width !== oldData.width || newData.height !== oldData.height || newData.timeframe === 'tab' && (newTabData.tabStartDateISO !== oldTabData.tabStartDateISO || newTabData.tabEndDateISO !== oldTabData.tabEndDateISO)) {
+	        this.reloadData();
+	      }
+	      if (newData.showBackground !== oldData.showBackground) {
+	        this.render();
+	      }
+	      if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
+	        var rawData = this.state.rawData;
+	        var filteredRawData = (0, _support.postFilter)({ metrics: newData.metrics, data: rawData }, newData.postfilters);
+	        var g = [];
+	        _.each(filteredRawData.data, function (datum, i) {
+	          g.push({ "type": "Feature",
+	            "geometry": { "type": "Point", "coordinates": [datum.longitude, datum.latitude] },
+	            "properties": { 'title': datum.category }
+	          });
+	        });
+	        var dummy = {
+	          type: 'FeatureCollection',
+	          features: g
+	        };
+	        this.setState({ data: dummy, key: 1 - this.state.key });
+	      }
+	    }
+	  }, {
+	    key: 'reloadData',
+	    value: function reloadData() {
+	      var thisthis = this;
+	      var props = this.props;
+	      var data = props.widgets[props.widgetindex].data;
+	      if (data.source === '(undefined)' || data.metrics[0] === '(undefined)' || data.metrics[1] === '(undefined)' || data.metrics[2] === '(undefined)' || data.metrics[3] === '(undefined)' || data.label === '(undefined)' || data.timeframe === '(undefined)') {
+	        thisthis.setState({ rawData: undefined, filteredRawData: undefined, key: 1 - thisthis.state.key });
+	        //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Choropleth Widget Not Configured</div>');
+	      } else {
+	        var fs = data.filters.map(function (f) {
+	          return f.metric + ':' + f.comp + ':' + f.value;
+	        }).join();
+	        // If we're using the tab timeframe, add that as a filter.
+	        if (props.widgets[props.widgetindex].data.timeframe == 'tab') {
+	          var tabStartDateUnix = moment(props.dashLayout[props.currentTab].tabStartDateISO).unix();
+	          var tabEndDateUnix = moment(props.dashLayout[props.currentTab].tabEndDateISO).unix();
+	          if (fs.length > 0) {
+	            fs = fs + ',';
+	          }
+	          fs = fs + 'datetime:>=:' + tabStartDateUnix + ',datetime:<=:' + tabEndDateUnix;
+	        }
+	        // If we're using the widget timeframe, add that as a filter.
+	        if (props.widgets[props.widgetindex].data.timeframe == 'custom') {
+	          var myStartDateUnix = moment(props.widgets[props.widgetindex].data.myStartDateISO).unix();
+	          var myEndDateUnix = moment(props.widgets[props.widgetindex].data.myEndDateISO).unix();
+	          if (fs.length > 0) {
+	            fs = fs + ',';
+	          }
+	          fs = fs + 'datetime:>=:' + myStartDateUnix + ',datetime:<=:' + myEndDateUnix;
+	        }
+	        //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Choropleth Widget Loading</div>');
+	        this.setState({ rawData: undefined, filteredRawData: undefined });
+	        $.post((0, _support.REST_multiplevalue)(), (0, _support.completeParams)({
+	          source: data.source,
+	          metrics: data.metrics.join(','),
+	          filters: fs
+	        }), function (rawData) {
+	          // Construct the chart data and fill in the chart.
+	          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html((0, _support.tableFromRawData)({ metrics: data.metrics, data: rawData.data }, data.mytitle === undefined ? '' : data.mytitle));
+	          // Postfilter the data.
+	          var filteredRawData = (0, _support.postFilter)({ metrics: data.metrics, data: rawData.data }, data.postfilters);
+	          var g = [];
+	          _.each(filteredRawData.data, function (datum, i) {
+	            g.push({ "type": "Feature",
+	              "geometry": { "type": "Point", "coordinates": [datum[data.metrics[2]], datum[data.metrics[1]]] },
+	              "properties": { 'title': datum[data.metrics[3]] }
+	            });
+	          });
+	          var dummy = {
+	            type: 'FeatureCollection',
+	            features: g
+	          };
+	          // The data property is not dynamic, meaning that changing it
+	          // does not trigger an update of the component.  So we save
+	          // a key which alternates back and forth and makes sure to
+	          // trigger an update.
+	          thisthis.setState({ data: dummy, rawData: rawData.data, filteredRawData: filteredRawData.data, key: 1 - thisthis.state.key });
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.reloadData();
+	    }
+	  }, {
+	    key: 'pointToLayer',
+	    value: function pointToLayer(feature, latlng) {
+	      // renders our GeoJSON points as circle markers, rather than Leaflet's default image markers
+	      // parameters to style the GeoJSON markers
+	      var markerParams = {
+	        radius: 4,
+	        fillColor: 'red',
+	        color: '#fff',
+	        weight: 1,
+	        opacity: 0.5,
+	        fillOpacity: 0.8
+	      };
+	      return _leaflet2.default.circleMarker(latlng, markerParams);
+	    }
+	  }, {
+	    key: 'onEachFeature',
+	    value: function onEachFeature(feature, layer) {
+	      layer.bindPopup(feature.properties.title);
+	      layer.on('mouseover', function () {
+	        layer.openPopup();
+	      });
+	      layer.on('mouseout', function () {
+	        layer.closePopup();
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var thisthis = this;
+	      var widgetdata = this.props.widgets[this.props.widgetindex].data;
+	      var innerchartcss = 'widget-chart-container-' + widgetdata.width + '-' + widgetdata.height;
+	      var innerdatacss = 'widget-data-container-' + widgetdata.width + '-' + widgetdata.height;
+	      return React.createElement('div', null, React.createElement('div', { className: innerchartcss, style: { visibility: widgetdata.fob === 'front' ? 'inherit' : 'hidden' }, ref: 'chart' }, this.state.filteredRawData !== undefined ? React.createElement('div', null, React.createElement(_reactLeaflet.Map, { key: this.state.key, bounds: widgetdata.bounds, center: [this.state.latitude, this.state.longitude], zoom: this.state.zoom, scrollWheelZoom: false, attributionControl: false }, widgetdata.showBackground ? React.createElement(_reactLeaflet.TileLayer, { url: 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png' }) : '', React.createElement(_reactLeaflet.GeoJson, { key: this.state.key, pointToLayer: this.pointToLayer, onEachFeature: this.onEachFeature, data: this.state.data }))) : React.createElement('div', { className: 'nice-middle' }, React.createElement('div', { className: 'loading-spinner' }), React.createElement('br', null), React.createElement('br', null), 'Retrieving Data')), React.createElement('div', { className: innerdatacss, style: { visibility: widgetdata.fob === 'back' ? 'inherit' : 'hidden' }, ref: 'chartdata' }, this.state.data === undefined ? React.createElement('div', { className: 'nice-middle' }, React.createElement('div', { className: 'loading-spinner' }), React.createElement('br', null), React.createElement('br', null), 'Retrieving Data') : React.createElement('div', null)));
+	    }
+	  }]);
+	
+	  return WidgetPointMapper;
+	}(React.Component);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// I think:
+	// This maps the state, or part of it, to our props.
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    widgets: state.widgets,
+	    dashLayout: state.dashLayout,
+	    currentTab: state.currentTab,
+	    fullstate: state
+	  };
+	};
+	
+	// I think:
+	// This maps the dispatch tools, or some of them, to our props.
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    update_widget_plus_save: function update_widget_plus_save(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET_PLUS_SAVE', widgetindex: widgetindex, changes: changes });
+	    },
+	    update_widget: function update_widget(widgetindex, changes) {
+	      return dispatch({ type: 'UPDATE_WIDGET', widgetindex: widgetindex, changes: changes });
+	    }
+	  };
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(WidgetPointMapper);
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! underscore */ 1), __webpack_require__(/*! jquery */ 56)))
 
 /***/ }
 /******/ ]);

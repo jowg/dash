@@ -6,9 +6,9 @@ import {Map,TileLayer,GeoJson} from 'react-leaflet';
 import {REST_aggregate,completeParams,getColor,tableFromRawData} from './support.js';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import WidgetGeospatialInfo from './WidgetGeospatialInfo.js';
+import WidgetChoroplethInfo from './WidgetChoroplethInfo.js';
 
-class WidgetGeospatial extends React.Component {
+class WidgetChoropleth extends React.Component {
   constructor(props) {
     super();
     this.state = {
@@ -98,12 +98,18 @@ class WidgetGeospatial extends React.Component {
         filters: [{"metric":"sector","comp":"==","value":s}]
       });
     }
-    // 11 controls 10
+    // 11 controls 10 and 12.
     if (this.props.widgetindex === 11) {
       var s = e.target.feature.properties.sector;
+      var b = e.target.getBounds();
       this.props.update_widget(10,{
         mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
         postfilters: [{"metric":"sector","comp":"==","value":s}]
+      });
+      this.props.update_widget_plus_save(12,{
+        mytitle: '2016/01/01 - 311 Listing for Sector: ' + s,
+        postfilters: [{"metric":"sector","comp":"==","value":s}],
+        bounds: [[b.getSouth(),b.getWest()],[b.getNorth(),b.getEast()]]        
       });
     }
   }
@@ -155,7 +161,7 @@ class WidgetGeospatial extends React.Component {
       };
 
       thisthis.setState({data: dummy,key: 1-thisthis.state.key })
-      //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Geospatial Widget Not Configured</div>');
+      //$(ReactDOM.findDOMNode(chart)).html('<div class="nice-middle">Choropleth Widget Not Configured</div>');
     } else {
       var fs = data.filters.map(function(f) {
         return(f.metric+':'+f.comp+':'+f.value);
@@ -174,7 +180,7 @@ class WidgetGeospatial extends React.Component {
         if (fs.length > 0) {fs = fs + ',';}
         fs = fs + 'datetime:>=:'+myStartDateUnix+',datetime:<=:'+myEndDateUnix;
       }
-      //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Geospatial Widget Loading</div>');
+      //$(ReactDOM.findDOMNode(this.refs.chart)).html('<div class="nice-middle">Choropleth Widget Loading</div>');
       this.setState({data:undefined});
       $.post(
         REST_aggregate(),
@@ -199,7 +205,7 @@ class WidgetGeospatial extends React.Component {
             chartData.data.push(v);
           });
           $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData(chartData,(data.mytitle === undefined ? '' : data.mytitle)));
-          // Construct the geospatial data.
+          // Construct the choropleth data.
           var max = rawData.data[0][data.metrics[0]];
           var min = max;
           var g = [];
@@ -271,24 +277,24 @@ class WidgetGeospatial extends React.Component {
     var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
-        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'>
+        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'inherit':'hidden')}} ref='chart'>
         {this.state.data !== undefined ?
          <div>
-         <div className='widget-geospatial-title'>
+         {/*<div className='widget-choropleth-title'>
          {widgetdata.obeyChoropleth ? widgetdata.aggMethod+'('+widgetdata.metrics[0]+') by '+widgetdata.metrics[1] : widgetdata.metrics[1]}
-         </div>
-         <Map key={this.state.key} center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
+         </div>*/}
+         <Map key={this.state.key} bounds={widgetdata.bounds} center={[this.state.latitude,this.state.longitude]} zoom={this.state.zoom} scrollWheelZoom={false} attributionControl={false}>
          {widgetdata.showBackground ? <TileLayer url='http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'/> : ''}
          <GeoJson key={this.state.key} onEachFeature={this.onEachFeature} style={this.choroplethStyle} data={this.state.data}>
-         {/*<WidgetGeospatialInfo key={this.state.key} myLabel={this.state.currentLabel}/>*/}
+         {/*<WidgetChoroplethInfo key={this.state.key} myLabel={this.state.currentLabel}/>*/}
          </GeoJson>
          </Map>
          </div>
-         : <div className={innerchartcss}><div className='loading-spinner'></div><br/><br/>Retrieving Data</div>}
+         : <div className='nice-middle'><div className='loading-spinner'></div><br/><br/>Retrieving Data</div>}
       </div>
-        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back' ? 'inline-block':'none')}} ref='chartdata'>
+        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back' ? 'inherit':'hidden')}} ref='chartdata'>
         {this.state.data === undefined ?
-         <div className={innerchartcss}><div className='loading-spinner'></div><br/><br/>Retrieving Data</div>
+         <div className='nice-middle'><div className='loading-spinner'></div><br/><br/>Retrieving Data</div>
          : <div/>}
       </div>
       </div>
@@ -321,4 +327,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WidgetGeospatial);
+)(WidgetChoropleth);

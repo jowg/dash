@@ -17,11 +17,12 @@ import WidgetConfigColumn      from './WidgetConfigColumn.js';
 import WidgetConfigHistogram   from './WidgetConfigHistogram.js';
 import WidgetConfigStats       from './WidgetConfigStats.js';
 import WidgetConfigScatter     from './WidgetConfigScatter.js';
-import WidgetConfigGeospatial  from './WidgetConfigGeospatial.js';
+import WidgetConfigChoropleth  from './WidgetConfigChoropleth.js';
 import WidgetConfigSingleValue from './WidgetConfigSingleValue.js';
 import WidgetConfigTable       from './WidgetConfigTable.js';
+import WidgetConfigPointMapper from './WidgetConfigPointMapper.js';
 
-import WidgetGeospatial  from './WidgetGeospatial.js';
+import WidgetChoropleth  from './WidgetChoropleth.js';
 import WidgetPie         from './WidgetPie.js';
 import WidgetHistogram   from './WidgetHistogram.js';
 import WidgetBar         from './WidgetBar.js';
@@ -31,6 +32,7 @@ import WidgetScatter     from './WidgetScatter.js';
 import WidgetLine        from './WidgetLine.js';
 import WidgetSingleValue from './WidgetSingleValue.js';
 import WidgetTable       from './WidgetTable.js';
+import WidgetPointMapper from './WidgetPointMapper.js';
 
 import SelectBar from './SelectBar.js';
 
@@ -110,6 +112,7 @@ class Widget extends React.Component {
          : <div className='widget-top-bar'></div>}
 
         {/* The widget itself. */}
+
         <div style={{clear:'both'}}></div>
         <div className={innersubcss}>
         {(() => {
@@ -122,17 +125,22 @@ class Widget extends React.Component {
           case 'singlevalue': return(<WidgetSingleValue widgetindex={this.props.widgetindex}/>);
           case 'scatter':     return(<WidgetScatter     widgetindex={this.props.widgetindex}/>);
           case 'line':        return(<WidgetLine        widgetindex={this.props.widgetindex}/>);
-          case 'geospatial':  return(<WidgetGeospatial  widgetindex={this.props.widgetindex}/>);
+          case 'choropleth':  return(<WidgetChoropleth  widgetindex={this.props.widgetindex}/>);
           case 'table':       return(<WidgetTable       widgetindex={this.props.widgetindex}/>);
+          case 'pointmapper': return(<WidgetPointMapper widgetindex={this.props.widgetindex}/>);
           }
         })()}</div>
+
         {/* The widget flip control. */}
+
+        <div className='widget-top-bar'>
         {(() => {
         switch (widgetdata.type) {
         case 'table': return '';
         default: return(<img className='widget-flippy-right' src='flippy.png' title={widgetdata.fob === 'front' ? 'Flip to View Data' : 'Flip to View Graphic'} onClick={this.flipToOtherSide}></img>);
         }
         })()}
+      </div>
         {/* The widget config. */}
           {(() => {
           switch (props.widgets[props.widgetindex].data.type) {
@@ -144,8 +152,9 @@ class Widget extends React.Component {
           case 'stats':       return(<WidgetConfigStats       widgetindex={props.widgetindex}/>);
           case 'singlevalue': return(<WidgetConfigSingleValue widgetindex={props.widgetindex}/>);
           case 'scatter':     return(<WidgetConfigScatter     widgetindex={props.widgetindex}/>);
-          case 'geospatial':  return(<WidgetConfigGeospatial  widgetindex={props.widgetindex}/>);
+          case 'choropleth':  return(<WidgetConfigChoropleth  widgetindex={props.widgetindex}/>);
           case 'table':       return(<WidgetConfigTable       widgetindex={props.widgetindex}/>);
+          case 'pointmapper': return(<WidgetConfigPointMapper widgetindex={props.widgetindex}/>);
           }
         })()}
         </div>);

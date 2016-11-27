@@ -196,8 +196,8 @@ class WidgetBar extends React.Component {
     var innerdatacss = 'widget-data-container-'+widgetdata.width+'-'+widgetdata.height;
     return (
         <div>
-        <div className={innerchartcss} style={{display:(widgetdata.fob === 'front'?'inline-block':'none')}} ref='chart'/>
-        <div className={innerdatacss} style={{display:(widgetdata.fob === 'back'?'inline-block':'none')}} ref='chartdata'></div>
+        <div className={innerchartcss} style={{visibility:(widgetdata.fob === 'front'?'inherit':'hidden')}} ref='chart'/>
+        <div className={innerdatacss} style={{visibility:(widgetdata.fob === 'back'?'inherit':'hidden')}} ref='chartdata'></div>
         </div>
     );
   }

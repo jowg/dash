@@ -12,7 +12,7 @@ require('./dash.css');
 
 // How does the dash get access to the store?
 
-class WidgetConfigGeospatial extends React.Component {
+class WidgetConfigPointMapper extends React.Component {
   constructor(props) {
     super();
     var data = props.widgets[props.widgetindex].data;
@@ -28,8 +28,7 @@ class WidgetConfigGeospatial extends React.Component {
       longitude:      data.longitude,
       zoom:           data.zoom,
       moveValue:      -0.5,
-      showBackground: data.showBackground,
-      obeyChoropleth: data.obeyChoropleth
+      showBackground: data.showBackground
     }
     this.selectSourceUpdate         = this.selectSourceUpdate.bind(this);
     this.selectMetricUpdate         = this.selectMetricUpdate.bind(this);
@@ -39,7 +38,6 @@ class WidgetConfigGeospatial extends React.Component {
     this.selectMoveValueUpdate      = this.selectMoveValueUpdate.bind(this);
     this.selectAggMethodUpdate      = this.selectAggMethodUpdate.bind(this);
     this.selectShowBackgroundUpdate = this.selectShowBackgroundUpdate.bind(this);
-    this.selectObeyChoroplethUpdate = this.selectObeyChoroplethUpdate.bind(this);
     this.updateLayout               = this.updateLayout.bind(this);
     this.deleteWidget               = this.deleteWidget.bind(this);
     this.selectTimeframeUpdate      = this.selectTimeframeUpdate.bind(this);
@@ -54,8 +52,7 @@ class WidgetConfigGeospatial extends React.Component {
       metrics:        ['(undefined)'],
       aggMethod:      ['(undefined)'],      
       filters:        [],
-      showBackground: true,
-      obeyChoropleth: true
+      showBackground: true
     });
   }
   selectMetricUpdate(i,e) {
@@ -78,9 +75,6 @@ class WidgetConfigGeospatial extends React.Component {
   selectShowBackgroundUpdate(e) {
     this.setState({showBackground:e.target.checked});
   }
-  selectObeyChoroplethUpdate(e) {
-    this.setState({obeyChoropleth:e.target.checked});
-  }
   updateLayout() {
     var newDashLayout = calculateNewLayout(this.props.currentTab,this.props.dashLayout,this.props.widgetindex,Number(this.state.moveValue));
     this.props.update_widget(this.props.widgetindex,{configDisplay: 'none'});
@@ -100,8 +94,7 @@ class WidgetConfigGeospatial extends React.Component {
       latitude:       Number(this.state.latitude),
       longitude:      Number(this.state.longitude),
       zoom:           Number(this.state.zoom),
-      showBackground: this.state.showBackground,
-      obeyChoropleth: this.state.obeyChoropleth
+      showBackground: this.state.showBackground
     });
   }
   cancelConfig() {
@@ -118,8 +111,7 @@ class WidgetConfigGeospatial extends React.Component {
       latitude:       oldState.latitude,
       longitude:      oldState.longitude,
       zoom:           oldState.zoom,
-      showBackground: oldState.showBackground,
-      obeyChoropleth: oldState.obeyChoropleth
+      showBackground: oldState.showBackground
     });
     this.props.update_widget(this.props.widgetindex,{configDisplay: 'none'});
   }
@@ -152,7 +144,7 @@ class WidgetConfigGeospatial extends React.Component {
         <div style={{display: data.configDisplay}}>
         <div className='deactivating-overlay'></div>
         <div className='widget-config-window'>
-        <BorderTopPlusClose onClose={this.cancelConfig} title='Geospatial Widget Configuration'/>
+        <BorderTopPlusClose onClose={this.cancelConfig} title='Point Mapper Widget Configuration'/>
         <div className='bandsubtitle'>Choose Source & Metrics</div>
         <div className='simpleborder'>
         Source
@@ -161,26 +153,28 @@ class WidgetConfigGeospatial extends React.Component {
       </select>
         </div>
         <div className='simpleborder'>
-        Geospatial Aggregation Metric
+        Region Metric
+        <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
+        {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
+      </select>
+        <br/>
+        Latitude Metric
         <select onChange={this.selectMetricUpdate.bind(this,1)} value={this.state.metrics[1]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         <br/>
-        Aggregate Method
-        <select onChange={this.selectAggMethodUpdate} value={this.state.aggMethod}>
-        {aggMethods.map(function(option,i) {return (<option key={i} value={option}>{option}</option>)})}
-      </select>        
-        </div>
-        <div className='simpleborder'>
-        Choropleth Metric
-        <select onChange={this.selectMetricUpdate.bind(this,0)} value={this.state.metrics[0]}>
+        Longitude Metric
+        <select onChange={this.selectMetricUpdate.bind(this,2)} value={this.state.metrics[2]}>
+        {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
+      </select>
+        <br/>
+        Data Metric
+        <select onChange={this.selectMetricUpdate.bind(this,3)} value={this.state.metrics[3]}>
         {metrics.map(function(metric,i) {return (<option key={i} value={metric}>{metric}</option>)})}
       </select>
         </div>
         <div className='simpleborder'>        
         <label><input type='checkbox' checked={this.state.showBackground} onChange={this.selectShowBackgroundUpdate} /> Show Background</label>
-        <br/>
-        <label><input type='checkbox' checked={this.state.obeyChoropleth} onChange={this.selectObeyChoroplethUpdate} /> Obey Choropleth</label>
       </div>
         <div className='simpleborder'>
         Filters
@@ -248,4 +242,4 @@ const mapDispatchToProps = (dispatch,ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(WidgetConfigGeospatial);
+)(WidgetConfigPointMapper);
