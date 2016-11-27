@@ -1,7 +1,7 @@
 :root {
   --body-color:                         #bbbbbb;
-  --topbar-color:                       #4a708b;
-  --widget-topbar-color:                #ffffff;
+  --topbar-color:                       #888888;
+  --widget-topbar-color:                #888888;
   --tabholder-color:                    #ffffff;
   --tabholder-width:                    160px;
   --tab-selected-background-color:      #e0e0e0;
@@ -9,8 +9,8 @@
   --tab-default-color:                  #000000;
   --topbar-default-color:               #ffffff;
   --widget-border-color:                #cccccc;
-  --widget-border-radius:               5px;
-  --widget-border-thickness:            1px;
+  --widget-border-radius:               0px;
+  --widget-border-thickness:            0px;
   --global-font:                        Helvetica;
   --global-font-size-medium:            120%;
   --global-font-size-small:             100%;
@@ -18,17 +18,17 @@
   --global-font-size-90:                90%;
   --global-font-size-100:               100%;
   --global-font-size-400:               400%;
-  --config-window-border-color:         #4a708b;
+  --config-window-border-color:         #888888;
   --config-window-border-thickness:     7px;
   --band-title-color:                   #eeeeee;
-  --band-title-background-color:        #4a708b;
+  --band-title-background-color:        #888888;
   --widget-datepicker-background-color: #ffffff;
   --widget-datepicker-border-color:     #ffffff;
   --widget-datepicker-color:            #000000;
-  --datepicker-background-color:        #4a708b;
+  --datepicker-background-color:        #888888;
   --config-window-button-color:         #ffffff;
-  --config-window-button-background-color: #4a708b;
-  --config-window-button-background-color-hover: #5a809b;
+  --config-window-button-background-color: #888888;
+  --config-window-button-background-color-hover: #777777;
 }
 
 .disabled {
@@ -58,7 +58,7 @@ html,body {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
   border-radius:    var(--widget-border-radius);
-  width:            1075px;
+  width:            1070px;
   height:           75px;
   box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
   visibility:       inherit;
