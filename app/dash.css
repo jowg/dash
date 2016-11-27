@@ -52,6 +52,21 @@ html,body {
   display: inline-block;
 }
 /*---------------------------------------------------------------------------------------------------------*/
+.tab-long-description {
+  font-family: var(--global-font);
+  font-size:   var(--global-font-size-small);
+  border:           var(--widget-border-thickness) solid var(--widget-border-color);
+  background-color: #ffffff;
+  border-radius:    var(--widget-border-radius);
+  width:            1075px;
+  height:           75px;
+  box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
+  visibility:       inherit;
+  margin-top:       10px;
+  margin-left:      10px;
+}
+
+/*---------------------------------------------------------------------------------------------------------*/
 .widget-container-half-half {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
@@ -176,7 +191,7 @@ html,body {
   border:           var(--widget-border-thickness) solid var(--widget-border-color);
   background-color: #ffffff;
   border-radius:    var(--widget-border-radius);
-  width:            700px;
+  width:            710px;
   height:           710px;
   text-align:       center;
   box-shadow:       0px 7px 7px 0px rgba(0,0,0,0.2);
@@ -185,13 +200,13 @@ html,body {
   margin-left:      10px;
 }
 .widget-sub-container-full-full {
-  width:      700px;
+  width:      710px;
   height:     660px;
   position:   relative;
   visibility: inherit;
 }
 .widget-chart-container-full-full {
-  width:          700px;
+  width:          710px;
   height:         660px;
   vertical-align: middle;
   text-align:     center;
@@ -201,7 +216,7 @@ html,body {
   visibility:     inherit;
 }
 .widget-data-container-full-full {
-  width:          700px;
+  width:          710px;
   height:         660px;
   overflow-y:     auto;
   overflow-x:     hidden;
@@ -375,7 +390,7 @@ html,body {
   width:        100%;
   height:       100%;
   padding-left: 16px;
-  padding-top:  48px;
+  padding-top:  40px;
   display:      inline-block;
   visibility:   visible;
 }
@@ -386,7 +401,7 @@ html,body {
   width:        100%;
   height:       100%;
   padding-left: 16px;
-  padding-top:  48px;
+  padding-top:  40px;
   display:      inline-block;
   visibility:   hidden;
   z-index:      -1000;
@@ -397,7 +412,7 @@ html,body {
   padding-top:      10px;
   padding-bottom:   10px;
   left:             4px;
-  top:              46px;
+  top:              40px;
   bottom:           10px;
   width:            var(--tabholder-width);
   background-color: var(--tabholder-color);
@@ -580,10 +595,10 @@ html,body {
   position:         fixed;
   top:              50%;
   left:             50%;
-  margin-top:       -150px;
+  margin-top:       -200px;
   margin-left:      -200px;
-  width:            300px;
-  height:           200px;
+  width:            400px;
+  height:           400px;
   z-index:          1000;
   background-color: #ffffff;
   font-family:      var(--global-font);

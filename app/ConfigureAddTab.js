@@ -9,11 +9,13 @@ class ConfigureAddTab extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      tabName:''
+      tabName: '',
+      tabLong: ''
     }
     this.cancelButtonHandler = this.cancelButtonHandler.bind(this);
     this.updateButtonHandler = this.updateButtonHandler.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.onChangeTabLong = this.onChangeTabLong.bind(this);
   }
   cancelButtonHandler() {
     this.props.update_dash({configAddTabDisplay: 'none'});
@@ -22,6 +24,7 @@ class ConfigureAddTab extends React.Component {
     if (this.state.tabName !== '') {
       var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));
       oldDash.push({tabName:         this.state.tabName.trim().replace(/\s+/g, ' '),
+                    tabLong:         this.state.tabLong.trim().replace(/\s+/g, ' '),
                     layout:          [],
                     tabStartDateISO: moment('2016-06-15T00:00:00').toISOString(),
                     tabEndDateISO:   moment('2016-06-30T00:00:00').toISOString()});
@@ -33,6 +36,9 @@ class ConfigureAddTab extends React.Component {
   onChange(e) {
     this.setState({tabName:e.target.value});
   }
+  onChangeTabLong(e) {
+    this.setState({tabLong:e.target.value});
+  }
   render() {
     return (
         <div>
@@ -42,9 +48,12 @@ class ConfigureAddTab extends React.Component {
         <br/>
         Enter Tab Name<br/>
         (Alphanumeric Only)
-        <br/>
-        <br/>
+        <br/><br/>
         <input className='addTabTextfield' type="text" value={this.state.tabName} onChange={this.onChange.bind(this)}/>
+        <br/><br/>
+        Enter Long Tab Description
+        <br/><br/>
+        <textarea className='addTabTextfield' rows={5} cols={32} value={this.state.tabLong} onChange={this.onChangeTabLong.bind(this)}/>
         <br/><br/>
         <button className='config-window-button' onClick={this.updateButtonHandler}>Add Tab</button>
         </div>

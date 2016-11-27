@@ -9,24 +9,28 @@ class ConfigureEditTab extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      tabName: props.dashLayout[props.currentTab].tabName
+      tabName: props.dashLayout[props.currentTab].tabName,
+      tabLong: props.dashLayout[props.currentTab].tabLong
     }
     this.cancelButtonHandler = this.cancelButtonHandler.bind(this);
     this.updateButtonHandler = this.updateButtonHandler.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.onChangeTabLong = this.onChangeTabLong.bind(this);
   }
   cancelButtonHandler() {
     this.props.update_dash({configEditTabDisplay: 'none'});
   }
   componentWillReceiveProps(prevProps) {
     this.setState({
-      tabName: this.props.dashLayout[this.props.currentTab].tabName
+      tabName: this.props.dashLayout[this.props.currentTab].tabName,
+      tabLong: this.props.dashLayout[this.props.currentTab].tabLong
     });
   }
   updateButtonHandler() {
     if (this.state.tabName !== '') {
       var oldDash = JSON.parse(JSON.stringify(this.props.dashLayout));
       oldDash[this.props.currentTab].tabName = this.state.tabName.trim().replace(/\s+/g, ' ');
+      oldDash[this.props.currentTab].tabLong = this.state.tabLong.trim().replace(/\s+/g, ' ');
       this.props.update_dash_plus_save({dashLayout: oldDash,configEditTabDisplay: 'none'});
     } else {
       this.props.update_dash({configEditTabDisplay: 'none'});
@@ -34,6 +38,9 @@ class ConfigureEditTab extends React.Component {
   }
   onChange(e) {
     this.setState({tabName:e.target.value});
+  }
+  onChangeTabLong(e) {
+    this.setState({tabLong:e.target.value});
   }
   render() {
     return (
@@ -46,6 +53,10 @@ class ConfigureEditTab extends React.Component {
         (Alphanumeric Only)
         <br/><br/>
         <input className='addTabTextfield' type="text" value={this.state.tabName} onChange={this.onChange.bind(this)}/>
+        <br/><br/>
+        Enter Long Tab Description
+        <br/><br/>
+        <textarea className='addTabTextfield' rows={5} cols={32} value={this.state.tabLong} onChange={this.onChangeTabLong.bind(this)}/>      
         <br/><br/>
         <button className='config-window-button' onClick={this.updateButtonHandler}>Save Tab</button>
         </div>
