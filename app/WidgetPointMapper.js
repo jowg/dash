@@ -24,6 +24,7 @@ class WidgetPointMapper extends React.Component {
   }
 
   componentDidUpdate(prevProps,prevState) {
+    var thisthis = this;
     var newData = this.props.widgets[this.props.widgetindex].data;
     var oldData = prevProps.widgets[prevProps.widgetindex].data;
     var newTabData = this.props.dashLayout[this.props.currentTab];
@@ -49,6 +50,8 @@ class WidgetPointMapper extends React.Component {
     if (JSON.stringify(newData.postfilters) !== JSON.stringify(oldData.postfilters)) {
       var rawData = this.state.rawData;
       var filteredRawData = postFilter({metrics:newData.metrics,data:rawData},newData.postfilters);
+      // Construct the chart data and fill in the chart.
+      $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:newData.metrics,data:filteredRawData.data},(newData.mytitle === undefined ? '' : newData.mytitle)));
       var g = [];
       _.each(filteredRawData.data,function(datum,i) {
         g.push({"type": "Feature",
@@ -59,7 +62,7 @@ class WidgetPointMapper extends React.Component {
       var dummy = {
         type: 'FeatureCollection',
         features: g
-      };        
+      };
       this.setState({data:dummy,key: 1-this.state.key});
     }    
   }
@@ -105,8 +108,6 @@ class WidgetPointMapper extends React.Component {
           filters:   fs
         }),
         function(rawData) {
-          // Construct the chart data and fill in the chart.
-          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:rawData.data},(data.mytitle === undefined ? '' : data.mytitle)));
           // Postfilter the data.
           var filteredRawData = postFilter({metrics:data.metrics,data:rawData.data},data.postfilters);
           var g = [];
@@ -120,6 +121,8 @@ class WidgetPointMapper extends React.Component {
             type: 'FeatureCollection',
             features: g
           };            
+          // Construct the chart data and fill in the chart.
+          $(ReactDOM.findDOMNode(thisthis.refs.chartdata)).html(tableFromRawData({metrics:data.metrics,data:filteredRawData.data},(data.mytitle === undefined ? '' : data.mytitle)));
           // The data property is not dynamic, meaning that changing it
           // does not trigger an update of the component.  So we save
           // a key which alternates back and forth and makes sure to
